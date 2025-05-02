@@ -34,17 +34,18 @@ async def send_code(
         with open(f"image-{globalId}.{image_format}", "wb") as f:
             f.write(await imageFile.read())
 
-    subprocess.run(["pdflatex", f"-jobname=pdf-{globalId}", f"code-{globalId}.tex"])
+    subprocess.run(["pdflatex", "-interaction=nonstopmode", f"-jobname=pdf-{globalId}", f"code-{globalId}.tex"])
     file_path = f"pdf-{globalId}.pdf"
     response = FileResponse(file_path, media_type="application/pdf")
+    #To-DO add the code file to the delete list
+    # f"code-{globalId}.tex",
+    delete_list = [f"image-{globalId}.{image_format}",f"pdf-{globalId}.aux",f"pdf-{globalId}.log",f"pdf-{globalId}.out",f"pdf-{globalId}.pdf"]
+    def cleanup():
+        for file in delete_list:
+            if os.path.exists(file):
+                os.remove(file)
 
-    # delete_list = [f"code-{globalId}.tex",f"image-{globalId}.{image_format}",f"pdf-{globalId}.aux",f"pdf-{globalId}.log",f"pdf-{globalId}.out",f"pdf-{globalId}.pdf"]
-    # def cleanup():
-    #     for file in delete_list:
-    #         if os.path.exists(file):
-    #             os.remove(file)
-
-    # background_tasks.add_task(cleanup)
+    background_tasks.add_task(cleanup)
     return response
 
 

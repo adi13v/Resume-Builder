@@ -1,0 +1,184 @@
+
+  \documentclass[letterpaper,11pt]{article}
+  
+  \usepackage{latexsym}
+  \usepackage[empty]{fullpage}
+  \usepackage{titlesec}
+  \usepackage{marvosym}
+  \usepackage[usenames,dvipsnames]{color}
+  \usepackage{verbatim}
+  \usepackage{enumitem}
+  \usepackage[hidelinks]{hyperref}
+  \usepackage{fancyhdr}
+  \usepackage[english]{babel}
+  \usepackage{tabularx}
+  \input{glyphtounicode}
+  
+  
+  %----------FONT OPTIONS----------
+  % sans-serif
+  % \usepackage[sfdefault]{FiraSans}
+  % \usepackage[sfdefault]{roboto}
+  % \usepackage[sfdefault]{noto-sans}
+  % \usepackage[default]{sourcesanspro}
+  
+  % serif
+  % \usepackage{CormorantGaramond}
+  % \usepackage{charter}
+  
+  
+  \pagestyle{fancy}
+  \fancyhf{} % clear all header and footer fields
+  \fancyfoot{}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0pt}
+  
+  % Adjust margins
+  \addtolength{\oddsidemargin}{-0.5in}
+  \addtolength{\evensidemargin}{-0.5in}
+  \addtolength{\textwidth}{1in}
+  \addtolength{\topmargin}{-.5in}
+  \addtolength{\textheight}{1.0in}
+  
+  \urlstyle{same}
+  
+  \raggedbottom
+  \raggedright
+  \setlength{\tabcolsep}{0in}
+  
+  % Sections formatting
+  \titleformat{\section}{
+    \vspace{-4pt}\scshape\raggedright\large
+  }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+  
+  % Ensure that generate pdf is machine readable/ATS parsable
+  \pdfgentounicode=1
+  
+  %-------------------------
+  % Custom commands
+  \newcommand{\resumeItem}[1]{
+    \item\small{
+      {#1 \vspace{-2pt}}
+    }
+  }
+  
+  \newcommand{\resumeSubheading}[4]{
+    \vspace{-2pt}\item
+      \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & #2 \\
+        \textit{\small#3} & \textit{\small #4} \\
+      \end{tabular*}\vspace{-7pt}
+  }
+  
+  \newcommand{\resumeSubSubheading}[2]{
+      \item
+      \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+        \textit{\small#1} & \textit{\small #2} \\
+      \end{tabular*}\vspace{-7pt}
+  }
+  
+  \newcommand{\resumeProjectHeading}[2]{
+      \item
+      \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+        \small#1 & #2 \\
+      \end{tabular*}\vspace{-7pt}
+  }
+  
+  \newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
+  
+  \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+  
+  \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+  \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+  \newcommand{\resumeItemListStart}{\begin{itemize}}
+  \newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
+  
+  %-------------------------------------------
+  %%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
+  
+  
+  \begin{document}
+  
+  %----------HEADING----------
+  
+  \begin{center}
+      \textbf{\Huge \scshape Snoopy } \\ \vspace{1pt}
+      \small 6386419509 $|$ \href{2228090@kiit.ac.in}{\underline{2228090@kiit.ac.in}}
+        $|$ \href{www.google.com}{\underline{www.google.com}}
+        $|$ \href{http:\fd\d\s\f\\d\f}{\underline{http:\textbackslash fd\textbackslash d\textbackslash s\textbackslash f\textbackslash \textbackslash d\textbackslash f}}
+        $|$ \href{https://www.google.com/}{\underline{https://www.google.com/}}
+  \end{center}
+  
+  
+  %-----------EDUCATION-----------
+  \section{Education}
+    \resumeSubHeadingListStart
+     \resumeSubheading
+      {Massachusetts Institute of Technology}{Cambridge, Massachusetts}
+      {Master of Science in Computer Science}{Sep. 2020 -- May 2022}
+  \resumeSubheading
+      {Stanford University}{Stanford, California}
+      {Bachelor of Science in Computer Science}{Sep. 2016 -- May 2020}
+  \resumeSubheading
+      {University of California, Berkeley}{Berkeley, California}
+      {Bachelor of Arts in Mathematics}{Sep. 2014 -- May 2016}
+  
+    \resumeSubHeadingListEnd
+  
+  
+  %-----------EXPERIENCE-----------
+  \section{Experience}
+    \resumeSubHeadingListStart
+      \resumeSubheading
+      {Senior Software Engineer}{Jun. 2022 -- Present}
+      {Google}{Mountain View, California}
+      \resumeItemListStart
+        \resumeItem{Led development of scalable microservices architecture handling 1M+ daily requests}\resumeItem{Implemented CI/CD pipeline reducing deployment time by 40\%}\resumeItem{Mentored junior developers and conducted code reviews for team of 5 engineers}
+      \resumeItemListEnd
+      \resumeSubheading
+      {Software Engineer}{Jun. 2020 -- May 2022}
+      {Microsoft}{Redmond, Washington}
+      \resumeItemListStart
+        \resumeItem{Developed and maintained Azure cloud services with 99.99\% uptime}\resumeItem{Optimized database queries reducing response time by 30\%}\resumeItem{Collaborated with cross-functional teams to deliver features on schedule}
+      \resumeItemListEnd
+      
+    \resumeSubHeadingListEnd
+  
+  
+  %-----------PROJECTS-----------
+  \section{Projects}
+      \resumeSubHeadingListStart
+        \resumeProjectHeading
+ {\textbf{AI-Powered Resume Builder} $|$ \emph{React, TypeScript, Node.js, Express, MongoDB, OpenAI API}}{Jan. 2023 -- Jun. 2023}
+\resumeItemListStart
+\resumeItem{Real-time LaTeX PDF generation with custom templates}\resumeItem{AI-powered content suggestions and grammar checking}\resumeItem{Responsive design with dark/light mode support}\resumeItem{Local storage for draft saving and auto-recovery}
+\resumeItemListEnd
+\resumeProjectHeading
+ {\textbf{Distributed Task Scheduler} $|$ \emph{Go, gRPC, Redis, Docker, Kubernetes}}{Jul. 2022 -- Dec. 2022}
+\resumeItemListStart
+\resumeItem{Implemented distributed consensus using Raft algorithm}\resumeItem{Achieved \textbf{99.9\%} task execution reliability}\resumeItem{Scaled to handle 100K+ concurrent tasks}\resumeItem{Added monitoring and alerting system}
+\resumeItemListEnd
+
+      \resumeSubHeadingListEnd
+
+  %-----------PROGRAMMING SKILLS-----------
+  \section{Technical Skills}
+   \begin{itemize}[leftmargin=0.15in, label={}]
+      \small{\item{
+       \textbf{Languages}: Python, JavaScript, TypeScript, Java, C++ \
+
+  \textbf{Frameworks}: React, Node.js, Express, Django, Spring Boot \
+
+  \textbf{Developer Tools}: Git, Docker, Kubernetes, AWS, Azure, CI/CD \
+
+  \textbf{Databases}: MongoDB, PostgreSQL, Redis, MySQL \
+
+  \textbf{Soft Skills}: Leadership, Team Collaboration, Problem Solving, Communication \
+
+  
+      }}
+   \end{itemize}
+  
+  %-------------------------------------------
+  \end{document}
+  
