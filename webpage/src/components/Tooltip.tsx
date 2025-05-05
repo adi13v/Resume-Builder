@@ -23,6 +23,9 @@ const Tooltip = ({children,title,message}) => {
 
     input?.addEventListener('keydown',handleKeyDown);
     
+    return ()=>{
+      input?.removeEventListener('keydown',handleKeyDown);
+    }
   } , [])
 
   return (
