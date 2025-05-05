@@ -29,6 +29,9 @@ interface FormDataStore {
   experienceEntries: ExperienceDetails[];
   projectEntries: ProjectDetails[];
   skills: SkillDetails[];
+  honorEntries: HonorDetails[];
+  clubEntries: ClubDetails[];
+  certificateEntries: CertificateDetails[];
 }
 
 const presets = ["Languages", "Frameworks", "Libraries", "Developer Tools", "Soft Skills"];
@@ -41,6 +44,7 @@ enum RestrictionType {
 interface EducationDetails extends BaseEntry {
   instituteName : string;
   degree: string;
+  branch: string;
   location: string;
   startDate: string;
   endDate: string;
@@ -60,7 +64,8 @@ interface ExperienceDetails extends BaseEntry {
 
 interface ProjectDetails extends BaseEntry {
   projectName : string;
-  technologiesUsed : string;
+  projectLinkTitle: string;
+  projectLink: string;
   featureList : string[];
   startDate:string,
   endDate:string
@@ -70,14 +75,36 @@ interface SkillDetails extends BaseEntry {
   value: string;
 }
 
+interface HonorDetails extends BaseEntry {
+  title: string;
+  date: string;
+  description: string;
+  linkTitle: string;
+  link: string;
+}
+
+interface ClubDetails extends BaseEntry {
+  title: string;
+  societyName: string;
+  startDate: string;
+  endDate: string;
+  achievements: string[];
+}
+
+interface CertificateDetails extends BaseEntry {
+  title: string;
+  link: string;
+}
+
 const defaultEducationEntry:EducationDetails = {
   id: "dfcvbhu7654efghnbvcd",
   instituteName: "Massachusetts Institute of Technology",
-  degree: "Master of Science in Computer Science",
+  degree: "Master of Science",
+  branch: "Computer Science",
   location: "Cambridge, Massachusetts",
   startDate: "2020-09",
   endDate: "2022-05",
-  gradeType: "CGPA",
+  gradeType: "cgpa",
   cgpa: "3.9",
   percentage: "",
 }
@@ -85,11 +112,12 @@ const defaultEducationEntry:EducationDetails = {
 const defaultEducationEntry2:EducationDetails = {
   id: "dfcvbhu7654efghnbvcd2",
   instituteName: "Stanford University",
-  degree: "Bachelor of Science in Computer Science",
+  degree: "Bachelor of Science",
+  branch: "Computer Science",
   location: "Stanford, California",
   startDate: "2016-09",
   endDate: "2020-05",
-  gradeType: "CGPA",
+  gradeType: "cgpa",
   cgpa: "3.8",
   percentage: "",
 }
@@ -97,7 +125,8 @@ const defaultEducationEntry2:EducationDetails = {
 const defaultEducationEntry3:EducationDetails = {
   id: "dfcvbhu7654efghnbvcd3",
   instituteName: "University of California, Berkeley",
-  degree: "Bachelor of Arts in Mathematics",
+  degree: "Bachelor of Arts",
+  branch: "Mathematics",
   location: "Berkeley, California",
   startDate: "2014-09",
   endDate: "2016-05",
@@ -137,7 +166,8 @@ const defaultExperienceEntry2:ExperienceDetails = {
 const defaultProjectEntry:ProjectDetails = {
   id: "0okmhgfdr543edf",
   projectName: "AI-Powered Resume Builder",
-  technologiesUsed: "React, TypeScript, Node.js, Express, MongoDB",
+  projectLinkTitle: "Github Link",
+  projectLink: "https://github.com/username/resume-builder",
   startDate: "2023-01",
   endDate: "2023-06",
   featureList: [
@@ -151,7 +181,8 @@ const defaultProjectEntry:ProjectDetails = {
 const defaultProjectEntry2:ProjectDetails = {
   id: "0okmhgfdr543edf2",
   projectName: "Distributed Task Scheduler",
-  technologiesUsed: "Go, gRPC, Redis, Docker, Kubernetes",
+  projectLinkTitle: "Github Link",
+  projectLink: "https://github.com/username/task-scheduler",
   startDate: "2022-07",
   endDate: "2022-12",
   featureList: [
@@ -197,6 +228,60 @@ const defaultSkillEntry5:SkillDetails = {
   value: "Leadership, Team Collaboration, Problem Solving, Communication",
 }
 
+const defaultHonorEntry: HonorDetails = {
+  id: "honor1",
+  title: "Dean's List",
+  date: "2023-05",
+  description: "Recognition for academic excellence in Computer Science program",
+  linkTitle: "Certificate",
+  link: "https://example.com/certificate"
+};
+
+const defaultHonorEntry2: HonorDetails = {
+  id: "honor2",
+  title: "Best Project Award",
+  date: "2022-12",
+  description: "Awarded for outstanding performance in the annual project competition",
+  linkTitle: "Profile Link",
+  link: "https://example.com/profile"
+};
+
+const defaultClubEntry: ClubDetails = {
+  id: "club1",
+  title: "Web Development Lead",
+  societyName: "KIIT MLSA",
+  startDate: "2023-01",
+  endDate: "2024-01",
+  achievements: [
+    "Led a team of 20+ members in developing and maintaining the society's website",
+    "Organized monthly coding workshops and hackathons"
+  ]
+};
+
+const defaultClubEntry2: ClubDetails = {
+  id: "club2",
+  title: "Public Speaking Mentor",
+  societyName: "KIIT MUN Society",
+  startDate: "2022-08",
+  endDate: "2023-08",
+  achievements: [
+    "Mentored 50+ students in public speaking and debate",
+    "Organized inter-college MUN conference with 200+ participants"
+  ]
+};
+
+const defaultCertificateEntry: CertificateDetails = {
+  id: "cert1",
+  title: "AWS Cloud Practitioner",
+  link: "https://example.com/certificate1"
+};
+
+const defaultCertificateEntry2: CertificateDetails = {
+  id: "cert2",
+  title: "Google Cloud Professional Data Engineer",
+  link: "https://example.com/certificate2"
+};
+
 // Function to format date from YYYY-MM to MMM YYYY
 function formatMonthYear(dateString) {
   if (!dateString || !dateString.match(/^\d{4}-\d{2}$/)) {
@@ -232,7 +317,19 @@ function ResumeWithPhoto() {
   const storageKeyName = `formData-${window.location.pathname}`
   const [imageFile,setImageFile] = useState<File|null>(null);
   const [modalOpen, setModalOpen] = useState(false);
+  const [honorEntries, setHonorEntries] = useState<HonorDetails[]>([defaultHonorEntry, defaultHonorEntry2]);
+  const [clubEntries, setClubEntries] = useState<ClubDetails[]>([defaultClubEntry, defaultClubEntry2]);
+  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([defaultCertificateEntry, defaultCertificateEntry2]);
 
+  // Add new state variables for section toggles
+  const [includeExperience, setIncludeExperience] = useState(true);
+  const [includeProjects, setIncludeProjects] = useState(true);
+  const [includeSkills, setIncludeSkills] = useState(true);
+  const [includeHonors, setIncludeHonors] = useState(true);
+  const [includeClubs, setIncludeClubs] = useState(true);
+  const [includeCertificates, setIncludeCertificates] = useState(true);
+  const [includeProjectLinks, setIncludeProjectLinks] = useState(true);
+  const [includePicture, setIncludePicture] = useState(true);
 
 const updateAvatar = async (imageUrl: string) => {
     
@@ -277,9 +374,12 @@ const debouncedStoreRef = useRef(debounce(loadToStore,1000));
       experienceEntries: experienceEntries,
       projectEntries: projectEntries,
       skills: skills,
+      honorEntries: honorEntries,
+      clubEntries: clubEntries,
+      certificateEntries: certificateEntries,
     }
     debouncedStoreRef.current(store) ;
-  } , [name,email,phoneNumber,githubLink,linkedInLink,portfolioLink,educationEntries,experienceEntries,projectEntries,skills])
+  } , [name,email,phoneNumber,githubLink,linkedInLink,portfolioLink,educationEntries,experienceEntries,projectEntries,skills,honorEntries,clubEntries,certificateEntries])
 
 
   useEffect(()=>{
@@ -297,17 +397,19 @@ const debouncedStoreRef = useRef(debounce(loadToStore,1000));
     setExperienceEntries(store.experienceEntries);
     setProjectEntries(store.projectEntries);
     setSkills(store.skills);
+    setHonorEntries(store.honorEntries || [defaultHonorEntry, defaultHonorEntry2]);
+    setClubEntries(store.clubEntries || [defaultClubEntry, defaultClubEntry2]);
+    setCertificateEntries(store.certificateEntries || [defaultCertificateEntry, defaultCertificateEntry2]);
     }
   },[])
 
 
 
 const parseEducationString = () => {
-
   const newString:string|void = educationEntries.map((entry) => {
-    return`\\resumeSubheading
-      {${sanitizeInput(entry.instituteName)}}{${sanitizeInput(entry.location)}}
-      {${sanitizeInput(entry.degree)}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
+    return`\\CVSubheading
+    {{${sanitizeInput(entry.degree)} $|$ \\emph{\\small{${sanitizeInput(entry.branch)}}}}} {${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
+    {${sanitizeInput(entry.instituteName)} $|$ ${sanitizeInput(entry.location)}}{${entry.gradeType === "cgpa"?`CGPA: ${entry.cgpa}`:`Percentage: ${entry.percentage}`}}
   `
   }
 ).join("")
@@ -317,45 +419,146 @@ const parseEducationString = () => {
 }
 
 const parseExperienceString = () => {
-  const newString:string|void = experienceEntries.map((entry) => {
-    return `\\resumeSubheading
-      {${sanitizeInput(entry.jobTitle)}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
-      {${sanitizeInput(entry.companyName)}}{${sanitizeInput(entry.location)}}
-      \\resumeItemListStart
-        ${entry.workList.map((work) => {
-        return `\\resumeItem{${sanitizeInput(work)}}`
-        }).join("")}
-      \\resumeItemListEnd
+  if(!includeExperience){
+    return ``
+  }
+  let newString:string|void = experienceEntries.map((entry) => {
+    return `\\CVSubheading
+    {${sanitizeInput(entry.jobTitle)}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
+    {${sanitizeInput(entry.companyName)}}{${sanitizeInput(entry.location)}}
+    \\CVItemListStart
+      ${entry.workList.map((work) => {
+        return `\\CVItem{${sanitizeInput(work)}}`
+      }).join("")}
+    \\CVItemListEnd
       `
   }).join("")
-  console.log(newString)
+  newString = `\\section{Work Experience}
+  \\CVSubHeadingListStart
+  ${newString}
+  \\CVSubHeadingListEnd
+  `
   return newString
   }
 
 const parseProjectString = () => {
-const newString = projectEntries.map((entry) => {
-return `\\resumeProjectHeading
- {\\textbf{${entry.projectName}} $|$ \\emph{${entry.technologiesUsed}}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
-\\resumeItemListStart
-${entry.featureList.map((feature) => {
-  return `\\resumeItem{${sanitizeInput(feature)}}`
-}).join("")}
-\\resumeItemListEnd
+if(!includeProjects){
+  return ``
+}
+
+let newString = ""
+if(includeProjectLinks){
+newString = projectEntries.map((entry) => {
+return `\\CVSubheading
+    {${sanitizeInput(entry.projectName)}}{${formatMonthYear(entry.startDate)} - ${formatMonthYear(entry.endDate)}}
+    {\\href{${sanitizeInputForLink(entry.projectLink)}}{\\color{blue}${sanitizeInputForDisplay(sanitizeInput(entry.projectLinkTitle))}}}{}
+    \\CVItemListStart
+      ${entry.featureList.map((feature) => {
+        return `\\CVItem{${sanitizeInput(feature)}}`
+      }).join("")}
+    \\CVItemListEnd
 `
 }
 ).join("")
-return newString
 }
-
-const parseSkillString = () => {
-const newString = skills.map((entry) => {
-  return`\\textbf{${sanitizeInput(entry.key)}}: ${sanitizeInput(entry.value)} \\
-
-  `
+else{
+newString = projectEntries.map((entry) => {
+return `\\ProjectEntry{${entry.projectName}}{${formatMonthYear(entry.startDate)} - ${formatMonthYear(entry.endDate)}}
+  \\CVItemListStart
+    ${entry.featureList.map((feature) => {
+      return `\\CVItem{${sanitizeInput(feature)}}`
+    }).join("")}
+  \\CVItemListEnd
+`
 }).join("")
+}
+
+
+newString = `
+\\section{Projects}
+\\CVSubHeadingListStart
+`+ newString +
+`\\CVSubHeadingListEnd
+`
 
 return newString
 }
+
+const parseHonorString = () => {
+if(!includeProjects){
+  return ``
+}
+
+const newString = `
+\\section{Honors and Achievments}
+\\CVSubHeadingListStart
+  ${honorEntries.map((entry) => {
+    return `\\CVSubheading
+    {${sanitizeInput(entry.title)}}{${formatMonthYear(entry.date)}}
+    {${sanitizeInput(entry.description)}}{\\href{${sanitizeInputForLink(entry.link)}}{\\color{blue}${sanitizeInputForDisplay(sanitizeInput(entry.linkTitle))}}}
+    `
+  }).join("")}
+\\CVSubHeadingListEnd
+`
+return newString
+
+}
+
+const parseClubString = () => {
+  if(!includeClubs){
+    return ``
+  }
+  const newString = `
+  \\section{Clubs And Societies}
+  \\CVSubHeadingListStart
+  ${clubEntries.map((entry) => {
+    return `\\CVSubheading
+    {${sanitizeInput(entry.title)}}{${formatMonthYear(entry.startDate)} - ${formatMonthYear(entry.endDate)}}
+    {${sanitizeInput(entry.societyName)}} {}
+    `
+  }).join("")}
+  \\CVSubHeadingListEnd
+  `
+  return newString
+}
+
+const parseCertificateString = () => {
+  if(!includeCertificates){
+    return ``
+  }
+  const newString = `
+  \\section{Certifications}
+  \\CVSubHeadingListStart
+  \\item \\small
+    \\begin{tabular*}{0.97\\textwidth}{l@{\\extracolsep{\\fill}}r}
+      ${certificateEntries.map((entry) => {
+        return `
+        \\textbf{${sanitizeInput(entry.title)}} & 
+        \\href{${sanitizeInputForLink(entry.link)}}{\\color{blue}Certificate Link} \\\\
+        `
+      }).join("")}
+    \\end{tabular*}
+    \\end{itemize}
+  `
+  return newString
+}
+const parseSkillString = () => {
+  if(!includeSkills){
+    return ``
+  }
+  const newString = `
+  \\section{Skills}
+  \\begin{itemize}[leftmargin=0.5cm, label={}]
+    \\small{\\item{
+      ${skills.map((entry) => {
+        return `\\textbf{${sanitizeInput(entry.key)}}{: ${sanitizeInput(entry.value)}}`
+      }).join(" \\\\ ")}
+      }}
+      \\end{itemize}
+  `
+  return newString
+}
+
 
 const sanitizeInput = (input:string) => {
 
@@ -372,6 +575,9 @@ const sanitizeInput = (input:string) => {
 const sanitizeInputForDisplay = (input:string) => {
   return input.replace(/https?:\/\//, '');
 }
+const addLineBreakInSpacing = (input:string) => {
+  return input.replace(/ /g, '\\\\ ');
+}
 
 const sanitizeInputForLink = (input:string) => {
   if (!input) return "";
@@ -385,8 +591,8 @@ const sanitizeInputForLink = (input:string) => {
 const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   event.preventDefault();
   if(skills.length === 0 || educationEntries.length === 0 || 
-   experienceEntries.length === 0 || projectEntries.length === 0) {
-  
+   experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
+    if (includePicture && imageFile === null) toast.error("Please upload a profile picture");
     if (skills.length === 0) toast.error("Please select at least one skill");
     if (educationEntries.length === 0) toast.error("Please add at least one education entry");
     if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
@@ -396,8 +602,8 @@ const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
   setGlobalId(generateUUID());
  
 const Code:string = String.raw`
-%-------------------
 \documentclass[A4,11pt]{article}
+
 \usepackage{latexsym}
 \usepackage[empty]{fullpage}
 \usepackage{titlesec}
@@ -411,16 +617,23 @@ const Code:string = String.raw`
 \usepackage{tikz}
 \input{glyphtounicode}
 \usepackage{palatino}
+
+
 % Adjust margins
 \addtolength{\oddsidemargin}{-1cm}
 \addtolength{\evensidemargin}{-1cm}
 \addtolength{\textwidth}{2cm}
 \addtolength{\topmargin}{-1cm}
 \addtolength{\textheight}{2cm}
+
+
+
 \urlstyle{same}
+
 \raggedbottom
 \raggedright
 \setlength{\tabcolsep}{0cm}
+
 % Sections formatting
 \titleformat{\section}{
 \vspace{-4pt}\scshape\raggedright\large
@@ -430,6 +643,13 @@ const Code:string = String.raw`
 \pdfgentounicode=1
 
 %-----CUSTOM COMMANDS FOR FORMATTING SECTIONS----------------------------------
+
+\newcommand{\ProjectEntry}[2]{%
+  \item
+  \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+    \textbf{#1} & #2 \\
+  \end{tabular*}\vspace{-5pt}
+}
 
 \newcommand{\CVItem}[1]{
 \item\small{
@@ -473,39 +693,42 @@ In Europe it is common to include a picture of ones self in the CV. Select
 which heading appropriate for the document you are creating.
 \end{comment}
 
-\begin{minipage}[c]{0.05\textwidth}
-\-\
-\end{minipage}
-\begin{minipage}[c]{0.2\textwidth}
-\begin{tikzpicture}
-  \clip (0,0) circle (1.75cm);
-  \node at (0,0) {\includegraphics[width = 4cm]{Aditya Photo.jpg}}; 
+${includePicture? `
+  \\begin{minipage}[c]{0.05\\textwidth}
+\\-\\
+\\end{minipage}
+\\begin{minipage}[c]{0.2\\textwidth}
+\\begin{tikzpicture}
+  \\clip (0,0) circle (1.75cm);
+  \\node at (0,0) {\\includegraphics[width = 4cm]{image-${globalId}}}; 
   % if necessary the picture may be moved by changing the at (coordinates)
   % width defines the 'zoom' of the picture
-\end{tikzpicture}
-\hfill\vline\hfill
-\end{minipage}
-\begin{minipage}[c]{0.4\textwidth}
-  \textbf{\Huge \scshape{Charles Rambo}} \\ \vspace{1pt} 
-  % \scshape sets small capital letters, remove if desired
-  \small{+1 123-456-7890} \\
-  \href{mailto:you@provider.com}{\underline{you@provider.com}}\\
+\\end{tikzpicture}
+\\hfill\\vline\\hfill
+\\end{minipage}
+\\begin{minipage}[c]{0.4\\textwidth}
+\\textbf{\\Huge \\scshape{${addLineBreakInSpacing(sanitizeInput(name))}}} \\\\ \\vspace{1pt} 
+  % \\scshape sets small capital letters, remove if desired
+  \\small{${sanitizeInput(phoneNumber)}} \\\\
+  \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}}\\\\
   % Be sure to use a professional *personal* email address
-  \href{https://www.linkedin.com/in/charles-rambo/}{\underline{linkedin.com/in/charles-rambo}} \\
+  ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}} \\\\` : ``}
   % you should adjust you linked in profile name to be professional and recognizable
-  \href{https://github.com/fizixmastr}{\underline{github.com/fizixmastr}}
-\end{minipage}
+  ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}} \\\\` : ``}
+  ${portfolioLink ? `\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}} \\\\` : ``}
+\\end{minipage}
+  ` : `
+   %Without picture
+\\begin{center}
+    \\textbf{\\Huge \\scshape ${sanitizeInput(name)}} \\\\ \\vspace{1pt} %\\scshape sets small capital letters, remove if desired
+    \\small ${sanitizeInput(phoneNumber)} $|$ 
+    \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}} ${portfolioLink ? `$|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:``} ${linkedInLink || githubLink ? ` $|$ \\\\ ` : ``}
+    ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}` : ``} ${githubLink && linkedInLink ? ` $|$` : ``}
+    % you should adjust you linked in profile name to be professional and recognizable
+    ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}` : ``}
+\\end{center}
+  `}
 
-% Without picture
-%\begin{center}
-%    \textbf{\Huge \scshape Charles Rambo} \\ \vspace{1pt} %\scshape sets small capital letters, remove if desired
-%    \small +1 123-456-7890 $|$ 
-%    \href{mailto:you@provider.com}{\underline{you@provider.com}} $|$\\
-%    % Be sure to use a professional *personal* email address
-%    \href{https://linkedin.com/in/your-name-here}{\underline{linkedin.com/in/charles-rambo}} $|$
-%    % you should adjust you linked in profile name to be professional and recognizable
-%    \href{https://github.com/fizixmastr}{\underline{github.com/fizixmastr}}
-%\end{center}
 
 
 
@@ -533,189 +756,34 @@ information though). Whatever order you choose be consistent throughout.
 %-----EDUCATION----------------------------------------------------------------
 \section{Education}
 \CVSubHeadingListStart
-%    \CVSubheading % Example
-%      {Degree Achieved}{Years of Study}
-%      {Institution of Study}{Where it is located}
-  \CVSubheading
-    {{Master of Science $|$ \emph{\small{Photonics}}}}{Aug. 2019 -- May 2021} 
-    {University of Eastern Finland $|$ Joensuu, Finland}{CGPA 9.8}
-  \CVSubheading
-    {{Bachelor of Arts $|$ \emph{\small{Major: Physics, Minor: Education}}}}{Aug. 2016 -- May 2018}
-    {Austin College $|$ Sherman, TX}{CGPA 9.9}
-  \CVSubheading
-    {Associate of Liberal Sciences}{Aug. 2015 -- May 2016}
-    {North Lake College $|$ Irving, TX}{CGPA 7.9}
+${parseEducationString()}
 \CVSubHeadingListEnd
 
 %-----WORK EXPERIENCE----------------------------------------------------------
-\begin{comment}
-try to briefly explain what you did and why it is relevant to the position you
-are seeking
-\end{comment}
-
-\section{Work Experience}
-\CVSubHeadingListStart
-%    \CVSubheading %Example
-%      {What you did}{When you worked there}
-%      {Who you worked for}{Where they are located}
-%      \CVItemListStart
-%        \CVItem{Why it is important to this employer}
-%      \CVItemListEnd
-  \CVSubheading
-    {Integration Engineering Intern}{Jun. 2018 -- Aug. 2019}
-    {Finisar Corp.}{Sherman, TX}
-    \CVItemListStart
-      \CVItem{Worked in ISO 4 cleanroom developing applications to improve efficiency and creating specs}
-      \CVItem{Employed metrology and microscopy for failure analysis and developing process for wet etching}
-      \CVItem{Member of Emergency Response Team}
-    \CVItemListEnd
-  \CVSubheading
-    {Laboratory Assistant}{Jan. 2016 -- Jul. 2016}
-    {North Lake College}{Irving, TX}
-    \CVItemListStart
-      \CVItem{Inventoried and maintained Physics Department lab equipment}
-      \CVItem{Physics tutoring}
-  \CVItemListEnd
-  \CVSubheading
-    {Assistant Manager}{Dec. 2006 -- Aug. 2015}
-    {Sun \& Ski Sports}{Austin, TX}
-    \CVItemListStart
-      \CVItem{Led a team of 20+ employees}
-      \CVItem{Ran social media, as well as all grassroots marketing}
-    \CVItemListEnd
-\CVSubHeadingListEnd
-
+${parseExperienceString()}
 %-----PROJECTS AND RESEARCH----------------------------------------------------
-\begin{comment}
-Ideally the title of the work should speak for what it is. However if you feel
-like you should explain more about why the project is applicable to this job,
-use item list as is shown in the work experience section.
-\end{comment}
 
-\section{Projects}
-\CVSubHeadingListStart
-  
-  \CVSubheading
-    {Characterization of the Flame-S Spectrometer for Spectral Imaging Research}{Jan. 2024 - Aug. 2026 }
-    {University of Eastern Finland}{\href{https://google.com}{\color{blue}Website Link}}
-    \CVItemListStart
-      \CVItem{Led a team of 20+ employees}
-      \CVItem{Ran social media, as well as all grassroots marketing}
-    \CVItemListEnd
-
- 
-  
-\CVSubHeadingListEnd
-
-%-----CONFERENCES AND PRESENTATIONS--------------------------------------------
-\begin{comment}
-Again the title should have already been enough, but if it is necessary to add
-descriptions maintain the consistency from prior sections
-\end{comment}
-
-\section{Conferences and Presentations}
-\CVSubHeadingListStart
-%    \CVSubheading % Example
-%      {Work Presented}{When}
-%      {Occasion}{}
-  \CVSubheading
-    {Photometric Filter Fidelity and Use for Be Star Identification}{November 2017}
-    {Austin College Physics Research Seminar}{}
-  \CVSubheading
-    {Reflectometry for Volumetric Soil Moisture Measurement}{May 2017}
-    {Austin College Atmospheric Physics Fair}{}
-  \CVSubheading
-    {Design and Manufacturing of Products using 3D Printing}{April 2017}
-    {Austin College Student Scholarship Conference}{}
-\CVSubHeadingListEnd
+${parseProjectString()}
 
 %-----HONORS AND AWARDS--------------------------------------------------------
-\section{Honors and Achievments}
-\CVSubHeadingListStart
-%    \CVSubheading %Example
-%      {What}{When}
-%      {Short Description}{}
-  \CVSubheading
-    {Dean's List}{Fall 2017}
-    {Recognition for to 20\% of students in academics at Austin College}{\href{https://google.com}{\color{blue}Certificate}}
-    \CVSubheading
-    {Dean's List}{Fall 2017}
-    {Recognition for to 20\% of students in academics at Austin College}{\href{https://google.com}{\color{blue}Profile Link}}
-  
-\CVSubHeadingListEnd
+${parseHonorString()}
 
-
-
-%-----PROJECTS AND RESEARCH----------------------------------------------------
-\begin{comment}
-Ideally the title of the work should speak for what it is. However if you feel
-like you should explain more about why the project is applicable to this job,
-use item list as is shown in the work experience section.
-\end{comment}
-
-\section{Clubs And Societies}
-\CVSubHeadingListStart
-  
-  \CVSubheading
-    {Web Development Lead}{Jan. 2024 - Aug. 2026 }
-    {KIIT MLSA}{}
-    \CVItemListStart
-      \CVItem{Led a team of 20+ employees}
-      \CVItem{Ran social media, as well as all grassroots marketing}
-    \CVItemListEnd
-
-     \CVSubheading
-    {Public Speaking Mentor}{Jan. 2024 - Aug. 2026 }
-    {KIIT MUN Society}{}
-    \CVItemListStart
-      \CVItem{Led a team of 20+ employees}
-      \CVItem{Ran social media, as well as all grassroots marketing}
-    \CVItemListEnd
-
- 
-  
-\CVSubHeadingListEnd
+%-----CLUBS AND SOCIETIES--------------------------------------------------------
+${parseClubString()}
 
 %-----Certifications-------------------------------------------------------------------
-\begin{comment}
-This section is compressed from the various skills sections that Euro CV
-recommends.
-\end{comment}
-
-\section{Certifications}
-\begin{itemize}[leftmargin=0.5cm, label={}]
-  \item \small
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      AWS Cloud Executive Certificate & \href{https://google.com}{\color{blue}Certificate} \\
-      AWS Cloud Practitioner Course & \href{https://google.com}{\color{blue}Certificate} \\
-      AWS Advanced Networking & \href{https://google.com}{\color{blue}Certificate} \\
-    \end{tabular*}
-\end{itemize}
-  
+${parseCertificateString()}
 
 %-----SKILLS-------------------------------------------------------------------
-\begin{comment}
-This section is compressed from the various skills sections that Euro CV
-recommends.
-\end{comment}
-
-\section{Skills}
-\begin{itemize}[leftmargin=0.5cm, label={}]
-  \small{\item{
-   \textbf{Languages}{: English (Native), Spanish (B1), Finnish (A1)} \\
-   \textbf{Programming}{: Python (NumPy, SciPy, Matplotlib, Pandas), MATLAB, Mathematica, Java} \\
-   \textbf{Document Creation}{: Microsoft Office Suite, LaTex, Markdown} \\
-  }}
-\end{itemize}
+${parseSkillString()}
   
 %------------------------------------------------------------------------------
 \end{document}`
 
 const formData = new FormData()
   formData.append('payload', Code)
-  if(imageFile){ 
-  
-  formData.append('imageFile', imageFile)
+  if(imageFile && includePicture){ 
+    formData.append('imageFile', imageFile)
   }
   formData.append('globalId', globalId)
   api.post('/' , formData, {responseType: 'blob',
@@ -864,8 +932,8 @@ const removeEntry = <T extends BaseEntry>(
             </label>
             <div className="flex items-center gap-6">
               <div 
-                className="relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#DFD0B8] bg-[#2a2a2a] flex items-center justify-center cursor-pointer hover:border-[#c0b0a0] transition-colors"
-                onClick={() => setModalOpen(true)}
+                className={`relative w-24 h-24 rounded-full overflow-hidden border-2 border-[#DFD0B8] bg-[#2a2a2a] flex items-center justify-center cursor-pointer hover:border-[#c0b0a0] transition-colors ${!includePicture ? 'opacity-50 cursor-not-allowed' : ''}`}
+                onClick={() => includePicture && setModalOpen(true)}
               >
                 {imageFile ? (
                   <>
@@ -889,10 +957,24 @@ const removeEntry = <T extends BaseEntry>(
                   </>
                 ) : (
                   <div className="text-[#DFD0B8] text-sm text-center p-2">
-                    Click to add photo
+                    {includePicture ? "Click to add photo" : "Photo disabled"}
                   </div>
                 )}
               </div>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includePicture}
+                  onChange={(e) => {
+                    setIncludePicture(e.target.checked);
+                    if (!e.target.checked) {
+                      setImageFile(null);
+                    }
+                  }}
+                  className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+                />
+                <span className="ml-2 text-[#DFD0B8]">Include in Resume</span>
+              </label>
             </div>
           </div>
           {modalOpen && (
@@ -951,23 +1033,6 @@ const removeEntry = <T extends BaseEntry>(
             </Tooltip>
           </div>
           <div className="mb-4">
-            <label htmlFor="githubLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
-              GitHub Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://</span>
-            </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
-            <input
-              type="text"
-              id="githubLink"
-              name="githubLink"
-              value={githubLink}
-              placeholder="github.com/adi13v"
-              onChange={(e) => setGithubLink(e.target.value)}
-
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
-            />
-            </Tooltip>
-          </div>
-          <div className="mb-4">
               <label htmlFor="linkedInLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
                 LinkedIn Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://, also if URL is too long, <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">edit in Linkedin</a></span>
             </label>
@@ -983,7 +1048,23 @@ const removeEntry = <T extends BaseEntry>(
             />
             </Tooltip>
             </div>
-            <div className="mb-4">
+          <div className="mb-4">
+            <label htmlFor="githubLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+              GitHub Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://</span>
+            </label>
+            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <input
+              type="text"
+              id="githubLink"
+              name="githubLink"
+              value={githubLink}
+              placeholder="github.com/adi13v"
+              onChange={(e) => setGithubLink(e.target.value)}
+              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+            />
+            </Tooltip>
+          </div>
+          <div className="mb-4">
             <label htmlFor="portfolioLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
               Portfolio Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://</span>
             </label>
@@ -1039,13 +1120,28 @@ const removeEntry = <T extends BaseEntry>(
 
                 <div className="mb-4">
                   <label className="block text-[#DFD0B8] font-medium mb-2">
-                    Degree with Branch* <span className=" mx-0.5 text-xs text-white">Tip: For School, write Secondary/High School or Senior Secondary.</span> 
+                    Degree* <span className=" mx-0.5 text-xs text-white">Tip: For School, write Secondary/High School or Senior Secondary.</span> 
                   </label>
                   <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
                   <input
                     type="text"
                     value={entry.degree}
                     onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'degree', e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    required
+                  />
+                  </Tooltip>
+                </div>
+
+                <div className="mb-4">
+                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                    Branch* <span className=" mx-0.5 text-xs text-white">Tip: Write your specialization or major.</span> 
+                  </label>
+                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <input
+                    type="text"
+                    value={entry.branch}
+                    onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'branch', e.target.value)}
                     className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
                     required
                   />
@@ -1191,268 +1287,323 @@ const removeEntry = <T extends BaseEntry>(
 
       {/* Experience Section */}
       <div className="mb-8 border-b border-gray-700 pb-6">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <h2 className="text-2xl font-light text-[#DFD0B8]">Experience</h2>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeExperience}
+              onChange={(e) => setIncludeExperience(e.target.checked)}
+              className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+            />
+            <span className="ml-2 text-[#DFD0B8]">Include Section</span>
+          </label>
         </div>
-        <div className="space-y-6">
-          {experienceEntries.map((entry, index) => (
-            <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-light text-[#DFD0B8]">Experience #{index + 1}</h3>
-                <button
-                  type="button"
-                  onClick={() => removeEntry(setExperienceEntries, index)}
-                  className="text-red-400 hover:text-red-300 focus:outline-none"
-                >
-                  Remove
-                </button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor={`jobTitle-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Job Title:</label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
-                  <input
-                    type="text"
-                    id={`jobTitle-${entry.id}`}
-                    value={entry.jobTitle}
-                    onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'jobTitle', e.target.value)}
-                    
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-                    required
-                  />
-                  </Tooltip>
-                </div>
-                <div>
-                  <label htmlFor={`companyName-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Company Name:</label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
-                  <input
-                    type="text"
-                    id={`companyName-${entry.id}`}
-                    value={entry.companyName}
-                    onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'companyName', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-                    required
-                  />
-                  </Tooltip>
-                </div>
-                <div>
-                  <label htmlFor={`location-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Location:</label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
-                  <input
-                    type="text"
-                    id={`location-${entry.id}`}
-                    value={entry.location}
-                    onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'location', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-                    required
-                  />
-                  </Tooltip>
-                </div>
-                <div>
-                  <label htmlFor={`startDate-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Start Date:</label>
-                  <input
-                    type="month"
-                    id={`startDate-${entry.id}`}
-                    value={entry.startDate}
-                    onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'startDate', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-                    required
-                  />
-                </div>
-                <div>
-                  <label htmlFor={`endDate-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">End Date:</label>
-                  <input
-                    type={entry.endDate === "Present" ? "text" : "month"}
-
-                    id={`endDate-${entry.id}`}
-                    value={entry.endDate}
-                    onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-                    required
-                  />
-                   <input type="checkbox" onChange={
-                    (e) => {
-                      if (e.target.checked) {
-                        handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', "Present");
-                      }
-                      
-                      else {
-                        handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', "");
-                      }
-                    }
-                  } />
-                  
-                  <label htmlFor="">Currently Pursuing</label>
-                </div>
-                <div className="col-span-full">
-                  <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Work Details: <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
-                  {entry.workList.map((work, workIndex) => (
-                    <div key={workIndex} className="mb-2 flex items-center space-x-4">
-                      <label htmlFor={`work-${entry.id}-${workIndex}`} className="block text-[#DFD0B8] font-medium mb-1">Work {workIndex + 1}:</label>
+        <div className={`${!includeExperience ? 'opacity-50 pointer-events-none' : ''}`}>
+          {includeExperience && (
+            <div className="space-y-6">
+              {experienceEntries.map((entry, index) => (
+                <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-light text-[#DFD0B8]">Experience #{index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeEntry(setExperienceEntries, index)}
+                      className="text-red-400 hover:text-red-300 focus:outline-none"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor={`jobTitle-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Job Title:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
                       <input
                         type="text"
-                        id={`work-${entry.id}-${workIndex}`}
-                        value={work}
-                        onChange={(e) => handleSubListInputChange(setExperienceEntries, index, 'workList', workIndex, e.target.value)}
-                        onKeyDown={(e)=>handleKeyActionOnSublist(e,setExperienceEntries,'workList',index,workIndex)}
+                        id={`jobTitle-${entry.id}`}
+                        value={entry.jobTitle}
+                        onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'jobTitle', e.target.value)}
+                        
                         className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
                         required
                       />
-                      <button
-                        type="button"
-                        onClick={() => removeItemFromSubList(setExperienceEntries, index, 'workList', workIndex)}
-                        className="px-2 py-1 bg-amber-800 text-[#DFD0B8] rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
-                      >
-                        Remove
-                      </button>
+                      </Tooltip>
                     </div>
-                  ))}
-                  <div className="mt-2">
-                    <button
-                      type="button"
-                      onClick={() => addItemToSubList(setExperienceEntries, index, 'workList', '')}
-                      className="px-4 py-2 text-[#DFD0B8] rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
-                    >
-                      Add Work
-                    </button>
+                    <div>
+                      <label htmlFor={`companyName-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Company Name:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <input
+                        type="text"
+                        id={`companyName-${entry.id}`}
+                        value={entry.companyName}
+                        onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'companyName', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <label htmlFor={`location-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Location:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <input
+                        type="text"
+                        id={`location-${entry.id}`}
+                        value={entry.location}
+                        onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'location', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <label htmlFor={`startDate-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Start Date:</label>
+                      <input
+                        type="month"
+                        id={`startDate-${entry.id}`}
+                        value={entry.startDate}
+                        onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'startDate', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor={`endDate-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">End Date:</label>
+                      <input
+                        type={entry.endDate === "Present" ? "text" : "month"}
+
+                        id={`endDate-${entry.id}`}
+                        value={entry.endDate}
+                        onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                       <input type="checkbox" onChange={
+                        (e) => {
+                          if (e.target.checked) {
+                            handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', "Present");
+                          }
+                          
+                          else {
+                            handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', "");
+                          }
+                        }
+                      } />
+                      
+                      <label htmlFor="">Currently Pursuing</label>
+                    </div>
+                    <div className="col-span-full">
+                      <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Work Details: <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
+                      {entry.workList.map((work, workIndex) => (
+                        <div key={workIndex} className="mb-2 flex items-center space-x-4">
+                          <label htmlFor={`work-${entry.id}-${workIndex}`} className="block text-[#DFD0B8] font-medium mb-1">Work {workIndex + 1}:</label>
+                          <input
+                            type="text"
+                            id={`work-${entry.id}-${workIndex}`}
+                            value={work}
+                            onChange={(e) => handleSubListInputChange(setExperienceEntries, index, 'workList', workIndex, e.target.value)}
+                            onKeyDown={(e)=>handleKeyActionOnSublist(e,setExperienceEntries,'workList',index,workIndex)}
+                            className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                            required
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeItemFromSubList(setExperienceEntries, index, 'workList', workIndex)}
+                            className="px-2 py-1 bg-amber-800 text-[#DFD0B8] rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          onClick={() => addItemToSubList(setExperienceEntries, index, 'workList', '')}
+                          className="px-4 py-2 text-[#DFD0B8] rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                        >
+                          Add Work
+                        </button>
+                      </div>
+                    </div>
                   </div>
                 </div>
-              </div>
+              ))}
             </div>
-          ))}
-        </div>
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={() => addEntry(setExperienceEntries, defaultExperienceEntry)}
-            className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
-          >
-            <PlusIcon className="w-4 h-4" /> Add Experience
-          </button>
+          )}
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => addEntry(setExperienceEntries, defaultExperienceEntry)}
+              className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            >
+              <PlusIcon className="w-4 h-4" /> Add Experience
+            </button>
+          </div>
         </div>
       </div>
 
       {/* Projects Section */}
       <div className="mb-8 border-b border-gray-700 pb-6">
-        <div className="mb-6">
+        <div className="mb-6 flex justify-between items-center">
           <h2 className="text-2xl font-light text-[#DFD0B8]">Projects</h2>
+          <div className="flex items-center gap-4">
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={includeProjectLinks}
+                onChange={(e) => setIncludeProjectLinks(e.target.checked)}
+                className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+              />
+              <span className="ml-2 text-[#DFD0B8]">Include Project Links</span>
+            </label>
+            <label className="inline-flex items-center cursor-pointer">
+              <input
+                type="checkbox"
+                checked={includeProjects}
+                onChange={(e) => setIncludeProjects(e.target.checked)}
+                className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+              />
+              <span className="ml-2 text-[#DFD0B8]">Include Section</span>
+            </label>
+          </div>
         </div>
-        <div className="space-y-6">
-          {projectEntries.map((entry, index) => (
-            <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-light text-[#DFD0B8]">Project #{index + 1}</h3>
-                <button
-                  type="button"
-                  onClick={() => removeEntry(setProjectEntries, index)}
-                  className="text-red-400 hover:text-red-300 focus:outline-none"
-                >
-                  Remove
-                </button>
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
-                    Project Name*
-                  </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
-                  <input
-                    type="text"
-                    value={entry.projectName}
-                    onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'projectName', e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
-                    required
-                  />
-                  </Tooltip>
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
-                    Technologies Used*
-                  </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
-                  <input
-                    type="text"
-                    value={entry.technologiesUsed}
-                    onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'technologiesUsed', e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
-                    required
-                  />
-                  </Tooltip>
-                </div>
-                <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
-                    Start Date*
-                  </label>
-                  <input
-                    type="month"
-                    value={entry.startDate || ''}
-                    onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'startDate', e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
-                  />
-                </div>
-
-                <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
-                    End Date*
-                  </label>
-                  <input
-                    type={entry.endDate === "Present" ? "text" : "month"}
-                    disabled={entry.endDate === "Present"}
-                    value={entry.endDate || ''}
-                    onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'endDate', e.target.value)}
-                    className= {`w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8] ${entry.endDate=="Present"? ' bg-gray-500 cursor-not-allowed' : ''}`}
-                  />
-                  <input type="checkbox" onChange={
-                      (e) => {
-                        if (e.target.checked) {
-                          handleInputChange(setProjectEntries, projectEntries, index, 'endDate', "Present");
-                        }
-                        
-                        else {
-                          handleInputChange(setProjectEntries, projectEntries, index, 'endDate', "");
-                        }
-                      }
-                    } />
-                    
-                    <label htmlFor="">Currently Pursuing</label>
-                  
-                </div>
-              </div>
-
-              <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Features:* <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
-              {entry.featureList.map((feature, featureIndex) => (
-                <div key={`${entry.id}-feature-${featureIndex}`} className="mb-2 flex items-center space-x-4">
-                  <label htmlFor={`feature-${entry.id}-${featureIndex}`} className="block text-[#DFD0B8] font-medium mb-1">Feature {featureIndex + 1}:</label>
-                  <input
-                    type="text"
-                    id={`feature-${entry.id}-${featureIndex}`}
-                    value={feature}
-                    onKeyDown={(e)=>handleKeyActionOnSublist(e,setProjectEntries,'featureList',index,featureIndex)}
-                    onChange={(e) => handleSubListInputChange(setProjectEntries, index, 'featureList', featureIndex, e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
-                  />
+        {includeProjects && (
+          <div className="space-y-6">
+            {projectEntries.map((entry, index) => (
+              <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+                <div className="flex justify-between items-center mb-4">
+                  <h3 className="text-lg font-light text-[#DFD0B8]">Project #{index + 1}</h3>
                   <button
                     type="button"
-                    onClick={() => removeItemFromSubList(setProjectEntries, index, 'featureList', featureIndex)}
-                    className="px-2 py-1 text-amber-800 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                    onClick={() => removeEntry(setProjectEntries, index)}
+                    className="text-red-400 hover:text-red-300 focus:outline-none"
                   >
                     Remove
                   </button>
                 </div>
-              ))}
-              <div className="mt-2">
-                <button
-                  type="button"
-                  onClick={() => addItemToSubList(setProjectEntries, index, 'featureList', '')}
-                  className="px-4 py-2 text-green-700  rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
-                >
-                  Add Feature
-                </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="mb-4">
+                    <label className="block text-[#DFD0B8] font-medium mb-2">
+                      Project Name*
+                    </label>
+                    <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                    <input
+                      type="text"
+                      value={entry.projectName}
+                      onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'projectName', e.target.value)}
+                      className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                      required
+                    />
+                    </Tooltip>
+                  </div>
+
+                  {includeProjectLinks && (
+                    <>
+                      <div className="mb-4">
+                        <label className="block text-[#DFD0B8] font-medium mb-2">
+                          Project Link Title* <span className=" mx-0.5 text-xs text-white">Tip: Use concise text like "Github Link" or "Website Link"</span>
+                        </label>
+                        <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                        <input
+                          type="text"
+                          value={entry.projectLinkTitle}
+                          onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'projectLinkTitle', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                          required
+                        />
+                        </Tooltip>
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block text-[#DFD0B8] font-medium mb-2">
+                          Project Link* <span className=" mx-0.5 text-xs text-white">Tip: The actual URL of the project (e.g., https://github.com/username/project)</span>
+                        </label>
+                        <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                        <input
+                          type="url"
+                          value={entry.projectLink}
+                          onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'projectLink', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                          required
+                        />
+                        </Tooltip>
+                      </div>
+                    </>
+                  )}
+
+                  <div className="mb-4">
+                    <label className="block text-[#DFD0B8] font-medium mb-2">
+                      Start Date*
+                    </label>
+                    <input
+                      type="month"
+                      value={entry.startDate || ''}
+                      onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'startDate', e.target.value)}
+                      className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                    />
+                  </div>
+
+                  <div className="mb-4">
+                    <label className="block text-[#DFD0B8] font-medium mb-2">
+                      End Date*
+                    </label>
+                    <input
+                      type={entry.endDate === "Present" ? "text" : "month"}
+                      disabled={entry.endDate === "Present"}
+                      value={entry.endDate || ''}
+                      onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'endDate', e.target.value)}
+                      className= {`w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8] ${entry.endDate=="Present"? ' bg-gray-500 cursor-not-allowed' : ''}`}
+                    />
+                    <input type="checkbox" onChange={
+                        (e) => {
+                          if (e.target.checked) {
+                            handleInputChange(setProjectEntries, projectEntries, index, 'endDate', "Present");
+                          }
+                          
+                          else {
+                            handleInputChange(setProjectEntries, projectEntries, index, 'endDate', "");
+                          }
+                        }
+                      } />
+                      
+                      <label htmlFor="">Currently Pursuing</label>
+                    
+                  </div>
+                </div>
+
+                <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Features:* <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
+                {entry.featureList.map((feature, featureIndex) => (
+                  <div key={`${entry.id}-feature-${featureIndex}`} className="mb-2 flex items-center space-x-4">
+                    <label htmlFor={`feature-${entry.id}-${featureIndex}`} className="block text-[#DFD0B8] font-medium mb-1">Feature {featureIndex + 1}:</label>
+                    <input
+                      type="text"
+                      id={`feature-${entry.id}-${featureIndex}`}
+                      value={feature}
+                      onKeyDown={(e)=>handleKeyActionOnSublist(e,setProjectEntries,'featureList',index,featureIndex)}
+                      onChange={(e) => handleSubListInputChange(setProjectEntries, index, 'featureList', featureIndex, e.target.value)}
+                      className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => removeItemFromSubList(setProjectEntries, index, 'featureList', featureIndex)}
+                      className="px-2 py-1 text-amber-800 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ))}
+                <div className="mt-2">
+                  <button
+                    type="button"
+                    onClick={() => addItemToSubList(setProjectEntries, index, 'featureList', '')}
+                    className="px-4 py-2 text-green-700  rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                  >
+                    Add Feature
+                  </button>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
         <div className="mt-6 flex justify-end">
           <button
             type="button"
@@ -1465,71 +1616,395 @@ const removeEntry = <T extends BaseEntry>(
       </div>
 
       {/* Skills Section */}
-      <div className="mb-8">
-        <div className="mb-6">
+      <div className="mb-8 border-b border-gray-700 pb-6">
+        <div className="mb-6 flex justify-between items-center">
           <h2 className="text-2xl font-light text-[#DFD0B8]">Technical Skills</h2>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeSkills}
+              onChange={(e) => setIncludeSkills(e.target.checked)}
+              className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+            />
+            <span className="ml-2 text-[#DFD0B8]">Include Section</span>
+          </label>
         </div>
-        {/* Presets checkboxes */}
-        <div className="flex flex-wrap gap-4 mb-4">
-          {presets.map((preset) => {
-            const checked = skills.some(skill => skill.key === preset);
-            return (
-              <label key={preset} className="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={checked}
-                  onChange={e => {
-                    if (e.target.checked) {
-                      setSkills(prev => [...prev, { ...defaultSkillEntry, key: preset, value: "" }]);
-                    } else {
-                      setSkills(prev => prev.filter(skill => skill.key !== preset));
-                    }
-                  }}
-                  className="form-checkbox h-4 w-4 text-green-600  border-[#948979] focus:ring-2 focus:ring-green-400"
-                />
-                <span className="ml-2 text-[#DFD0B8]">{preset}</span>
-              </label>
-            );
-          })}
-        </div>
-        <div className="space-y-6">
-          {skills.map((skill, index) => (
-            <div className="inputGroup mb-4 flex items-center space-x-4" key={index}>
-            <Tooltip title = "This will already be bold" message = "Making Text Bold is not allowed here">
-              <input
-                type="text"
-                placeholder="Skill Type (e.g., Frameworks)"
-                value={skill.key}
-                onChange={(e) => handleInputChange(setSkills, skills, index, "key", e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-              />
-              </Tooltip>
-              <input
-                type="text"
-                placeholder="Skills (e.g., React, Node)"
-                value={skill.value}
-                onKeyDown={(e)=>handleKeyActiononList(e,setSkills,skills,index,"value")}
-                onChange={(e) => handleInputChange(setSkills, skills, index, "value", e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
-              />
-              <button
-                type="button"
-                onClick={() => removeEntry(setSkills, index)}
-                className="px-2 py-1 bg-amber-800 text-[#DFD0B8] rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
-              >
-                Remove
-              </button>
+        <div className={`${!includeSkills ? 'opacity-50 pointer-events-none' : ''}`}>
+          {includeSkills && (
+            <div className="space-y-6">
+              {skills.map((skill, index) => (
+                <div className="inputGroup mb-4 flex items-center space-x-4" key={index}>
+                <Tooltip title = "This will already be bold" message = "Making Text Bold is not allowed here">
+                  <input
+                    type="text"
+                    placeholder="Skill Type (e.g., Frameworks)"
+                    value={skill.key}
+                    onChange={(e) => handleInputChange(setSkills, skills, index, "key", e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                  />
+                  </Tooltip>
+                  <input
+                    type="text"
+                    placeholder="Skills (e.g., React, Node)"
+                    value={skill.value}
+                    onKeyDown={(e)=>handleKeyActiononList(e,setSkills,skills,index,"value")}
+                    onChange={(e) => handleInputChange(setSkills, skills, index, "value", e.target.value)}
+                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => removeEntry(setSkills, index)}
+                    className="px-2 py-1 bg-amber-800 text-[#DFD0B8] rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => addEntry(setSkills, defaultEmptySkillEntry)}
+              className="px-4 py-2 flex items-center gap-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+            >
+              <PlusIcon className="w-4 h-4" /> Add Skill
+            </button>
+          </div>
         </div>
-        <div className="mt-6 flex justify-end">
-          <button
-            type="button"
-            onClick={() => addEntry(setSkills, defaultEmptySkillEntry)}
-            className="px-4 py-2 flex items-center gap-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
-          >
-            <PlusIcon className="w-4 h-4" /> Add Skill
-          </button>
+      </div>
+
+      {/* Honors and Achievements Section */}
+      <div className="mb-8 border-b border-gray-700 pb-6">
+        <div className="mb-6 flex justify-between items-center">
+          <h2 className="text-2xl font-light text-[#DFD0B8]">Honors and Achievements</h2>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeHonors}
+              onChange={(e) => setIncludeHonors(e.target.checked)}
+              className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+            />
+            <span className="ml-2 text-[#DFD0B8]">Include Section</span>
+          </label>
+        </div>
+        <div className={`${!includeHonors ? 'opacity-50 pointer-events-none' : ''}`}>
+          {includeHonors && (
+            <div className="space-y-6">
+              {honorEntries.map((entry, index) => (
+                <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-light text-[#DFD0B8]">Achievement #{index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeEntry(setHonorEntries, index)}
+                      className="text-red-400 hover:text-red-300 focus:outline-none"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor={`title-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Title:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <input
+                        type="text"
+                        id={`title-${entry.id}`}
+                        value={entry.title}
+                        onChange={(e) => handleInputChange(setHonorEntries, honorEntries, index, 'title', e.target.value)}
+                        
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <label htmlFor={`date-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Date:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <input
+                        type="text"
+                        id={`date-${entry.id}`}
+                        value={entry.date}
+                        onChange={(e) => handleInputChange(setHonorEntries, honorEntries, index, 'date', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                    <div className="col-span-full">
+                      <label htmlFor={`description-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Description:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <textarea
+                        id={`description-${entry.id}`}
+                        value={entry.description}
+                        onChange={(e) => handleInputChange(setHonorEntries, honorEntries, index, 'description', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <label htmlFor={`linkTitle-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Link Title:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <input
+                        type="text"
+                        id={`linkTitle-${entry.id}`}
+                        value={entry.linkTitle}
+                        onChange={(e) => handleInputChange(setHonorEntries, honorEntries, index, 'linkTitle', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                    <div>
+                      <label htmlFor={`link-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Link:</label>
+                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <input
+                        type="url"
+                        id={`link-${entry.id}`}
+                        value={entry.link}
+                        onChange={(e) => handleInputChange(setHonorEntries, honorEntries, index, 'link', e.target.value)}
+                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        required
+                      />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => addEntry(setHonorEntries, defaultHonorEntry)}
+              className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            >
+              <PlusIcon className="w-4 h-4" /> Add Achievement
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Clubs and Societies Section */}
+      <div className="mb-8 border-b border-gray-700 pb-6">
+        <div className="mb-6 flex justify-between items-center">
+          <h2 className="text-2xl font-light text-[#DFD0B8]">Clubs and Societies</h2>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeClubs}
+              onChange={(e) => setIncludeClubs(e.target.checked)}
+              className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+            />
+            <span className="ml-2 text-[#DFD0B8]">Include Section</span>
+          </label>
+        </div>
+        <div className={`${!includeClubs ? 'opacity-50 pointer-events-none' : ''}`}>
+          {includeClubs && (
+            <div className="space-y-6">
+              {clubEntries.map((entry, index) => (
+                <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-light text-[#DFD0B8]">Club #{index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeEntry(setClubEntries, index)}
+                      className="text-red-400 hover:text-red-300 focus:outline-none"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="mb-4">
+                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                        Position Title*
+                      </label>
+                      <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
+                        <input
+                          type="text"
+                          value={entry.title}
+                          onChange={(e) => handleInputChange(setClubEntries, clubEntries, index, 'title', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8]"
+                          required
+                        />
+                      </Tooltip>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                        Society/Club Name*
+                      </label>
+                      <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
+                        <input
+                          type="text"
+                          value={entry.societyName}
+                          onChange={(e) => handleInputChange(setClubEntries, clubEntries, index, 'societyName', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8]"
+                          required
+                        />
+                      </Tooltip>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                        Start Date*
+                      </label>
+                      <input
+                        type="month"
+                        value={entry.startDate}
+                        onChange={(e) => handleInputChange(setClubEntries, clubEntries, index, 'startDate', e.target.value)}
+                        className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8]"
+                        required
+                      />
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                        End Date*
+                      </label>
+                      <input
+                        type={entry.endDate === "Present" ? "text" : "month"}
+                        value={entry.endDate}
+                        disabled={entry.endDate === "Present"}
+                        onChange={(e) => handleInputChange(setClubEntries, clubEntries, index, 'endDate', e.target.value)}
+                        className={`w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8] ${entry.endDate === "Present" ? 'bg-gray-500 cursor-not-allowed' : ''}`}
+                        required
+                      />
+                      <input
+                        type="checkbox"
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            handleInputChange(setClubEntries, clubEntries, index, 'endDate', "Present");
+                          } else {
+                            handleInputChange(setClubEntries, clubEntries, index, 'endDate', "");
+                          }
+                        }}
+                      />
+                      <label className="ml-2 text-[#DFD0B8]">Currently Active</label>
+                    </div>
+
+                    <div className="col-span-full">
+                      <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Achievements:* <span className="mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
+                      {entry.achievements.map((achievement, achievementIndex) => (
+                        <div key={`${entry.id}-achievement-${achievementIndex}`} className="mb-2 flex items-center space-x-4">
+                          <label className="block text-[#DFD0B8] font-medium mb-1">Achievement {achievementIndex + 1}:</label>
+                          <input
+                            type="text"
+                            value={achievement}
+                            onKeyDown={(e) => handleKeyActionOnSublist(e, setClubEntries, 'achievements', index, achievementIndex)}
+                            onChange={(e) => handleSubListInputChange(setClubEntries, index, 'achievements', achievementIndex, e.target.value)}
+                            className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8]"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => removeItemFromSubList(setClubEntries, index, 'achievements', achievementIndex)}
+                            className="px-2 py-1 text-amber-800 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                          >
+                            Remove
+                          </button>
+                        </div>
+                      ))}
+                      <div className="mt-2">
+                        <button
+                          type="button"
+                          onClick={() => addItemToSubList(setClubEntries, index, 'achievements', '')}
+                          className="px-4 py-2 text-green-700 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                        >
+                          Add Achievement
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => addEntry(setClubEntries, defaultClubEntry)}
+              className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            >
+              <PlusIcon className="w-4 h-4" /> Add Club/Society
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Certifications Section */}
+      <div className="mb-8 border-b border-gray-700 pb-6">
+        <div className="mb-6 flex justify-between items-center">
+          <h2 className="text-2xl font-light text-[#DFD0B8]">Certifications</h2>
+          <label className="inline-flex items-center cursor-pointer">
+            <input
+              type="checkbox"
+              checked={includeCertificates}
+              onChange={(e) => setIncludeCertificates(e.target.checked)}
+              className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
+            />
+            <span className="ml-2 text-[#DFD0B8]">Include Section</span>
+          </label>
+        </div>
+        <div className={`${!includeCertificates ? 'opacity-50 pointer-events-none' : ''}`}>
+          {includeCertificates && (
+            <div className="space-y-6">
+              {certificateEntries.map((entry, index) => (
+                <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="text-lg font-light text-[#DFD0B8]">Certificate #{index + 1}</h3>
+                    <button
+                      type="button"
+                      onClick={() => removeEntry(setCertificateEntries, index)}
+                      className="text-red-400 hover:text-red-300 focus:outline-none"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                  <div className="grid grid-cols-1 gap-4">
+                    <div className="mb-4">
+                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                        Certificate Title*
+                      </label>
+                      <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
+                        <input
+                          type="text"
+                          value={entry.title}
+                          onChange={(e) => handleInputChange(setCertificateEntries, certificateEntries, index, 'title', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8]"
+                          required
+                        />
+                      </Tooltip>
+                    </div>
+
+                    <div className="mb-4">
+                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                        Certificate Link* <span className="mx-0.5 text-xs text-white">Tip: The URL of your certificate or verification page</span>
+                      </label>
+                      <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
+                        <input
+                          type="url"
+                          value={entry.link}
+                          onChange={(e) => handleInputChange(setCertificateEntries, certificateEntries, index, 'link', e.target.value)}
+                          className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] text-[#DFD0B8]"
+                          required
+                        />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+          <div className="mt-6 flex justify-end">
+            <button
+              type="button"
+              onClick={() => addEntry(setCertificateEntries, defaultCertificateEntry)}
+              className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            >
+              <PlusIcon className="w-4 h-4" /> Add Certificate
+            </button>
+          </div>
         </div>
       </div>
 

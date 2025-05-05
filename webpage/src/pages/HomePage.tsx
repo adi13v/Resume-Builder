@@ -196,7 +196,7 @@ const LandingPage = () => {
                         animate="visible"
                         className="text-center"
                     >
-                        <h1 className="text-5xl font-bold text-white mb-4 tracking-tight">
+                        <h1 className="text-5xl mt-15 font-bold text-white mb-4 tracking-tight">
                             Overleaf is the industry standard <br/> of professional resumes,
                             <span className="block text-gray-400 mt-2 font-normal text-xl">But it's so damn complicated.</span>
                         </h1>

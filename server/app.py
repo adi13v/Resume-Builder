@@ -23,7 +23,9 @@ async def send_code(
     imageFile: Optional[UploadFile] = None,
     globalId: Optional[str] = Form(None),
 ):
-
+    # print(imageFile)
+    # return {"message": "Image received"}
+    
     image_format = imageFile.content_type.split("/")[1] if imageFile else None
     if imageFile and image_format not in ["jpeg", "png"]:
         return {"error": "Invalid image format. Only JPEG and PNG are supported."}
@@ -33,8 +35,9 @@ async def send_code(
     if imageFile:
         with open(f"image-{globalId}.{image_format}", "wb") as f:
             f.write(await imageFile.read())
-
-    subprocess.run(["pdflatex", "-interaction=nonstopmode", f"-jobname=pdf-{globalId}", f"code-{globalId}.tex"])
+            
+#TO:DO  "-interaction=nonstopmode",
+    subprocess.run(["pdflatex",  f"-jobname=pdf-{globalId}", f"code-{globalId}.tex"])
     file_path = f"pdf-{globalId}.pdf"
     response = FileResponse(file_path, media_type="application/pdf")
     #To-DO add the code file to the delete list

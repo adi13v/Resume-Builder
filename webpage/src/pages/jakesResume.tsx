@@ -402,7 +402,7 @@ const debouncedStoreRef = useRef(debounce(loadToStore,1000));
   \begin{center}
       \textbf{\Huge \scshape ${sanitizeInput(name)}} \\ \vspace{1pt}
       \small ${sanitizeInput(phoneNumber)} $|$ \href{mailto:${email}}{\underline{${sanitizeInput(email)}}}
-       ${linkedInLink!=="" ? ` $|$\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(sanitizeInput(linkedInLink))}}}` : ""} ${githubLink!=="" ? ` $|$\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(sanitizeInput(githubLink))}}}` : ""} ${portfolioLink!=="" ? ` $|$\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(sanitizeInput(portfolioLink))}}}` : ""}
+       ${linkedInLink!=="" ? ` $|$\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(sanitizeInput(linkedInLink))}}}` : ""}${githubLink!=="" ? ` $|$\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(sanitizeInput(githubLink))}}}` : ""} ${portfolioLink!=="" ? ` $|$\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(sanitizeInput(portfolioLink))}}}` : ""}
   \end{center}
   
   
@@ -656,52 +656,49 @@ const removeEntry = <T extends BaseEntry>(
 
   return (
     <>
-     <div className='grid grid-cols-1 md:grid-cols-2  gap-4 p-4 font-sans '>
-     <form action="" onSubmit={handleFormSubmit} className="bg-[#1a1a1a] shadow-lg rounded-lg px-8 pt-6 pb-8 mb-4 w-[100%]">
+     <div className='grid grid-cols-1 md:grid-cols-2 gap-4 p-4 font-sans min-h-screen w-[100%] overflow-x-hidden bg-gray-950'>
+     <form action="" onSubmit={handleFormSubmit} className="bg-gray-900/50 mt-15  backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10">
       {/* Personal Information Section */}
-      <div className="mb-8 border-b border-gray-700 pb-6">
-        <h2 className="text-2xl font-light text-[#DFD0B8] mb-6">Personal Information</h2>
-        <div className="grid grid-cols-1  gap-4">
+      <div className="mb-8 border-b border-white/10 pb-6">
+        <h2 className="text-2xl font-light text-white mb-6">Personal Information</h2>
+        <div className="grid grid-cols-1 gap-4">
           <div className="mb-4">
-            
-            <label htmlFor="name" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+            <label htmlFor="name" className="block text-white text-sm font-bold mb-2">
               Name*
             </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
             <input
               id="tooltip"
               type="text"
               name="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              // onKeyDown={(e)=>alertRestrictedKeyPress(e,RestrictionType.NOT_ALLOWED)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
               required
             />  
             </Tooltip>
           </div>
           <div className="mb-4">
-            <label htmlFor="email" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+            <label htmlFor="email" className="block text-white text-sm font-bold mb-2">
               Email*
             </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
             <input
               type="email"
-              // onKeyDown={(e)=>alertRestrictedKeyPress(e,RestrictionType.NOT_ALLOWED)}
               id="email"
               name="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
               required
             />
             </Tooltip>
           </div>
           <div className="mb-4">
-            <label htmlFor="phoneNumber" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+            <label htmlFor="phoneNumber" className="block text-white text-sm font-bold mb-2">
               Phone Number* <span className=" mx-0.5 text-xs text-white">Tip: Write Country Code followed by - and then the number</span>
             </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
             <input
               type="text"
               id="phoneNumber"
@@ -709,16 +706,16 @@ const removeEntry = <T extends BaseEntry>(
               value={phoneNumber}
               onChange={(e) => setPhoneNumber(e.target.value)}
               placeholder="+91-9876543210"
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
               required
             />
             </Tooltip>
           </div>
           <div className="mb-4">
-            <label htmlFor="githubLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+            <label htmlFor="githubLink" className="block text-white text-sm font-bold mb-2">
               GitHub Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://</span>
             </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
             <input
               type="text"
               id="githubLink"
@@ -726,16 +723,15 @@ const removeEntry = <T extends BaseEntry>(
               value={githubLink}
               placeholder="github.com/adi13v"
               onChange={(e) => setGithubLink(e.target.value)}
-
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
             />
             </Tooltip>
           </div>
           <div className="mb-4">
-              <label htmlFor="linkedInLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+              <label htmlFor="linkedInLink" className="block text-white text-sm font-bold mb-2">
                 LinkedIn Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://, also if URL is too long, <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">edit in Linkedin</a></span>
             </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
             <input
               type="text"
               id="linkedInLink"
@@ -743,22 +739,22 @@ const removeEntry = <T extends BaseEntry>(
               value={linkedInLink}
               placeholder="linkedin.com/in/adityav1313/"
               onChange={(e) => setLinkedInLink(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
             />
             </Tooltip>
             </div>
             <div className="mb-4">
-            <label htmlFor="portfolioLink" className="block text-[#DFD0B8] text-sm font-bold mb-2">
+            <label htmlFor="portfolioLink" className="block text-white text-sm font-bold mb-2">
               Portfolio Link <span className=" mx-0.5 text-xs text-white">Tip: Remove the https://</span>
             </label>
-            <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+            <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
             <input
               type="text"
               id="portfolioLink"
               name="portfolioLink"
               value={portfolioLink}
               onChange={(e) => setPortfolioLink(e.target.value)}
-              className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] bg-[#2a2a2a] border-[#3a3a3a]"
+              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
             />
             </Tooltip>
           </div>
@@ -766,15 +762,15 @@ const removeEntry = <T extends BaseEntry>(
       </div>
 
       {/* Education Section */}
-      <div className="mb-8 border-b border-gray-700 pb-6">
+      <div className="mb-8 border-b border-white/10 pb-6">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-[#DFD0B8]">Education</h2>
+          <h2 className="text-2xl font-light text-white">Education</h2>
         </div>
         <div className="space-y-6">
           {educationEntries.map((entry, index) => (
-            <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+            <div key={entry.id} className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-light text-[#DFD0B8]">Education #{index + 1}</h3>
+                <h3 className="text-lg font-light text-white">Education #{index + 1}</h3>
                 <button
                   type="button"
                   onClick={() => removeEntry(setEducationEntries, index)}
@@ -785,69 +781,66 @@ const removeEntry = <T extends BaseEntry>(
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Institute Name* <span className=" mx-0.5 text-xs text-white">Tip: Write Institute Name without any abbreviations.</span>
                   </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     placeholder="Massachusetts Institute of Technology"
-                    // onKeyDown={(e)=>alertRestrictedKeyPress(e,RestrictionType.NOT_ALLOWED)}
                     value={entry.instituteName}
                     onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'instituteName', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                   </Tooltip>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Degree with Branch* <span className=" mx-0.5 text-xs text-white">Tip: For School, write Secondary/High School or Senior Secondary.</span> 
                   </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     value={entry.degree}
                     onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'degree', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                   </Tooltip>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Location*
                   </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     value={entry.location}
-                 
                     onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'location', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                   </Tooltip>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Start Date*
                   </label>
                   <input
                     type="month"
                     value={entry.startDate}
-
                     onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'startDate', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     End Date*
                   </label>
                   <input
@@ -855,7 +848,7 @@ const removeEntry = <T extends BaseEntry>(
                     value={entry.endDate}
                     disabled={entry.endDate === "Present"}
                     onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'endDate', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                   required/>
                   <input type="checkbox" onChange={
                     (e) => {
@@ -873,29 +866,29 @@ const removeEntry = <T extends BaseEntry>(
                 </div>
 
                 <div className="mb-4 md:col-span-2">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Grade Format
                   </label>
                   <div className="flex space-x-4 mb-2">
-                    <label className="inline-flex items-center text-[#DFD0B8]">
+                    <label className="inline-flex items-center text-white">
                       <input
                         type="radio"
                         name={`gradeType-${entry.id}`}
                         checked={entry.gradeType === 'cgpa'}
                         onChange={() => handleInputChange(setEducationEntries, educationEntries, index, 'gradeType', 'cgpa')}
                       
-                        className="form-radio h-4 w-4 text-[#DFD0B8]"
+                        className="form-radio h-4 w-4 text-white"
                       />
                       <span className="ml-2">CGPA</span>
                     </label>
-                    <label className="inline-flex items-center text-[#DFD0B8]">
+                    <label className="inline-flex items-center text-white">
                       <input
                         type="radio"
                         name={`gradeType-${entry.id}`}
                         checked={entry.gradeType === 'percentage'}
                         onChange={() => handleInputChange(setEducationEntries, educationEntries, index, 'gradeType', 'percentage')}
                        
-                        className="form-radio h-4 w-4 text-[#DFD0B8]"
+                        className="form-radio h-4 w-4 text-white"
                       />
                       <span className="ml-2">Percentage</span>
                     </label>
@@ -903,10 +896,10 @@ const removeEntry = <T extends BaseEntry>(
 
                   {entry.gradeType === 'cgpa' ? (
                     <div>
-                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         CGPA
                       </label>
-                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                       <input
                         type="number"
                         step="0.01"
@@ -914,16 +907,16 @@ const removeEntry = <T extends BaseEntry>(
                         max="10"
                         value={entry.cgpa}
                         onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'cgpa', e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                       />
                       </Tooltip>
                     </div>
                   ) : (
                     <div>
-                      <label className="block text-[#DFD0B8] font-medium mb-2">
+                      <label className="block text-white font-medium mb-2">
                         Percentage
                       </label>
-                      <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                      <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                       <input
                         type="number"
                         step="0.01"
@@ -931,7 +924,7 @@ const removeEntry = <T extends BaseEntry>(
                         max="100"
                         value={entry.percentage}
                         onChange={(e) => handleInputChange(setEducationEntries, educationEntries, index, 'percentage', e.target.value)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                         required
                       />
                       </Tooltip>
@@ -946,7 +939,7 @@ const removeEntry = <T extends BaseEntry>(
           <button
             type="button"
             onClick={() => addEntry(setEducationEntries, defaultEducationEntry)}
-            className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon className="w-4 h-4" /> Add Education
           </button>
@@ -954,15 +947,15 @@ const removeEntry = <T extends BaseEntry>(
       </div>
 
       {/* Experience Section */}
-      <div className="mb-8 border-b border-gray-700 pb-6">
+      <div className="mb-8 border-b border-white/10 pb-6">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-[#DFD0B8]">Experience</h2>
+          <h2 className="text-2xl font-light text-white">Experience</h2>
         </div>
         <div className="space-y-6">
           {experienceEntries.map((entry, index) => (
-            <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+            <div key={entry.id} className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-light text-[#DFD0B8]">Experience #{index + 1}</h3>
+                <h3 className="text-lg font-light text-white">Experience #{index + 1}</h3>
                 <button
                   type="button"
                   onClick={() => removeEntry(setExperienceEntries, index)}
@@ -973,65 +966,64 @@ const removeEntry = <T extends BaseEntry>(
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label htmlFor={`jobTitle-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Job Title:</label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <label htmlFor={`jobTitle-${entry.id}`} className="block text-white font-medium mb-2">Job Title:</label>
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     id={`jobTitle-${entry.id}`}
                     value={entry.jobTitle}
                     onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'jobTitle', e.target.value)}
                     
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                   </Tooltip>
                 </div>
                 <div>
-                  <label htmlFor={`companyName-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Company Name:</label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <label htmlFor={`companyName-${entry.id}`} className="block text-white font-medium mb-2">Company Name:</label>
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     id={`companyName-${entry.id}`}
                     value={entry.companyName}
                     onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'companyName', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                   </Tooltip>
                 </div>
                 <div>
-                  <label htmlFor={`location-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Location:</label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <label htmlFor={`location-${entry.id}`} className="block text-white font-medium mb-2">Location:</label>
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     id={`location-${entry.id}`}
                     value={entry.location}
                     onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'location', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                   </Tooltip>
                 </div>
                 <div>
-                  <label htmlFor={`startDate-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">Start Date:</label>
+                  <label htmlFor={`startDate-${entry.id}`} className="block text-white font-medium mb-2">Start Date:</label>
                   <input
                     type="month"
                     id={`startDate-${entry.id}`}
                     value={entry.startDate}
                     onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'startDate', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                 </div>
                 <div>
-                  <label htmlFor={`endDate-${entry.id}`} className="block text-[#DFD0B8] font-medium mb-2">End Date:</label>
+                  <label htmlFor={`endDate-${entry.id}`} className="block text-white font-medium mb-2">End Date:</label>
                   <input
                     type={entry.endDate === "Present" ? "text" : "month"}
-
                     id={`endDate-${entry.id}`}
                     value={entry.endDate}
                     onChange={(e) => handleInputChange(setExperienceEntries, experienceEntries, index, 'endDate', e.target.value)}
-                    className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                     required
                   />
                    <input type="checkbox" onChange={
@@ -1049,23 +1041,23 @@ const removeEntry = <T extends BaseEntry>(
                   <label htmlFor="">Currently Pursuing</label>
                 </div>
                 <div className="col-span-full">
-                  <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Work Details: <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
+                  <h4 className="text-md font-semibold mb-2 text-white">Work Details: <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
                   {entry.workList.map((work, workIndex) => (
                     <div key={workIndex} className="mb-2 flex items-center space-x-4">
-                      <label htmlFor={`work-${entry.id}-${workIndex}`} className="block text-[#DFD0B8] font-medium mb-1">Work {workIndex + 1}:</label>
+                      <label htmlFor={`work-${entry.id}-${workIndex}`} className="block text-white font-medium mb-1">Work {workIndex + 1}:</label>
                       <input
                         type="text"
                         id={`work-${entry.id}-${workIndex}`}
                         value={work}
                         onChange={(e) => handleSubListInputChange(setExperienceEntries, index, 'workList', workIndex, e.target.value)}
                         onKeyDown={(e)=>handleKeyActionOnSublist(e,setExperienceEntries,'workList',index,workIndex)}
-                        className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                        className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
                         required
                       />
                       <button
                         type="button"
                         onClick={() => removeItemFromSubList(setExperienceEntries, index, 'workList', workIndex)}
-                        className="px-2 py-1 bg-amber-800 text-[#DFD0B8] rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                        className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                       >
                         Remove
                       </button>
@@ -1075,7 +1067,7 @@ const removeEntry = <T extends BaseEntry>(
                     <button
                       type="button"
                       onClick={() => addItemToSubList(setExperienceEntries, index, 'workList', '')}
-                      className="px-4 py-2 text-[#DFD0B8] rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                      className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
                     >
                       Add Work
                     </button>
@@ -1089,7 +1081,7 @@ const removeEntry = <T extends BaseEntry>(
           <button
             type="button"
             onClick={() => addEntry(setExperienceEntries, defaultExperienceEntry)}
-            className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon className="w-4 h-4" /> Add Experience
           </button>
@@ -1097,15 +1089,15 @@ const removeEntry = <T extends BaseEntry>(
       </div>
 
       {/* Projects Section */}
-      <div className="mb-8 border-b border-gray-700 pb-6">
+      <div className="mb-8 border-b border-white/10 pb-6">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-[#DFD0B8]">Projects</h2>
+          <h2 className="text-2xl font-light text-white">Projects</h2>
         </div>
         <div className="space-y-6">
           {projectEntries.map((entry, index) => (
-            <div key={entry.id} className="bg-[#2a2a2a] p-6 rounded-lg shadow">
+            <div key={entry.id} className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
               <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-light text-[#DFD0B8]">Project #{index + 1}</h3>
+                <h3 className="text-lg font-light text-white">Project #{index + 1}</h3>
                 <button
                   type="button"
                   onClick={() => removeEntry(setProjectEntries, index)}
@@ -1116,48 +1108,48 @@ const removeEntry = <T extends BaseEntry>(
               </div>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Project Name*
                   </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     value={entry.projectName}
                     onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'projectName', e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                    className="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20  text-white"
                     required
                   />
                   </Tooltip>
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Technologies Used*
                   </label>
-                  <Tooltip title = "Not Allowed Here" message = "Making Text Bold is not allowed here">
+                  <Tooltip title="Not Allowed Here" message="Making Text Bold is not allowed here">
                   <input
                     type="text"
                     value={entry.technologiesUsed}
                     onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'technologiesUsed', e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                    className="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20  text-white"
                     required
                   />
                   </Tooltip>
                 </div>
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     Start Date*
                   </label>
                   <input
                     type="month"
                     value={entry.startDate || ''}
                     onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'startDate', e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                    className="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20  text-white"
                   />
                 </div>
 
                 <div className="mb-4">
-                  <label className="block text-[#DFD0B8] font-medium mb-2">
+                  <label className="block text-white font-medium mb-2">
                     End Date*
                   </label>
                   <input
@@ -1165,7 +1157,7 @@ const removeEntry = <T extends BaseEntry>(
                     disabled={entry.endDate === "Present"}
                     value={entry.endDate || ''}
                     onChange={(e) => handleInputChange(setProjectEntries, projectEntries, index, 'endDate', e.target.value)}
-                    className= {`w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8] ${entry.endDate=="Present"? ' bg-gray-500 cursor-not-allowed' : ''}`}
+                    className= {`w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20  text-white ${entry.endDate=="Present"? ' bg-gray-500 cursor-not-allowed' : ''}`}
                   />
                   <input type="checkbox" onChange={
                       (e) => {
@@ -1184,22 +1176,22 @@ const removeEntry = <T extends BaseEntry>(
                 </div>
               </div>
 
-              <h4 className="text-md font-semibold mb-2 text-[#DFD0B8]">Features:* <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
+              <h4 className="text-md font-semibold mb-2 text-white">Features:* <span className=" mx-0.5 text-xs text-white">Tip: Use Bold For Highlighting but don't overdo it</span></h4>
               {entry.featureList.map((feature, featureIndex) => (
                 <div key={`${entry.id}-feature-${featureIndex}`} className="mb-2 flex items-center space-x-4">
-                  <label htmlFor={`feature-${entry.id}-${featureIndex}`} className="block text-[#DFD0B8] font-medium mb-1">Feature {featureIndex + 1}:</label>
+                  <label htmlFor={`feature-${entry.id}-${featureIndex}`} className="block text-white font-medium mb-1">Feature {featureIndex + 1}:</label>
                   <input
                     type="text"
                     id={`feature-${entry.id}-${featureIndex}`}
                     value={feature}
                     onKeyDown={(e)=>handleKeyActionOnSublist(e,setProjectEntries,'featureList',index,featureIndex)}
                     onChange={(e) => handleSubListInputChange(setProjectEntries, index, 'featureList', featureIndex, e.target.value)}
-                    className="w-full px-3 py-2 border border-[#948979] rounded-md focus:outline-none focus:ring-2 focus:ring-[#DFD0B8]  text-[#DFD0B8]"
+                    className="w-full px-3 py-2 border border-white/10 rounded-lg focus:outline-none focus:ring-2 focus:ring-white/20  text-white"
                   />
                   <button
                     type="button"
                     onClick={() => removeItemFromSubList(setProjectEntries, index, 'featureList', featureIndex)}
-                    className="px-2 py-1 text-amber-800 rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                    className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                   >
                     Remove
                   </button>
@@ -1209,7 +1201,7 @@ const removeEntry = <T extends BaseEntry>(
                 <button
                   type="button"
                   onClick={() => addItemToSubList(setProjectEntries, index, 'featureList', '')}
-                  className="px-4 py-2 text-green-700  rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-600 text-sm"
+                  className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
                 >
                   Add Feature
                 </button>
@@ -1221,7 +1213,7 @@ const removeEntry = <T extends BaseEntry>(
           <button
             type="button"
             onClick={() => addEntry(setProjectEntries, defaultProjectEntry)}
-            className="px-4 py-2 flex items-center gap-2 bg-[#DFD0B8] text-green-700 rounded-md hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
+            className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon className="w-4 h-4" /> Add Project
           </button>
@@ -1231,7 +1223,7 @@ const removeEntry = <T extends BaseEntry>(
       {/* Skills Section */}
       <div className="mb-8">
         <div className="mb-6">
-          <h2 className="text-2xl font-light text-[#DFD0B8]">Technical Skills</h2>
+          <h2 className="text-2xl font-light text-white">Technical Skills</h2>
         </div>
         {/* Presets checkboxes */}
         <div className="flex flex-wrap gap-4 mb-4">
@@ -1249,9 +1241,9 @@ const removeEntry = <T extends BaseEntry>(
                       setSkills(prev => prev.filter(skill => skill.key !== preset));
                     }
                   }}
-                  className="form-checkbox h-4 w-4 text-green-600  border-[#948979] focus:ring-2 focus:ring-green-400"
+                  className="form-checkbox h-4 w-4 text-white border-white/20 focus:ring-2 focus:ring-white/20 bg-white/5"
                 />
-                <span className="ml-2 text-[#DFD0B8]">{preset}</span>
+                <span className="ml-2 text-white">{preset}</span>
               </label>
             );
           })}
@@ -1259,13 +1251,13 @@ const removeEntry = <T extends BaseEntry>(
         <div className="space-y-6">
           {skills.map((skill, index) => (
             <div className="inputGroup mb-4 flex items-center space-x-4" key={index}>
-            <Tooltip title = "This will already be bold" message = "Making Text Bold is not allowed here">
+            <Tooltip title="This will already be bold" message="Making Text Bold is not allowed here">
               <input
                 type="text"
                 placeholder="Skill Type (e.g., Frameworks)"
                 value={skill.key}
                 onChange={(e) => handleInputChange(setSkills, skills, index, "key", e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
               />
               </Tooltip>
               <input
@@ -1274,12 +1266,12 @@ const removeEntry = <T extends BaseEntry>(
                 value={skill.value}
                 onKeyDown={(e)=>handleKeyActiononList(e,setSkills,skills,index,"value")}
                 onChange={(e) => handleInputChange(setSkills, skills, index, "value", e.target.value)}
-                className="shadow appearance-none border rounded w-full py-2 px-3 text-[#DFD0B8] leading-tight focus:outline-none focus:shadow-outline  border-[#948979]"
+                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
               />
               <button
                 type="button"
                 onClick={() => removeEntry(setSkills, index)}
-                className="px-2 py-1 bg-amber-800 text-[#DFD0B8] rounded-md hover:bg-amber-700 focus:outline-none focus:ring-2 focus:ring-amber-700 text-xs"
+                className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
               >
                 Remove
               </button>
@@ -1290,7 +1282,7 @@ const removeEntry = <T extends BaseEntry>(
           <button
             type="button"
             onClick={() => addEntry(setSkills, defaultEmptySkillEntry)}
-            className="px-4 py-2 flex items-center gap-2 bg-green-600 text-white rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-400 transition-colors"
+            className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
           >
             <PlusIcon className="w-4 h-4" /> Add Skill
           </button>
@@ -1298,44 +1290,40 @@ const removeEntry = <T extends BaseEntry>(
       </div>
 
       <div className="flex justify-center">
-        {/* <button 
-          type="submit" 
-          className="px-8 py-3 bg-[#DFD0B8] text-green-700 rounded-lg font-light hover:bg-[#c0b0a0] focus:outline-none focus:ring-2 focus:ring-[#DFD0B8] transition-colors border border-[#c0b0a0]"
-        >
-          Generate Resume
-        </button> */}
-        <div className=" bg-black rounded-xl flex justify-center items-center">
-
-    <div className="relative inline-flex rounded-xl  group">
-        <div
-            className="absolute transitiona-all  rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt">
+        <div className="bg-black rounded-xl flex justify-center items-center">
+          <div className="relative inline-flex rounded-xl group">
+            <div className="absolute transition-all rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt">
+            </div>
+            <button 
+              type="submit" 
+              className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+            >
+              Generate Resume
+            </button>
+          </div>
         </div>
-        <button type="submit" title="Get quote now"
-            className="relative  inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
-            >Generate Resume
-        </button>
-    </div>
-</div>
-
       </div>
      </form>
-     {pdfUrl && (
-      <div className="lg:fixed lg:top-0 lg:right-0 lg:w-1/2 lg:h-screen md:fixed md:top-0 md:right-0 md:w-1/2 md:h-screen">
+    
+
+    {pdfUrl && (
+      <div className="pdf-viewer-container md:fixed md:top-19 md:right-0 md:w-1/2 sm:w-full">
         <iframe
           src={pdfUrl + '#zoom=88%'}
-          className='w-full h-screen'
+          className="w-full h-screen rounded-xl border border-white/10"
         />
       </div>
-      
      )}
      {!pdfUrl && (
-      <div className="lg:fixed lg:top-0 lg:right-0 lg:w-1/2 lg:h-screen md:fixed md:top-0 md:right-0 md:w-1/2 md:h-screen">
+      <div className="pdf-viewer-container md:fixed md:top-19 md:right-0 md:w-1/2 sm:w-full">
         <iframe
           src={hello + '#zoom=88%'}
-          className='w-full h-screen'
+          className="w-full h-screen rounded-xl border border-white/10"
         />
       </div>
      )}
+     
+   
      </div>
     </>
   )
