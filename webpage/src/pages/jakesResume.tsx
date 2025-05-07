@@ -6,16 +6,28 @@ import { PlusIcon } from 'lucide-react'
 import toast from 'react-hot-toast';
 import hello from '../assets/hello.pdf'
 import Tooltip from '../components/Tooltip';
+import { generateUUID, 
+  BaseEntry,
+   handleInputChange,
+   sanitizeInputForDisplay,
+   formatMonthYear,
+   sanitizeInput,
+   sanitizeInputForLink,
+   debounce,
+   addItemToSubList,
+   removeItemFromSubList,
+   handleSubListInputChange,
+   addEntry,
+   removeEntry,
+   handleKeyActiononList,
+   handleKeyActionOnSublist
+  } from '../helper/helperFunctions';
+import PdfBox from '../components/PdfBox';
 const api = axios.create({
   baseURL: `http://localhost:8000`
 })
 
-function generateUUID() {
-  return uuidv4();
-}
-interface BaseEntry {
-  id: string; // Or the appropriate ID type
-}
+
 
 interface FormDataStore {
   name: string;
@@ -37,6 +49,7 @@ enum RestrictionType {
   ALREADY_ITALIC = "already_italic",
   NOT_ALLOWED = "not_allowed",
 }
+
 interface EducationDetails extends BaseEntry {
   instituteName : string;
   degree: string;
@@ -196,23 +209,6 @@ const defaultSkillEntry5:SkillDetails = {
   value: "Leadership, Team Collaboration, Problem Solving, Communication",
 }
 
-// Function to format date from YYYY-MM to MMM YYYY
-function formatMonthYear(dateString) {
-  if (!dateString || !dateString.match(/^\d{4}-\d{2}$/)) {
-    return 'Present';
-  }
-  
-  const [year, month] = dateString.split('-');
-  const date = new Date(parseInt(year), parseInt(month) - 1);
-  
-  // Get month name
-  const monthName = date.toLocaleString('en-US', { month: 'short' });
-  
-  // Add period after month name except for May
-  const formattedMonth = monthName === 'May' ? 'May' : `${monthName}.`;
-  
-  return `${formattedMonth} ${year}`;
-}
 
 function JakeResume() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
@@ -236,18 +232,7 @@ const loadToStore = (store: FormDataStore) => {
 }
 const debouncedStoreRef = useRef(debounce(loadToStore,1000));
 
-  function debounce<T extends (...args:Parameters<T>)=> void>(func:T,delay:number):(...args:Parameters<T>)=>void {
-    let timer: ReturnType<typeof setTimeout>;
-    
-    return (...args:Parameters<T>)=>{
-      clearTimeout(timer);
-      timer = setTimeout(()=>{
-        func(...args);
-      },delay);
-    }
-      
-    }
-
+ 
   useEffect(()=>{
     const store = {
       name: name,
@@ -282,6 +267,7 @@ const debouncedStoreRef = useRef(debounce(loadToStore,1000));
     setSkills(store.skills);
     }
   },[])
+
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
@@ -512,147 +498,9 @@ const newString = skills.map((entry) => {
 return newString
 }
 
-const sanitizeInput = (input:string) => {
 
-  // Dont Disrupt The order because if __bold__ becomes \textbf and 
-  // then We change \ to \backslash, then even \textbf will suffer
-  let sanitizedInput = input.replace(/\\/g, '\\textbackslash ');
-  sanitizedInput = sanitizedInput.replace(/__bold\[(.*?)\]__/g, '\\textbf{$1}');
-  sanitizedInput = sanitizedInput.replace(/__italic\[(.*?)\]__/g, '\\textit{$1}');
-  sanitizedInput = sanitizedInput.replace(/%/g, '\\%');
-  
-  return sanitizedInput;
-}
 
-const sanitizeInputForDisplay = (input:string) => {
-  return input.replace(/https?:\/\//, '');
-}
 
-const sanitizeInputForLink = (input:string) => {
-  if (!input) return "";
-  const trimmedInput = input.trim();
-  if (!trimmedInput.startsWith("http://") && !trimmedInput.startsWith("https://")){
-    return "https://" + trimmedInput;
-  }
-  return trimmedInput;
-}
-
-const handleKeyActiononList = <T extends BaseEntry>(e:React.KeyboardEvent<HTMLInputElement>,setEntries: React.Dispatch<React.SetStateAction<T[]>>,Entries:T[],index:number, key:string)  => {
-  if (e.ctrlKey && e.key === 'b'){
-    e.preventDefault();
-    const input = e.target as HTMLInputElement;
-    if (!input) return;
-    const value = input.value;
-    if (!value) return;
-    const start = input.selectionStart;
-    const end = input.selectionEnd;
-    if (start === null || end === null) return;
-    if (start !== end){
-      const selectedText = value.slice(start,end);
-      const wrapped = `bold[${selectedText}]`;
-      const newText = value.slice(0,start) + wrapped + value.slice(end);
-      handleInputChange(setEntries,Entries,index,key,newText)
-    }
-  }
-
-}
-const handleKeyActionOnSublist = <T extends BaseEntry> (e:React.KeyboardEvent<HTMLInputElement>, setState:React.Dispatch<React.SetStateAction<T[]>> , listName:keyof T , index:number , listIndex:number) => {
-
-if (e.ctrlKey && (e.key === 'b' || e.key === 'i')){
-  e.preventDefault();
-  const input = e.target as HTMLInputElement;
-  if (!input) return;
-  const value = input.value;
-  if (!value) return;
-
-  const start = input.selectionStart;
-  const end = input.selectionEnd;
- if (start === null || end === null) return;
-
-  if (start!== end){
-    const selectedText = value.slice(start, end);
-    const wrapped = e.key === 'b' ? `__bold[${selectedText}]__` : `__italic[${selectedText}]__`;
-    const newText = value.slice(0, start) + wrapped + value.slice(end);
-    handleSubListInputChange(setState,index,listName,listIndex,newText)
-  }
-  
-}
-}
-const handleInputChange = <T extends BaseEntry>(setEntries: React.Dispatch<React.SetStateAction<T[]>>,Entries:T[],index:number, key:string, value:string) => {
-const newEntries = [...Entries]
-newEntries[index] = { ...newEntries[index], [key]: value };
-setEntries(newEntries);
-}
-
-const addItemToSubList = <T extends BaseEntry>(setEntries: React.Dispatch<React.SetStateAction<T[]>>,index:number, listName: keyof T , value:string) => {
-  setEntries(prevEntries=> prevEntries.map((entry,idx)=>{
-  if(idx === index){
-    const currentList = entry[listName];
-    if(Array.isArray(currentList)){
-      const newList = [...currentList, value]
-      console.log(sanitizeInput(experienceEntries[0].workList[2]))
-    return {
-      ...entry,
-      [listName]: newList,
-    } as T;
-  }
-}
-
-  return entry
-}))
-}
-
-const removeItemFromSubList = <T extends BaseEntry>(setEntries: React.Dispatch<React.SetStateAction<T[]>>,index:number, listName: keyof T , listIndex:number) => {
-setEntries(prevEntries => prevEntries.map((entry,idx)=>{
-  if (idx === index){
-    const currentList = entry[listName];
-    if(Array.isArray(currentList)){
-      const newList = currentList.filter((_,i) => i !== listIndex);
-      return {
-        ...entry,
-        [listName]: newList,
-      } as T;
-    }
-  }
-  return entry
-}))
-
-}
-
-const handleSubListInputChange = <T extends BaseEntry>(setEntries:React.Dispatch<React.SetStateAction<T[]>>,index:number, listName: keyof T , listIndex:number, value:string) => {
- setEntries(prevEntries => prevEntries.map((entry,idx)=>{
-  if(idx === index){
-    const currentList = entry[listName];
-    if(Array.isArray(currentList)){
-      currentList[listIndex] = value;
-      return {
-        ...entry,
-        [listName]: currentList,
-      } as T;
-    }
-  }
-  return entry
- }))
-}
-
-const addEntry =  <T extends BaseEntry>(
-  setEntries: React.Dispatch<React.SetStateAction<T[]>>,
-  defaultEntry: Omit<T, 'id'>,
- 
-)=>{
- 
-  setEntries((prevEntries)=> [
-    ...prevEntries,
-    {...defaultEntry,id: generateUUID() } as T
-  ])
-}
-
-const removeEntry = <T extends BaseEntry>(
-  setEntries: React.Dispatch<React.SetStateAction<T[]>>,
-  index:number
-) => {
-  setEntries((prevEntries) => prevEntries.filter((_,idx) => idx !== index));
-};
 
   return (
     <>
@@ -1304,26 +1152,10 @@ const removeEntry = <T extends BaseEntry>(
         </div>
       </div>
      </form>
-    
+     <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={hello}/>
 
-    {pdfUrl && (
-      <div className="pdf-viewer-container md:fixed md:top-19 md:right-0 md:w-1/2 sm:w-full">
-        <iframe
-          src={pdfUrl + '#zoom=88%'}
-          className="w-full h-screen rounded-xl border border-white/10"
-        />
-      </div>
-     )}
-     {!pdfUrl && (
-      <div className="pdf-viewer-container md:fixed md:top-19 md:right-0 md:w-1/2 sm:w-full">
-        <iframe
-          src={hello + '#zoom=88%'}
-          className="w-full h-screen rounded-xl border border-white/10"
-        />
-      </div>
-     )}
+          
      
-   
      </div>
     </>
   )

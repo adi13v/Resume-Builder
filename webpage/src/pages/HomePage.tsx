@@ -3,6 +3,7 @@ import { Link, redirect} from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Rocket, FileText, CheckCircle, X } from 'lucide-react';
+import App from '../App';
 
 // Sample resume data (replace with your actual data)
 const resumeTemplates = {
@@ -58,17 +59,10 @@ const Parallax = ({ children, offset = 50 }) => {
 };
 
 const ResumeCatalog = () => {
-    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    
+    
 
-    const openModal = (imageUrl: string) => {
-        setSelectedImage(imageUrl);
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
-    };
-
-    const closeModal = () => {
-        setSelectedImage(null);
-        document.body.style.overflow = '';        // Allow scrolling again
-    };
+  
 
     return (
         <>
@@ -96,7 +90,7 @@ const ResumeCatalog = () => {
                                                     transition-all duration-300 group">
                                             <div
                                                 className="relative aspect-[3/4] w-full cursor-pointer" // Added cursor-pointer
-                                                onClick={() => openModal(template.imageUrl)} // Added onClick
+                                               
                                             >
                                                 <img
                                                     src={template.imageUrl}
@@ -126,40 +120,7 @@ const ResumeCatalog = () => {
                     </div>
                 ))}
             </motion.div>
-            <AnimatePresence>
-                {selectedImage && (
-                    <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center"
-                        onClick={closeModal} // Added onClick to close modal
-                    >
-                        <motion.div
-                            initial={{ scale: 0.8 }}
-                            animate={{ scale: 1 }}
-                            exit={{ scale: 0.8 }}
-                            transition={{ duration: 0.3 }}
-                            className="relative"
-                            onClick={(e) => e.stopPropagation()} // Prevent click from closing modal
-                        >
-                            <img
-                                src={selectedImage}
-                                alt="Full Screen"
-                                className="max-h-screen max-w-screen rounded-xl shadow-2xl"
-                            />
-                            <button
-                                onClick={closeModal}
-                                className="absolute top-1 right-[-4rem] rounded-full opacity-100 bg-white text-white p-10
-                                            hover:bg-black/70 hover:opacity-70  transition-opacity duration-200 z-10"
-                            >
-                                <X className="h-6 w-6 rounded" />
-                            </button>
-                        </motion.div>
-                    </motion.div>
-                )}
-            </AnimatePresence>
+           
         </>
     );
 };
@@ -239,7 +200,8 @@ const LandingPage = () => {
     );
 };
 
-const App = () => {
+const HomePage = () => {
+
     return (
         <div className="min-h-screen bg-gray-950 overflow-hidden w-[100vw]">
             <LandingPage />
@@ -247,5 +209,5 @@ const App = () => {
     )
 };
 
-export default App;
+export default HomePage;
 

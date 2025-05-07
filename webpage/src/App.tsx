@@ -5,6 +5,7 @@ import JakeResume from './pages/jakesResume'
 import ResumeWithPhoto from './pages/resumewithPhoto'
 import HomePage from './pages/HomePage'
 import Header from './components/Header'
+import NitResume from './pages/nitResume'
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
         <Route path='/' element={<HomePage/>}></Route>
         <Route path='/jake' element={<JakeResume />} />
         <Route path='/photo' element={<ResumeWithPhoto />} />
+        <Route path='/nit' element={<NitResume />} />
       </Routes>
      </div>
      

@@ -7,7 +7,6 @@ import toast from "react-hot-toast";
 import hello from "../assets/hello.pdf";
 import Tooltip from "../components/Tooltip";
 import Modal from "../components/Modal";
-import ChatbotModal from "../components/ChatbotModal";
 import {
   generateUUID,
   BaseEntry,
@@ -25,11 +24,29 @@ import {
   handleKeyActiononList,
   handleKeyActionOnSublist,
 } from "../helper/helperFunctions";
-import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, HonorDetails, ClubDetails, CertificateDetails, FormDataStore } from "../types/resumeWithPhoto";
 import PdfBox from "../components/PdfBox";
+import { ImageCropper } from "../components/ImageCropper";
+
 const api = axios.create({
   baseURL: `http://localhost:8000`,
 });
+
+interface FormDataStore {
+  name: string;
+  email: string;
+  phoneNumber: string;
+  githubLink: string;
+  linkedInLink: string;
+  portfolioLink: string;
+  educationEntries: EducationDetails[];
+  experienceEntries: ExperienceDetails[];
+  projectEntries: ProjectDetails[];
+  skillEntries: SkillDetails[];
+  honorEntries: HonorDetails[];
+  clubEntries: ClubDetails[];
+  certificateEntries: CertificateDetails[];
+  positionEntries: PositionDetails[];
+}
 
 const presets = [
   "Languages",
@@ -43,6 +60,66 @@ enum RestrictionType {
   ALREADY_BOLD = "already_bold",
   ALREADY_ITALIC = "already_italic",
   NOT_ALLOWED = "not_allowed",
+}
+
+interface EducationDetails extends BaseEntry {
+  instituteName: string;
+  degree: string;
+  branch: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  gradeType: string;
+  cgpa: string;
+  percentage: string;
+}
+
+interface ExperienceDetails extends BaseEntry {
+  jobTitle: string;
+  companyName: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  workList: string[];
+}
+
+interface ProjectDetails extends BaseEntry {
+  projectName: string;
+  description: string;
+  tools: string;
+  startDate: string;
+  endDate: string;
+  achievements: string[];
+  link: string;
+  linkType: "GitHub" | "Website";
+}
+
+interface SkillDetails extends BaseEntry {
+  skillName: string;
+  skillList: string[];
+}
+
+interface HonorDetails extends BaseEntry {
+  title: string;
+  linkTitle: string;
+  link: string;
+}
+
+interface ClubDetails extends BaseEntry {
+  clubName: string;
+  clubList: string[];
+}
+
+interface CertificateDetails extends BaseEntry {
+  title: string;
+  link: string;
+  date: string;
+}
+
+interface PositionDetails extends BaseEntry {
+  positionName: string;
+  societyName: string;
+  date: string;
 }
 
 const defaultEducationEntry: EducationDetails = {
@@ -113,78 +190,74 @@ const defaultExperienceEntry2: ExperienceDetails = {
 };
 
 const defaultProjectEntry: ProjectDetails = {
-  id: "0okmhgfdr543edf",
-  projectName: "AI-Powered Resume Builder",
-  projectLinkTitle: "Github Link",
-  projectLink: "https://github.com/username/resume-builder",
-  startDate: "2023-01",
-  endDate: "2023-06",
-  featureList: [
-    "Real-time LaTeX PDF generation with custom templates",
-    "AI-powered content suggestions and grammar checking",
-    "Responsive design with dark/light mode support",
-    "Local storage for draft saving and auto-recovery",
-  ],
+  id: generateUUID(),
+  projectName: "",
+  description: "",
+  tools: "",
+  startDate: "",
+  endDate: "",
+  achievements: [""],
+  link: "",
+  linkType: "GitHub"
 };
 
 const defaultProjectEntry2: ProjectDetails = {
-  id: "0okmhgfdr543edf2",
+  id: generateUUID(),
   projectName: "Distributed Task Scheduler",
-  projectLinkTitle: "Github Link",
-  projectLink: "https://github.com/username/task-scheduler",
+  description: "A scalable distributed task scheduling system",
+  tools: "Go, Docker, Kubernetes, Redis",
   startDate: "2022-07",
   endDate: "2022-12",
-  featureList: [
+  achievements: [
     "Implemented distributed consensus using Raft algorithm",
     "Achieved 99.9% task execution reliability",
     "Scaled to handle 100K+ concurrent tasks",
-    "Added monitoring and alerting system",
+    "Added monitoring and alerting system"
   ],
+  link: "https://github.com/username/task-scheduler",
+  linkType: "GitHub"
 };
 
 const defaultEmptySkillEntry: SkillDetails = {
   id: "3edfty7unbvcxae567j",
-  key: "",
-  value: "",
+  skillName: "",
+  skillList: [""],
 };
 const defaultSkillEntry: SkillDetails = {
   id: "3edfty7unbvcxae567j",
-  key: "Languages",
-  value: "Python, JavaScript, TypeScript, Java, C++",
+  skillName: "Languages",
+  skillList: ["Python, JavaScript, TypeScript, Java, C++"],
 };
 
 const defaultSkillEntry2: SkillDetails = {
   id: "3edfty7unbvcxae567j2",
-  key: "Frameworks",
-  value: "React, Node.js, Express, Django, Spring Boot",
+  skillName: "Frameworks",
+  skillList: ["React, Node.js, Express, Django, Spring Boot"],
 };
 
 const defaultSkillEntry3: SkillDetails = {
   id: "3edfty7unbvcxae567j3",
-  key: "Developer Tools",
-  value: "Git, Docker, Kubernetes, AWS, Azure, CI/CD",
+  skillName: "Developer Tools",
+  skillList: ["Git, Docker, Kubernetes, AWS, Azure, CI/CD"],
 };
 
 const defaultSkillEntry4: SkillDetails = {
   id: "3edfty7unbvcxae567j4",
-  key: "Databases",
-  value: "MongoDB, PostgreSQL, Redis, MySQL",
+  skillName: "Databases",
+  skillList: ["MongoDB, PostgreSQL, Redis, MySQL"],
 };
 
 const defaultSkillEntry5: SkillDetails = {
   id: "3edfty7unbvcxae567j5",
-  key: "Soft Skills",
-  value: "Leadership, Team Collaboration, Problem Solving, Communication",
+  skillName: "Soft Skills",
+  skillList: ["Leadership, Team Collaboration, Problem Solving, Communication"],
 };
 
 const defaultHonorEntry: HonorDetails = {
-  id: "honor1",
-  title: "Dean's List",
-  date: "2023-05",
-  description:
-    "Recognition for academic excellence in Computer Science program",
-  linkTitle: "Certificate",
-  link: "https://example.com/certificate",
+  id: generateUUID(),
+  title: "",
+  linkTitle: "",
+  link: ""
 };
 
 const defaultHonorEntry2: HonorDetails = {
@@ -222,15 +295,23 @@ const defaultClubEntry2: ClubDetails = {
 };
 
 const defaultCertificateEntry: CertificateDetails = {
-  id: "cert1",
-  title: "AWS Cloud Practitioner",
-  link: "https://example.com/certificate1",
+  id: generateUUID(),
+  title: "",
+  link: "",
+  date: ""
 };
 
 const defaultCertificateEntry2: CertificateDetails = {
   id: "cert2",
   title: "Google Cloud Professional Data Engineer",
   link: "https://example.com/certificate2",
+};
+
+const defaultPositionEntry: PositionDetails = {
+  id: generateUUID(),
+  positionName: "",
+  societyName: "",
+  date: ""
 };
 
 function ResumeWithPhoto() {
@@ -277,6 +358,9 @@ function ResumeWithPhoto() {
   const [certificateEntries, setCertificateEntries] = useState<
     CertificateDetails[]
   >([defaultCertificateEntry, defaultCertificateEntry2]);
+  const [positionEntries, setPositionEntries] = useState<PositionDetails[]>([
+    defaultPositionEntry,
+  ]);
 
   // Add new state variables for section toggles
   const [includeExperience, setIncludeExperience] = useState(true);
@@ -287,7 +371,7 @@ function ResumeWithPhoto() {
   const [includeCertificates, setIncludeCertificates] = useState(true);
   const [includeProjectLinks, setIncludeProjectLinks] = useState(true);
   const [includePicture, setIncludePicture] = useState(true);
-  const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
+  const [includePositions, setIncludePositions] = useState(true);
 
   const updateAvatar = async (imageUrl: string) => {
     try {
@@ -323,12 +407,7 @@ function ResumeWithPhoto() {
       honorEntries: honorEntries,
       clubEntries: clubEntries,
       certificateEntries: certificateEntries,
-      includeExperience: includeExperience,
-      includeProjects: includeProjects,
-      includeSkills: includeSkills,
-      includeHonors: includeHonors,
-      includeClubs: includeClubs,
-      includeCertificates: includeCertificates,
+      positionEntries: positionEntries,
     };
     debouncedStoreRef.current(store);
   }, [
@@ -345,12 +424,7 @@ function ResumeWithPhoto() {
     honorEntries,
     clubEntries,
     certificateEntries,
-    includeExperience,
-    includeProjects,
-    includeSkills,
-    includeHonors,
-    includeClubs,
-    includeCertificates,
+    positionEntries,
   ]);
 
   useEffect(() => {
@@ -380,12 +454,7 @@ function ResumeWithPhoto() {
           defaultCertificateEntry2,
         ]
       );
-      setIncludeExperience(store.includeExperience);
-      setIncludeProjects(store.includeProjects);
-      setIncludeSkills(store.includeSkills);
-      setIncludeHonors(store.includeHonors);
-      setIncludeClubs(store.includeClubs);
-      setIncludeCertificates(store.includeCertificates);
+      setPositionEntries(store.positionEntries || [defaultPositionEntry]);
     }
   }, []);
 
@@ -455,14 +524,14 @@ function ResumeWithPhoto() {
             entry.startDate
           )} - ${formatMonthYear(entry.endDate)}}
     {\\href{${sanitizeInputForLink(
-      entry.projectLink
+      entry.link
     )}}{\\color{blue}${sanitizeInputForDisplay(
-            sanitizeInput(entry.projectLinkTitle)
+            sanitizeInput(entry.projectName)
           )}}}{}
     \\CVItemListStart
-      ${entry.featureList
-        .map((feature) => {
-          return `\\CVItem{${sanitizeInput(feature)}}`;
+      ${entry.achievements
+        .map((achievement) => {
+          return `\\CVItem{${sanitizeInput(achievement)}}`;
         })
         .join("")}
     \\CVItemListEnd
@@ -476,9 +545,9 @@ function ResumeWithPhoto() {
             entry.startDate
           )} - ${formatMonthYear(entry.endDate)}}
   \\CVItemListStart
-    ${entry.featureList
-      .map((feature) => {
-        return `\\CVItem{${sanitizeInput(feature)}}`;
+    ${entry.achievements
+      .map((achievement) => {
+        return `\\CVItem{${sanitizeInput(achievement)}}`;
       })
       .join("")}
   \\CVItemListEnd
@@ -595,225 +664,211 @@ function ResumeWithPhoto() {
     return input.replace(/ /g, "\\\\ ");
   };
 
-  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    if(skills.length === 0 || educationEntries.length === 0 ||
-     experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
-      if (includePicture && imageFile === null) toast.error("Please upload a profile picture");
-      if (skills.length === 0) toast.error("Please select at least one skill");
-      if (educationEntries.length === 0) toast.error("Please add at least one education entry");
-      if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
-      if (projectEntries.length === 0) toast.error("Please add at least one project entry");
-    return;
-  }
-    setGlobalId(generateUUID());
-    console.log(globalId)
-
-  const Code:string = String.raw`
-  \documentclass[A4,11pt]{article}
-
-  \usepackage{latexsym}
-  \usepackage[empty]{fullpage}
-  \usepackage{titlesec}
-  \usepackage{marvosym}
-  \usepackage[usenames,dvipsnames]{color}
-  \usepackage{verbatim}
-  \usepackage{enumitem}
-  \usepackage[hidelinks]{hyperref}
-  \usepackage[english]{babel}
-  \usepackage{tabularx}
-  \usepackage{tikz}
-  \input{glyphtounicode}
-  \usepackage{palatino}
-
-  % Adjust margins
-  \addtolength{\oddsidemargin}{-1cm}
-  \addtolength{\evensidemargin}{-1cm}
-  \addtolength{\textwidth}{2cm}
-  \addtolength{\topmargin}{-1cm}
-  \addtolength{\textheight}{2cm}
-
-  \urlstyle{same}
-
-  \raggedbottom
-  \raggedright
-  \setlength{\tabcolsep}{0cm}
-
-  % Sections formatting
-  \titleformat{\section}{
-  \vspace{-4pt}\scshape\raggedright\large
-  }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
-
-  % Ensure that .pdf is machine readable/ATS parsable
-  \pdfgentounicode=1
-
-  %-----CUSTOM COMMANDS FOR FORMATTING SECTIONS----------------------------------
-
-  \newcommand{\ProjectEntry}[2]{%
-    \item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-    \end{tabular*}\vspace{-5pt}
-  }
-
-  \newcommand{\CVItem}[1]{
-  \item\small{
-    {#1 \vspace{-2pt}}
-  }
-  }
-
-  \newcommand{\CVSubheading}[4]{
-  \vspace{-2pt}\item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-      \small#3 & \small #4 \\
-    \end{tabular*}\vspace{-7pt}
-  }
-
-  \newcommand{\CVSubSubheading}[2]{
-    \item
-    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \text{\small#1} & \text{\small #2} \\
-    \end{tabular*}\vspace{-7pt}
-  }
-
-  \newcommand{\CVSubItem}[1]{\CVItem{#1}\vspace{-4pt}}
-
-  \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-
-  \newcommand{\CVSubHeadingListStart}{\begin{itemize}[leftmargin=0.5cm, label={}]}
-  % \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]} % Uncomment for US
-  \newcommand{\CVSubHeadingListEnd}{\end{itemize}}
-  \newcommand{\CVItemListStart}{\begin{itemize}}
-  \newcommand{\CVItemListEnd}{\end{itemize}\vspace{-5pt}}
-
-  %------------------------------------------------------------------------------
-  % CV STARTS HERE  %
-  %------------------------------------------------------------------------------
-  \begin{document}
-
-  %-----HEADING------------------------------------------------------------------
-  \begin{comment}
-  In Europe it is common to include a picture of ones self in the CV. Select
-  which heading appropriate for the document you are creating.
-  \end{comment}
-
-  ${includePicture? `
-    \\begin{minipage}[c]{0.05\\textwidth}
-  \\-\\
-  \\end{minipage}
-  \\begin{minipage}[c]{0.2\\textwidth}
-  \\begin{tikzpicture}
-    \\clip (0,0) circle (1.75cm);
-    \\node at (0,0) {\\includegraphics[width = 4cm]{image-${globalId}}};
-    % if necessary the picture may be moved by changing the at (coordinates)
-    % width defines the 'zoom' of the picture
-  \\end{tikzpicture}
-  \\hfill\\vline\\hfill
-  \\end{minipage}
-  \\begin{minipage}[c]{0.4\\textwidth}
-  \\textbf{\\Huge \\scshape{${addLineBreakInSpacing(sanitizeInput(name))}}} \\\\ \\vspace{1pt}
-    % \\scshape sets small capital letters, remove if desired
-    \\small{${sanitizeInput(phoneNumber)}} \\\\
-    \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}}\\\\
-    ${linkedInLink!=='' ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}} ` : ``} ${githubLink!=='' ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}  ` : ``}  ${portfolioLink!=='' ? `\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}` : ``}
-  \\end{minipage}
-    ` : `
-     %Without picture
-  \\begin{center}
-      \\textbf{\\Huge \\scshape ${sanitizeInput(name)}} \\\\ \\vspace{1pt} %\\scshape sets small capital letters, remove if desired
-      \\small ${sanitizeInput(phoneNumber)} $|$
-      \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}} ${portfolioLink ? `$|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:``} ${linkedInLink || githubLink ? ` $|$ \\\\ ` : ``}
-      ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}` : ``} ${githubLink && linkedInLink ? ` $|$` : ``}
-      % you should adjust you linked in profile name to be professional and recognizable
-      ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}` : ``}
-  \\end{center}
-    `}
-  \begin{comment}
-  This CV was written for specifically for positions I was applying for in
-  academia, and then modified to be a template.
-
-  A standard CV is about two pages long where as a resume in the US is one page.
-  sections can be added and removed here with this in mind. In my experience,
-  education, and applicable work experience and skills are the most import things
-  to include on a resume. For a CV the Europass CV suggests the categories: Work
-  Experience, Education and Training, Language Skills, Digital Skills,
-  Communication and Interpersonal Skills, Conferences and Seminars, Creative Works
-  Driver's License, Hobbies and Interests, Honors and Awards, Management and
-  Leadership Skills, Networks and Memberships, Organizational Skills, Projects,
-  Publications, Recommendations, Social and Political Activities, Volunteering.
-
-  Your goal is to convey a who, what , when, where, why for every item you share.
-  The who is obviously you, but I believe the rest should be done in that order.
-  For example below. An employer cares most about the degree held and typically
-  less about the institution or where it is located (This is still good
-  information though). Whatever order you choose be consistent throughout.
-  \end{comment}
-
-  %-----EDUCATION----------------------------------------------------------------
-  \section{Education}
-  \CVSubHeadingListStart
-  ${parseEducationString()}
-  \CVSubHeadingListEnd
-
-  %-----WORK EXPERIENCE----------------------------------------------------------
-  ${parseExperienceString()}
-  %-----PROJECTS AND RESEARCH----------------------------------------------------
-
-  ${parseProjectString()}
-
-  %-----HONORS AND AWARDS--------------------------------------------------------
-  ${parseHonorString()}
-
-  %-----CLUBS AND SOCIETIES--------------------------------------------------------
-  ${parseClubString()}
-
-  %-----Certifications-------------------------------------------------------------------
-  ${parseCertificateString()}
-
-  %-----SKILLS-------------------------------------------------------------------
-  ${parseSkillString()}
-
-  %------------------------------------------------------------------------------
-  \end{document}`
-
-  const formData = new FormData()
-    formData.append('payload', Code)
-    if(imageFile && includePicture){
-      formData.append('imageFile', imageFile)
+    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
+      if(skills.length === 0 || educationEntries.length === 0 ||
+       experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
+        if (includePicture && imageFile === null) toast.error("Please upload a profile picture");
+        if (skills.length === 0) toast.error("Please select at least one skill");
+        if (educationEntries.length === 0) toast.error("Please add at least one education entry");
+        if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
+        if (projectEntries.length === 0) toast.error("Please add at least one project entry");
+      return;
     }
-    formData.append('globalId', globalId)
-    api.post('/' , formData, {responseType: 'blob',
-        headers:{
-        'Content-Type': 'multipart/form-data'
-    }})
-    .then((res)=>{
-      const file = new Blob([res.data], { type: 'application/pdf' });
-      const fileURL = URL.createObjectURL(file);
-      setPdfUrl(fileURL);
+      setGlobalId(generateUUID());
+      console.log(globalId)
 
-    })
-    .catch((err)=>{
-      console.log(err)
-    })
-  }
+    const Code:string = String.raw`
+    \documentclass[A4,11pt]{article}
 
-  // Add this function to handle the AI-generated form data
-  const handleAIGeneratedData = (data: FormDataStore) => {
-    setName(data.name || '');
-    setEmail(data.email || '');
-    setPhoneNumber(data.phoneNumber || '');
-    setGithubLink(data.githubLink || '');
-    setLinkedInLink(data.linkedInLink || '');
-    setPortfolioLink(data.portfolioLink || '');
-    setEducationEntries(data.educationEntries || []);
-    setExperienceEntries(data.experienceEntries || []);
-    setProjectEntries(data.projectEntries || []);
-    setSkills(data.skills || []);
-    setHonorEntries(data.honorEntries || []);
-    setClubEntries(data.clubEntries || []);
-    setCertificateEntries(data.certificateEntries || []);
-  };
+    \usepackage{latexsym}
+    \usepackage[empty]{fullpage}
+    \usepackage{titlesec}
+    \usepackage{marvosym}
+    \usepackage[usenames,dvipsnames]{color}
+    \usepackage{verbatim}
+    \usepackage{enumitem}
+    \usepackage[hidelinks]{hyperref}
+    \usepackage[english]{babel}
+    \usepackage{tabularx}
+    \usepackage{tikz}
+    \input{glyphtounicode}
+    \usepackage{palatino}
+
+    % Adjust margins
+    \addtolength{\oddsidemargin}{-1cm}
+    \addtolength{\evensidemargin}{-1cm}
+    \addtolength{\textwidth}{2cm}
+    \addtolength{\topmargin}{-1cm}
+    \addtolength{\textheight}{2cm}
+
+    \urlstyle{same}
+
+    \raggedbottom
+    \raggedright
+    \setlength{\tabcolsep}{0cm}
+
+    % Sections formatting
+    \titleformat{\section}{
+    \vspace{-4pt}\scshape\raggedright\large
+    }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+
+    % Ensure that .pdf is machine readable/ATS parsable
+    \pdfgentounicode=1
+
+    %-----CUSTOM COMMANDS FOR FORMATTING SECTIONS----------------------------------
+
+    \newcommand{\ProjectEntry}[2]{%
+      \item
+      \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & #2 \\
+      \end{tabular*}\vspace{-5pt}
+    }
+
+    \newcommand{\CVItem}[1]{
+    \item\small{
+      {#1 \vspace{-2pt}}
+    }
+    }
+
+    \newcommand{\CVSubheading}[4]{
+    \vspace{-2pt}\item
+      \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & #2 \\
+        \small#3 & \small #4 \\
+      \end{tabular*}\vspace{-7pt}
+    }
+
+    \newcommand{\CVSubSubheading}[2]{
+      \item
+      \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+        \text{\small#1} & \text{\small #2} \\
+      \end{tabular*}\vspace{-7pt}
+    }
+
+    \newcommand{\CVSubItem}[1]{\CVItem{#1}\vspace{-4pt}}
+
+    \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+
+    \newcommand{\CVSubHeadingListStart}{\begin{itemize}[leftmargin=0.5cm, label={}]}
+    % \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]} % Uncomment for US
+    \newcommand{\CVSubHeadingListEnd}{\end{itemize}}
+    \newcommand{\CVItemListStart}{\begin{itemize}}
+    \newcommand{\CVItemListEnd}{\end{itemize}\vspace{-5pt}}
+
+    %------------------------------------------------------------------------------
+    % CV STARTS HERE  %
+    %------------------------------------------------------------------------------
+    \begin{document}
+
+    %-----HEADING------------------------------------------------------------------
+    \begin{comment}
+    In Europe it is common to include a picture of ones self in the CV. Select
+    which heading appropriate for the document you are creating.
+    \end{comment}
+
+    ${includePicture? `
+      \\begin{minipage}[c]{0.05\\textwidth}
+    \\-\\
+    \\end{minipage}
+    \\begin{minipage}[c]{0.2\\textwidth}
+    \\begin{tikzpicture}
+      \\clip (0,0) circle (1.75cm);
+      \\node at (0,0) {\\includegraphics[width = 4cm]{image-${globalId}}};
+      % if necessary the picture may be moved by changing the at (coordinates)
+      % width defines the 'zoom' of the picture
+    \\end{tikzpicture}
+    \\hfill\\vline\\hfill
+    \\end{minipage}
+    \\begin{minipage}[c]{0.4\\textwidth}
+    \\textbf{\\Huge \\scshape{${addLineBreakInSpacing(sanitizeInput(name))}}} \\\\ \\vspace{1pt}
+      % \\scshape sets small capital letters, remove if desired
+      \\small{${sanitizeInput(phoneNumber)}} \\\\
+      \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}}\\\\
+      ${linkedInLink!=='' ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}} ` : ``} ${githubLink!=='' ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}  ` : ``}  ${portfolioLink!=='' ? `\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}` : ``}
+    \\end{minipage}
+      ` : `
+       %Without picture
+    \\begin{center}
+        \\textbf{\\Huge \\scshape ${sanitizeInput(name)}} \\\\ \\vspace{1pt} %\\scshape sets small capital letters, remove if desired
+        \\small ${sanitizeInput(phoneNumber)} $|$
+        \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}} ${portfolioLink ? `$|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:``} ${linkedInLink || githubLink ? ` $|$ \\\\ ` : ``}
+        ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}` : ``} ${githubLink && linkedInLink ? ` $|$` : ``}
+        % you should adjust you linked in profile name to be professional and recognizable
+        ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}` : ``}
+    \\end{center}
+      `}
+    \begin{comment}
+    This CV was written for specifically for positions I was applying for in
+    academia, and then modified to be a template.
+
+    A standard CV is about two pages long where as a resume in the US is one page.
+    sections can be added and removed here with this in mind. In my experience,
+    education, and applicable work experience and skills are the most import things
+    to include on a resume. For a CV the Europass CV suggests the categories: Work
+    Experience, Education and Training, Language Skills, Digital Skills,
+    Communication and Interpersonal Skills, Conferences and Seminars, Creative Works
+    Driver's License, Hobbies and Interests, Honors and Awards, Management and
+    Leadership Skills, Networks and Memberships, Organizational Skills, Projects,
+    Publications, Recommendations, Social and Political Activities, Volunteering.
+
+    Your goal is to convey a who, what , when, where, why for every item you share.
+    The who is obviously you, but I believe the rest should be done in that order.
+    For example below. An employer cares most about the degree held and typically
+    less about the institution or where it is located (This is still good
+    information though). Whatever order you choose be consistent throughout.
+    \end{comment}
+
+    %-----EDUCATION----------------------------------------------------------------
+    \section{Education}
+    \CVSubHeadingListStart
+    ${parseEducationString()}
+    \CVSubHeadingListEnd
+
+    %-----WORK EXPERIENCE----------------------------------------------------------
+    ${parseExperienceString()}
+    %-----PROJECTS AND RESEARCH----------------------------------------------------
+
+    ${parseProjectString()}
+
+    %-----HONORS AND AWARDS--------------------------------------------------------
+    ${parseHonorString()}
+
+    %-----CLUBS AND SOCIETIES--------------------------------------------------------
+    ${parseClubString()}
+
+    %-----Certifications-------------------------------------------------------------------
+    ${parseCertificateString()}
+
+    %-----SKILLS-------------------------------------------------------------------
+    ${parseSkillString()}
+
+    %-----Positions of Responsibility--------------------------------------------------------
+    ${parsePositionString()}
+
+    %------------------------------------------------------------------------------
+    \end{document}`
+
+    const formData = new FormData()
+      formData.append('payload', Code)
+      if(imageFile && includePicture){
+        formData.append('imageFile', imageFile)
+      }
+      formData.append('globalId', globalId)
+      api.post('/' , formData, {responseType: 'blob',
+          headers:{
+          'Content-Type': 'multipart/form-data'
+      }})
+      .then((res)=>{
+        const file = new Blob([res.data], { type: 'application/pdf' });
+        const fileURL = URL.createObjectURL(file);
+        setPdfUrl(fileURL);
+
+      })
+      .catch((err)=>{
+        console.log(err)
+      })
+    }
 
   return (
     <>
@@ -823,17 +878,6 @@ function ResumeWithPhoto() {
           onSubmit={handleFormSubmit}
           className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10"
         >
-          {/* Add AI Generator Button at the top */}
-          <div className="mb-8 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setChatbotModalOpen(true)}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-            >
-              Generate with AI
-            </button>
-          </div>
-
           {/* Personal Information Section */}
           <div className="mb-8 border-b border-white/10 pb-6">
             <div className="mb-6">
@@ -1702,15 +1746,6 @@ function ResumeWithPhoto() {
                 <label className="inline-flex items-center cursor-pointer">
                   <input
                     type="checkbox"
-                    checked={includeProjectLinks}
-                    onChange={(e) => setIncludeProjectLinks(e.target.checked)}
-                    className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                  />
-                  <span className="ml-2 text-white">Include Project Links</span>
-                </label>
-                <label className="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
                     checked={includeProjects}
                     onChange={(e) => setIncludeProjects(e.target.checked)}
                     className="form-checkbox h-4 w-4 text-white focus:ring-white"
@@ -1765,69 +1800,108 @@ function ResumeWithPhoto() {
                         </Tooltip>
                       </div>
 
-                      {includeProjectLinks && (
-                        <>
-                          <div className="mb-4">
-                            <label className="block text-[#44BCFF] font-medium mb-2">
-                              Project Link Title*{" "}
-                              <span className=" mx-0.5 text-xs text-white">
-                                Tip: Use concise text like "Github Link" or
-                                "Website Link"
-                              </span>
-                            </label>
-                            <Tooltip
-                              title="Not Allowed Here"
-                              message="Making Text Bold is not allowed here"
-                            >
-                              <input
-                                type="text"
-                                value={entry.projectLinkTitle}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    setProjectEntries,
-                                    projectEntries,
-                                    index,
-                                    "projectLinkTitle",
-                                    e.target.value
-                                  )
-                                }
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                required
-                              />
-                            </Tooltip>
-                          </div>
+                      <div className="mb-4">
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Description*
+                        </label>
+                        <Tooltip
+                          title="Not Allowed Here"
+                          message="Making Text Bold is not allowed here"
+                        >
+                          <textarea
+                            value={entry.description}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "description",
+                                e.target.value
+                              )
+                            }
+                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </Tooltip>
+                      </div>
 
-                          <div className="mb-4">
-                            <label className="block text-[#44BCFF] font-medium mb-2">
-                              Project Link*{" "}
-                              <span className=" mx-0.5 text-xs text-white">
-                                Tip: The actual URL of the project (e.g.,
-                                https://github.com/username/project)
-                              </span>
-                            </label>
-                            <Tooltip
-                              title="Not Allowed Here"
-                              message="Making Text Bold is not allowed here"
-                            >
-                              <input
-                                type="url"
-                                value={entry.projectLink}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    setProjectEntries,
-                                    projectEntries,
-                                    index,
-                                    "projectLink",
-                                    e.target.value
-                                  )
-                                }
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                required
-                              />
-                            </Tooltip>
-                          </div>
-                        </>
-                      )}
+                      <div className="mb-4">
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Tools Used*{" "}
+                          <span className="mx-0.5 text-xs text-white">
+                            Tip: Separate tools with commas (e.g., React, Node.js, MongoDB)
+                          </span>
+                        </label>
+                        <Tooltip
+                          title="Not Allowed Here"
+                          message="Making Text Bold is not allowed here"
+                        >
+                          <input
+                            type="text"
+                            value={entry.tools}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "tools",
+                                e.target.value
+                              )
+                            }
+                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </Tooltip>
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Link Type*
+                        </label>
+                        <select
+                          value={entry.linkType}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setProjectEntries,
+                              projectEntries,
+                              index,
+                              "linkType",
+                              e.target.value as 'github' | 'website'
+                            )
+                          }
+                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          required
+                        >
+                          <option value="github">GitHub</option>
+                          <option value="website">Website</option>
+                        </select>
+                      </div>
+
+                      <div className="mb-4">
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Project Link*
+                        </label>
+                        <Tooltip
+                          title="Not Allowed Here"
+                          message="Making Text Bold is not allowed here"
+                        >
+                          <input
+                            type="url"
+                            value={entry.link}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "link",
+                                e.target.value
+                              )
+                            }
+                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </Tooltip>
+                      </div>
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
@@ -1835,7 +1909,7 @@ function ResumeWithPhoto() {
                         </label>
                         <input
                           type="month"
-                          value={entry.startDate || ""}
+                          value={entry.startDate}
                           onChange={(e) =>
                             handleInputChange(
                               setProjectEntries,
@@ -1846,6 +1920,7 @@ function ResumeWithPhoto() {
                             )
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          required
                         />
                       </div>
 
@@ -1855,8 +1930,8 @@ function ResumeWithPhoto() {
                         </label>
                         <input
                           type={entry.endDate === "Present" ? "text" : "month"}
+                          value={entry.endDate}
                           disabled={entry.endDate === "Present"}
-                          value={entry.endDate || ""}
                           onChange={(e) =>
                             handleInputChange(
                               setProjectEntries,
@@ -1867,110 +1942,108 @@ function ResumeWithPhoto() {
                             )
                           }
                           className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
-                            entry.endDate === "Present"
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
+                            entry.endDate === "Present" ? "opacity-50 cursor-not-allowed" : ""
                           }`}
+                          required
                         />
-                        <input
-                          type="checkbox"
-                          onChange={(e) => {
-                            if (e.target.checked) {
-                              handleInputChange(
+                        <div className="mt-2">
+                          <input
+                            type="checkbox"
+                            onChange={(e) => {
+                              if (e.target.checked) {
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "endDate",
+                                  "Present"
+                                );
+                              } else {
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "endDate",
+                                  ""
+                                );
+                              }
+                            }}
+                          />
+                          <label className="ml-2 text-white">Currently Working</label>
+                        </div>
+                      </div>
+
+                      <div className="col-span-full">
+                        <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
+                          Achievements:*{" "}
+                          <span className="mx-0.5 text-xs text-white">
+                            Tip: Use Bold For Highlighting but don't overdo it
+                          </span>
+                        </h4>
+                        {entry.achievements.map((achievement, achievementIndex) => (
+                          <div
+                            key={`${entry.id}-achievement-${achievementIndex}`}
+                            className="mb-2 flex items-center space-x-4"
+                          >
+                            <label className="block text-[#44BCFF] font-medium mb-1">
+                              Achievement {achievementIndex + 1}:
+                            </label>
+                            <input
+                              type="text"
+                              value={achievement}
+                              onKeyDown={(e) =>
+                                handleKeyActionOnSublist(
+                                  e,
+                                  setProjectEntries,
+                                  "achievements",
+                                  index,
+                                  achievementIndex
+                                )
+                              }
+                              onChange={(e) =>
+                                handleSubListInputChange(
+                                  setProjectEntries,
+                                  index,
+                                  "achievements",
+                                  achievementIndex,
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            />
+                            <button
+                              type="button"
+                              onClick={() =>
+                                removeItemFromSubList(
+                                  setProjectEntries,
+                                  index,
+                                  "achievements",
+                                  achievementIndex
+                                )
+                              }
+                              className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        ))}
+                        <div className="mt-2">
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addItemToSubList(
                                 setProjectEntries,
-                                projectEntries,
                                 index,
-                                "endDate",
-                                "Present"
-                              );
-                            } else {
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "endDate",
+                                "achievements",
                                 ""
-                              );
+                              )
                             }
-                          }}
-                        />
-
-                        <label htmlFor="">Currently Pursuing</label>
+                            className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
+                          >
+                            Add Achievement
+                          </button>
+                        </div>
                       </div>
-                    </div>
-
-                    <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                      Features:*{" "}
-                      <span className=" mx-0.5 text-xs text-white">
-                        Tip: Use Bold For Highlighting but don't overdo it
-                      </span>
-                    </h4>
-                    {entry.featureList.map((feature, featureIndex) => (
-                      <div
-                        key={`${entry.id}-feature-${featureIndex}`}
-                        className="mb-2 flex items-center space-x-4"
-                      >
-                        <label
-                          htmlFor={`feature-${entry.id}-${featureIndex}`}
-                          className="block text-[#44BCFF] font-medium mb-1"
-                        >
-                          Feature {featureIndex + 1}:
-                        </label>
-                        <input
-                          type="text"
-                          id={`feature-${entry.id}-${featureIndex}`}
-                          value={feature}
-                          onKeyDown={(e) =>
-                            handleKeyActionOnSublist(
-                              e,
-                              setProjectEntries,
-                              "featureList",
-                              index,
-                              featureIndex
-                            )
-                          }
-                          onChange={(e) =>
-                            handleSubListInputChange(
-                              setProjectEntries,
-                              index,
-                              "featureList",
-                              featureIndex,
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            removeItemFromSubList(
-                              setProjectEntries,
-                              index,
-                              "featureList",
-                              featureIndex
-                            )
-                          }
-                          className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                    <div className="mt-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          addItemToSubList(
-                            setProjectEntries,
-                            index,
-                            "featureList",
-                            ""
-                          )
-                        }
-                        className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
-                      >
-                        Add Feature
-                      </button>
                     </div>
                   </div>
                 ))}
@@ -2083,11 +2156,9 @@ function ResumeWithPhoto() {
           </div>
 
           {/* Honors and Achievements Section */}
-          <div className="mb-8 border-b  pb-6">
+          <div className="mb-8 border-b pb-6">
             <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-light text-white">
-                Honors and Achievements
-              </h2>
+              <h2 className="text-2xl font-light text-white">Achievements</h2>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -2098,11 +2169,7 @@ function ResumeWithPhoto() {
                 <span className="ml-2 text-white">Include Section</span>
               </label>
             </div>
-            <div
-              className={`${
-                !includeHonors ? "opacity-50 pointer-events-none" : ""
-              }`}
-            >
+            <div className={`${!includeHonors ? "opacity-50 pointer-events-none" : ""}`}>
               {includeHonors && (
                 <div className="space-y-6">
                   {honorEntries.map((entry, index) => (
@@ -2124,11 +2191,8 @@ function ResumeWithPhoto() {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                          <label
-                            htmlFor={`title-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Title:
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Title*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2136,7 +2200,6 @@ function ResumeWithPhoto() {
                           >
                             <input
                               type="text"
-                              id={`title-${entry.id}`}
                               value={entry.title}
                               onChange={(e) =>
                                 handleInputChange(
@@ -2152,12 +2215,10 @@ function ResumeWithPhoto() {
                             />
                           </Tooltip>
                         </div>
+
                         <div>
-                          <label
-                            htmlFor={`date-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Date:
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Link Title*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2165,64 +2226,6 @@ function ResumeWithPhoto() {
                           >
                             <input
                               type="text"
-                              id={`date-${entry.id}`}
-                              value={entry.date}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-                        <div className="col-span-full">
-                          <label
-                            htmlFor={`description-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Description:
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <textarea
-                              id={`description-${entry.id}`}
-                              value={entry.description}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "description",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-                        <div>
-                          <label
-                            htmlFor={`linkTitle-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Link Title:
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              id={`linkTitle-${entry.id}`}
                               value={entry.linkTitle}
                               onChange={(e) =>
                                 handleInputChange(
@@ -2238,12 +2241,10 @@ function ResumeWithPhoto() {
                             />
                           </Tooltip>
                         </div>
-                        <div>
-                          <label
-                            htmlFor={`link-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Link:
+
+                        <div className="col-span-full">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Link*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2251,7 +2252,6 @@ function ResumeWithPhoto() {
                           >
                             <input
                               type="url"
-                              id={`link-${entry.id}`}
                               value={entry.link}
                               onChange={(e) =>
                                 handleInputChange(
@@ -2542,7 +2542,7 @@ function ResumeWithPhoto() {
           </div>
 
           {/* Certifications Section */}
-          <div className="mb-8 border-b  pb-6">
+          <div className="mb-8 border-b pb-6">
             <div className="mb-6 flex justify-between items-center">
               <h2 className="text-2xl font-light text-white">Certifications</h2>
               <label className="inline-flex items-center cursor-pointer">
@@ -2555,11 +2555,7 @@ function ResumeWithPhoto() {
                 <span className="ml-2 text-white">Include Section</span>
               </label>
             </div>
-            <div
-              className={`${
-                !includeCertificates ? "opacity-50 pointer-events-none" : ""
-              }`}
-            >
+            <div className={`${!includeCertificates ? "opacity-50 pointer-events-none" : ""}`}>
               {includeCertificates && (
                 <div className="space-y-6">
                   {certificateEntries.map((entry, index) => (
@@ -2573,9 +2569,7 @@ function ResumeWithPhoto() {
                         </h3>
                         <button
                           type="button"
-                          onClick={() =>
-                            removeEntry(setCertificateEntries, index)
-                          }
+                          onClick={() => removeEntry(setCertificateEntries, index)}
                           className="text-red-400 hover:text-red-300 focus:outline-none"
                         >
                           Remove
@@ -2602,7 +2596,7 @@ function ResumeWithPhoto() {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
@@ -2610,10 +2604,30 @@ function ResumeWithPhoto() {
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
+                            Date*
+                          </label>
+                          <input
+                            type="month"
+                            value={entry.date}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setCertificateEntries,
+                                certificateEntries,
+                                index,
+                                "date",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
                             Certificate Link*{" "}
                             <span className="mx-0.5 text-xs text-white">
-                              Tip: The URL of your certificate or verification
-                              page
+                              Tip: The URL of your certificate or verification page
                             </span>
                           </label>
                           <Tooltip
@@ -2632,7 +2646,7 @@ function ResumeWithPhoto() {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
@@ -2645,9 +2659,7 @@ function ResumeWithPhoto() {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() =>
-                    addEntry(setCertificateEntries, defaultCertificateEntry)
-                  }
+                  onClick={() => addEntry(setCertificateEntries, defaultCertificateEntry)}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Certificate
@@ -2656,8 +2668,136 @@ function ResumeWithPhoto() {
             </div>
           </div>
 
+          {/* Positions of Responsibility Section */}
+          <div className="mb-8 border-b pb-6">
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-2xl font-light text-white">Positions of Responsibility</h2>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includePositions}
+                  onChange={(e) => setIncludePositions(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                />
+                <span className="ml-2 text-white">Include Section</span>
+              </label>
+            </div>
+            <div className={`${!includePositions ? "opacity-50 pointer-events-none" : ""}`}>
+              {includePositions && (
+                <div className="space-y-6">
+                  {positionEntries.map((entry, index) => (
+                    <div
+                      key={entry.id}
+                      className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
+                    >
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-light text-[#44BCFF]">
+                          Position #{index + 1}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => removeEntry(setPositionEntries, index)}
+                          className="text-red-400 hover:text-red-300 focus:outline-none"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Position Name*
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="text"
+                              value={entry.positionName}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setPositionEntries,
+                                  positionEntries,
+                                  index,
+                                  "positionName",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Society Name*
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="text"
+                              value={entry.societyName}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setPositionEntries,
+                                  positionEntries,
+                                  index,
+                                  "societyName",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Date*
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="month"
+                              value={entry.date}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setPositionEntries,
+                                  positionEntries,
+                                  index,
+                                  "date",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => addEntry(setPositionEntries, defaultPositionEntry)}
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <PlusIcon className="w-4 h-4" /> Add Position
+                </button>
+              </div>
+            </div>
+          </div>
+
           <div className="flex justify-center">
-           
             <div className=" bg-black rounded-xl flex justify-center items-center">
               <div className="relative inline-flex rounded-xl  group">
                 <div className="absolute transitiona-all  rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
@@ -2674,15 +2814,6 @@ function ResumeWithPhoto() {
         </form>
         <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={hello} />
       </div>
-
-      {/* Add ChatbotModal */}
-      {chatbotModalOpen && (
-        <ChatbotModal
-          closeModal={() => setChatbotModalOpen(false)}
-          updateFormData={handleAIGeneratedData}
-          api = {api}
-        />
-      )}
     </>
   );
 }
