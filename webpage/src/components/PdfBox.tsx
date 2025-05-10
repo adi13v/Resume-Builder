@@ -4,7 +4,7 @@ function PdfBox({pdfUrl , defaultPdfUrl}:{pdfUrl:string | null , defaultPdfUrl:s
   return (
     <div>
     {pdfUrl && (
-      <div className="pdf-viewer-container md:fixed md:top-19 md:right-0 md:w-1/2 sm:w-full">
+      <div className="pdf-viewer-z-0 container md:fixed md:top-19 md:right-0 md:w-1/2 sm:w-full">
         <iframe
           src={pdfUrl + '#zoom=88%'}
           className="w-full h-screen rounded-xl border border-white/10"

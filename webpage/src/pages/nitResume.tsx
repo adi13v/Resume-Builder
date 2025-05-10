@@ -1,15 +1,14 @@
 import "../App.css";
 import axios from "axios";
 import { useState, useRef, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
 import hello from "../assets/hello.pdf";
 import Tooltip from "../components/Tooltip";
 import Modal from "../components/Modal";
+import ChatbotModal from "../components/ChatbotModal";
 import {
   generateUUID,
-  BaseEntry,
   handleInputChange,
   sanitizeInputForDisplay,
   formatMonthYear,
@@ -24,29 +23,21 @@ import {
   handleKeyActiononList,
   handleKeyActionOnSublist,
 } from "../helper/helperFunctions";
+import { 
+  EducationDetails, 
+  ExperienceDetails, 
+  ProjectDetails, 
+  SkillDetails, 
+  CertificateDetails, 
+  AchievementDetails,
+  PositionOfResponsibilityDetails,
+  FormDataStore 
+} from "../types/nitResume";
 import PdfBox from "../components/PdfBox";
-import { ImageCropper } from "../components/ImageCropper";
 
 const api = axios.create({
   baseURL: `http://localhost:8000`,
 });
-
-interface FormDataStore {
-  name: string;
-  email: string;
-  phoneNumber: string;
-  githubLink: string;
-  linkedInLink: string;
-  portfolioLink: string;
-  educationEntries: EducationDetails[];
-  experienceEntries: ExperienceDetails[];
-  projectEntries: ProjectDetails[];
-  skillEntries: SkillDetails[];
-  honorEntries: HonorDetails[];
-  clubEntries: ClubDetails[];
-  certificateEntries: CertificateDetails[];
-  positionEntries: PositionDetails[];
-}
 
 const presets = [
   "Languages",
@@ -62,74 +53,15 @@ enum RestrictionType {
   NOT_ALLOWED = "not_allowed",
 }
 
-interface EducationDetails extends BaseEntry {
-  instituteName: string;
-  degree: string;
-  branch: string;
-  location: string;
-  startDate: string;
-  endDate: string;
-  gradeType: string;
-  cgpa: string;
-  percentage: string;
-}
-
-interface ExperienceDetails extends BaseEntry {
-  jobTitle: string;
-  companyName: string;
-  location: string;
-  startDate: string;
-  endDate: string;
-  workList: string[];
-}
-
-interface ProjectDetails extends BaseEntry {
-  projectName: string;
-  description: string;
-  tools: string;
-  startDate: string;
-  endDate: string;
-  achievements: string[];
-  link: string;
-  linkType: "GitHub" | "Website";
-}
-
-interface SkillDetails extends BaseEntry {
-  skillName: string;
-  skillList: string[];
-}
-
-interface HonorDetails extends BaseEntry {
-  title: string;
-  linkTitle: string;
-  link: string;
-}
-
-interface ClubDetails extends BaseEntry {
-  clubName: string;
-  clubList: string[];
-}
-
-interface CertificateDetails extends BaseEntry {
-  title: string;
-  link: string;
-  date: string;
-}
-
-interface PositionDetails extends BaseEntry {
-  positionName: string;
-  societyName: string;
-  date: string;
-}
-
 const defaultEducationEntry: EducationDetails = {
   id: "dfcvbhu7654efghnbvcd",
   instituteName: "Massachusetts Institute of Technology",
   degree: "Master of Science",
   branch: "Computer Science",
   location: "Cambridge, Massachusetts",
-  startDate: "2020-09",
-  endDate: "2022-05",
+  degreeAbbreviation: "M.Tech",
+  branchAbbreviation: "CSE",
+  endDate: "Present",
   gradeType: "cgpa",
   cgpa: "3.9",
   percentage: "",
@@ -140,8 +72,9 @@ const defaultEducationEntry2: EducationDetails = {
   instituteName: "Stanford University",
   degree: "Bachelor of Science",
   branch: "Computer Science",
+  degreeAbbreviation: "B.Tech",
+  branchAbbreviation: "CSE",
   location: "Stanford, California",
-  startDate: "2016-09",
   endDate: "2020-05",
   gradeType: "cgpa",
   cgpa: "3.8",
@@ -154,7 +87,8 @@ const defaultEducationEntry3: EducationDetails = {
   degree: "Bachelor of Arts",
   branch: "Mathematics",
   location: "Berkeley, California",
-  startDate: "2014-09",
+  degreeAbbreviation: "B.A",
+  branchAbbreviation: "Hons.",
   endDate: "2016-05",
   gradeType: "CGPA",
   cgpa: "3.7",
@@ -190,115 +124,106 @@ const defaultExperienceEntry2: ExperienceDetails = {
 };
 
 const defaultProjectEntry: ProjectDetails = {
-  id: generateUUID(),
-  projectName: "",
-  description: "",
-  tools: "",
-  startDate: "",
-  endDate: "",
-  achievements: [""],
-  link: "",
-  linkType: "GitHub"
+  id: "0okmhgfdr543edf",
+  projectName: "AI-Powered Resume Builder",
+  description: "A modern resume builder with AI-powered content suggestions",
+  toolsUsed: "React, TypeScript, Node.js, LaTeX",
+  linkTitle: "GitHub",
+  projectLink: "https://github.com/username/resume-builder",
+  startDate: "2023-01",
+  endDate: "2023-06",
+  workDone: [
+    "Implemented real-time LaTeX PDF generation with custom templates",
+    "Integrated AI-powered content suggestions and grammar checking",
+    "Developed responsive design with dark/light mode support",
+    "Added local storage for draft saving and auto-recovery"
+  ]
 };
 
 const defaultProjectEntry2: ProjectDetails = {
-  id: generateUUID(),
+  id: "0okmhgfdr543edf2",
   projectName: "Distributed Task Scheduler",
-  description: "A scalable distributed task scheduling system",
-  tools: "Go, Docker, Kubernetes, Redis",
+  description: "A distributed task scheduling system with high reliability",
+  toolsUsed: "Go, Raft, Docker, Kubernetes",
+  linkTitle: "GitHub",
+  projectLink: "https://github.com/username/task-scheduler",
   startDate: "2022-07",
   endDate: "2022-12",
-  achievements: [
+  workDone: [
     "Implemented distributed consensus using Raft algorithm",
     "Achieved 99.9% task execution reliability",
     "Scaled to handle 100K+ concurrent tasks",
     "Added monitoring and alerting system"
-  ],
-  link: "https://github.com/username/task-scheduler",
-  linkType: "GitHub"
+  ]
 };
 
 const defaultEmptySkillEntry: SkillDetails = {
   id: "3edfty7unbvcxae567j",
-  skillName: "",
-  skillList: [""],
+  key: "",
+  value: "",
 };
 const defaultSkillEntry: SkillDetails = {
   id: "3edfty7unbvcxae567j",
-  skillName: "Languages",
-  skillList: ["Python, JavaScript, TypeScript, Java, C++"],
+  key: "Languages",
+  value: "Python, JavaScript, TypeScript, Java, C++",
 };
 
 const defaultSkillEntry2: SkillDetails = {
   id: "3edfty7unbvcxae567j2",
-  skillName: "Frameworks",
-  skillList: ["React, Node.js, Express, Django, Spring Boot"],
+  key: "Frameworks",
+  value: "React, Node.js, Express, Django, Spring Boot",
 };
 
 const defaultSkillEntry3: SkillDetails = {
   id: "3edfty7unbvcxae567j3",
-  skillName: "Developer Tools",
-  skillList: ["Git, Docker, Kubernetes, AWS, Azure, CI/CD"],
+  key: "Developer Tools",
+  value: "Git, Docker, Kubernetes, AWS, Azure, CI/CD",
 };
 
 const defaultSkillEntry4: SkillDetails = {
   id: "3edfty7unbvcxae567j4",
-  skillName: "Databases",
-  skillList: ["MongoDB, PostgreSQL, Redis, MySQL"],
+  key: "Databases",
+  value: "MongoDB, PostgreSQL, Redis, MySQL",
 };
 
 const defaultSkillEntry5: SkillDetails = {
   id: "3edfty7unbvcxae567j5",
-  skillName: "Soft Skills",
-  skillList: ["Leadership, Team Collaboration, Problem Solving, Communication"],
+  key: "Soft Skills",
+  value: "Leadership, Team Collaboration, Problem Solving, Communication",
 };
 
-const defaultHonorEntry: HonorDetails = {
-  id: generateUUID(),
-  title: "",
-  linkTitle: "",
-  link: ""
+const defaultAchievementEntry: AchievementDetails = {
+  id: "honor1",
+  title: "Dean's List",
+  linkTitle: "Certificate",
+  link: "https://example.com/certificate"
 };
 
-const defaultHonorEntry2: HonorDetails = {
+const defaultAchievementEntry2: AchievementDetails = {
   id: "honor2",
   title: "Best Project Award",
-  date: "2022-12",
-  description:
-    "Awarded for outstanding performance in the annual project competition",
   linkTitle: "Profile Link",
-  link: "https://example.com/profile",
+  link: "https://example.com/profile"
 };
 
-const defaultClubEntry: ClubDetails = {
+const defaultClubEntry: PositionOfResponsibilityDetails = {
   id: "club1",
-  title: "Web Development Lead",
-  societyName: "KIIT MLSA",
-  startDate: "2023-01",
-  endDate: "2024-01",
-  achievements: [
-    "Led a team of 20+ members in developing and maintaining the society's website",
-    "Organized monthly coding workshops and hackathons",
-  ],
+  positionName: "Technical Lead",
+  organizationName: "KIIT MLSA",
+  date: "2023-01"
 };
 
-const defaultClubEntry2: ClubDetails = {
+const defaultClubEntry2: PositionOfResponsibilityDetails = {
   id: "club2",
-  title: "Public Speaking Mentor",
-  societyName: "KIIT MUN Society",
-  startDate: "2022-08",
-  endDate: "2023-08",
-  achievements: [
-    "Mentored 50+ students in public speaking and debate",
-    "Organized inter-college MUN conference with 200+ participants",
-  ],
+  positionName: "Public Speaking Mentor",
+  organizationName: "KIIT MUN Society",
+  date: "2022-08"
 };
 
 const defaultCertificateEntry: CertificateDetails = {
-  id: generateUUID(),
-  title: "",
-  link: "",
-  date: ""
+  id: "cert1",
+  title: "AWS Cloud Practitioner",
+  link: "https://example.com/certificate1"
 };
 
 const defaultCertificateEntry2: CertificateDetails = {
@@ -307,27 +232,50 @@ const defaultCertificateEntry2: CertificateDetails = {
   link: "https://example.com/certificate2",
 };
 
-const defaultPositionEntry: PositionDetails = {
-  id: generateUUID(),
-  positionName: "",
-  societyName: "",
-  date: ""
+const defaultPositionEntry: PositionOfResponsibilityDetails = {
+  id: "pos1",
+  positionName: "Technical Lead",
+  organizationName: "KIIT MLSA",
+  date: "2023-01"
 };
 
 function ResumeWithPhoto() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
+  const [globalId, setGlobalId] = useState<string>(generateUUID());
+  const [name, setName] = useState<string>("Jake Smith");
+  const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
+  const [phoneNumber, setPhoneNumber] = useState<string>("6386419509");
+
+  const [githubLink, setGithubLink] = useState<string>("");
+  const [linkedInLink, setLinkedInLink] = useState<string>("");
+  const [imageFile, setImageFile] = useState<File | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
+  const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
+  const [prompt, setPrompt] = useState<string>("");
+  const storageKeyName = `formData-${window.location.pathname}`;
+
+  // Section toggles
+  const [includeExperience, setIncludeExperience] = useState(true);
+  const [includeProjects, setIncludeProjects] = useState(true);
+  const [includeSkills, setIncludeSkills] = useState(true);
+  const [includeCertificates, setIncludeCertificates] = useState(true);
+  const [includeAchievements, setIncludeAchievements] = useState(true);
+  const [includePositions, setIncludePositions] = useState(true);
+  const [includePicture, setIncludePicture] = useState(true);
+
+  // Form data states
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
     defaultEducationEntry2,
     defaultEducationEntry3,
   ]);
-
-  const [experienceEntries, setExperienceEntries] = useState<
-    ExperienceDetails[]
-  >([defaultExperienceEntry, defaultExperienceEntry2]);
+  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
+    defaultExperienceEntry,
+    defaultExperienceEntry2,
+  ]);
   const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
     defaultProjectEntry,
-    defaultProjectEntry2,
   ]);
   const [skills, setSkills] = useState<SkillDetails[]>([
     defaultSkillEntry,
@@ -336,42 +284,15 @@ function ResumeWithPhoto() {
     defaultSkillEntry4,
     defaultSkillEntry5,
   ]);
-  const [name, setName] = useState<string>("Jake Smith");
-  const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
-  const [phoneNumber, setPhoneNumber] = useState<string>("6386419509");
-  const [portfolioLink, setPortfolioLink] = useState<string>("google.com");
-  const [githubLink, setGithubLink] = useState<string>("");
-  const [linkedInLink, setLinkedInLink] = useState<string>("");
-  const [globalId, setGlobalId] = useState<string>(generateUUID());
-  console.log(globalId);
-  const storageKeyName = `formData-${window.location.pathname}`;
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [honorEntries, setHonorEntries] = useState<HonorDetails[]>([
-    defaultHonorEntry,
-    defaultHonorEntry2,
+  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([
+    defaultCertificateEntry,
   ]);
-  const [clubEntries, setClubEntries] = useState<ClubDetails[]>([
-    defaultClubEntry,
-    defaultClubEntry2,
+  const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([
+    defaultAchievementEntry,
   ]);
-  const [certificateEntries, setCertificateEntries] = useState<
-    CertificateDetails[]
-  >([defaultCertificateEntry, defaultCertificateEntry2]);
-  const [positionEntries, setPositionEntries] = useState<PositionDetails[]>([
+  const [positionEntries, setPositionEntries] = useState<PositionOfResponsibilityDetails[]>([
     defaultPositionEntry,
   ]);
-
-  // Add new state variables for section toggles
-  const [includeExperience, setIncludeExperience] = useState(true);
-  const [includeProjects, setIncludeProjects] = useState(true);
-  const [includeSkills, setIncludeSkills] = useState(true);
-  const [includeHonors, setIncludeHonors] = useState(true);
-  const [includeClubs, setIncludeClubs] = useState(true);
-  const [includeCertificates, setIncludeCertificates] = useState(true);
-  const [includeProjectLinks, setIncludeProjectLinks] = useState(true);
-  const [includePicture, setIncludePicture] = useState(true);
-  const [includePositions, setIncludePositions] = useState(true);
 
   const updateAvatar = async (imageUrl: string) => {
     try {
@@ -399,15 +320,21 @@ function ResumeWithPhoto() {
       phoneNumber: phoneNumber,
       githubLink: githubLink,
       linkedInLink: linkedInLink,
-      portfolioLink: portfolioLink,
+     
       educationEntries: educationEntries,
       experienceEntries: experienceEntries,
       projectEntries: projectEntries,
       skills: skills,
-      honorEntries: honorEntries,
-      clubEntries: clubEntries,
       certificateEntries: certificateEntries,
+      achievementEntries: achievementEntries,
       positionEntries: positionEntries,
+      includeExperience: includeExperience,
+      includeProjects: includeProjects,
+      includeSkills: includeSkills,
+      includeCertificates: includeCertificates,
+      includeAchievements: includeAchievements,
+      includePositions: includePositions,
+      prompt: prompt,
     };
     debouncedStoreRef.current(store);
   }, [
@@ -416,15 +343,21 @@ function ResumeWithPhoto() {
     phoneNumber,
     githubLink,
     linkedInLink,
-    portfolioLink,
+    
     educationEntries,
     experienceEntries,
     projectEntries,
     skills,
-    honorEntries,
-    clubEntries,
     certificateEntries,
+    achievementEntries,
     positionEntries,
+    includeExperience,
+    includeProjects,
+    includeSkills,
+    includeCertificates,
+    includeAchievements,
+    includePositions,
+    prompt,
   ]);
 
   useEffect(() => {
@@ -437,43 +370,38 @@ function ResumeWithPhoto() {
       setPhoneNumber(store.phoneNumber);
       setGithubLink(store.githubLink);
       setLinkedInLink(store.linkedInLink);
-      setPortfolioLink(store.portfolioLink);
+
       setEducationEntries(store.educationEntries);
       setExperienceEntries(store.experienceEntries);
       setProjectEntries(store.projectEntries);
       setSkills(store.skills);
-      setHonorEntries(
-        store.honorEntries || [defaultHonorEntry, defaultHonorEntry2]
-      );
-      setClubEntries(
-        store.clubEntries || [defaultClubEntry, defaultClubEntry2]
-      );
-      setCertificateEntries(
-        store.certificateEntries || [
-          defaultCertificateEntry,
-          defaultCertificateEntry2,
-        ]
-      );
-      setPositionEntries(store.positionEntries || [defaultPositionEntry]);
+      setCertificateEntries(store.certificateEntries || []);
+      setAchievementEntries(store.achievementEntries || []);
+      setPositionEntries(store.positionEntries || []);
+      setIncludeExperience(store.includeExperience);
+      setIncludeProjects(store.includeProjects);
+      setIncludeSkills(store.includeSkills);
+      setIncludeCertificates(store.includeCertificates);
+      setIncludeAchievements(store.includeAchievements);
+      setIncludePositions(store.includePositions);
+      setPrompt(store.prompt || "");
     }
   }, []);
+
+
+  useEffect(() => {
+    if (includeProjects) {
+      setIncludeProjects(true);
+    } else {
+      setIncludeProjects(false);
+    }
+  }, [includeProjects]);
 
   const parseEducationString = () => {
     const newString: string | void = educationEntries
       .map((entry) => {
-        return `\\CVSubheading
-    {{${sanitizeInput(entry.degree)} $|$ \\emph{\\small{${sanitizeInput(
-          entry.branch
-        )}}}}} {${formatMonthYear(entry.startDate)} -- ${formatMonthYear(
-          entry.endDate
-        )}}
-    {${sanitizeInput(entry.instituteName)} $|$ ${sanitizeInput(
-          entry.location
-        )}}{${
-          entry.gradeType === "cgpa"
-            ? `CGPA: ${entry.cgpa}`
-            : `Percentage: ${entry.percentage}`
-        }}
+        return `${entry.degreeAbbreviation?`${sanitizeInput(entry.degreeAbbreviation)}`:`${sanitizeInput(entry.degree)}`}, ${sanitizeInput(entry.branchAbbreviation?`${sanitizeInput(entry.branchAbbreviation)}`:`${sanitizeInput(entry.branch)}`)} & ${sanitizeInput(entry.instituteName)} & ${entry.gradeType.toUpperCase()=='CGPA'?`${sanitizeInput(entry.cgpa)}`:`${sanitizeInput(entry.percentage)}`} & ${formatMonthYear(entry.endDate)} \\\\ 
+  \\hline
   `;
       })
       .join("");
@@ -483,29 +411,32 @@ function ResumeWithPhoto() {
 
   const parseExperienceString = () => {
     if (!includeExperience) {
+
       return ``;
     }
+   
     let newString: string | void = experienceEntries
       .map((entry) => {
-        return `\\CVSubheading
-    {${sanitizeInput(entry.jobTitle)}}{${formatMonthYear(
-          entry.startDate
-        )} -- ${formatMonthYear(entry.endDate)}}
+        return `\\resumeSubheading
     {${sanitizeInput(entry.companyName)}}{${sanitizeInput(entry.location)}}
-    \\CVItemListStart
-      ${entry.workList
-        .map((work) => {
-          return `\\CVItem{${sanitizeInput(work)}}`;
-        })
-        .join("")}
-    \\CVItemListEnd
-      `;
+    {${sanitizeInput(entry.jobTitle)}}{${formatMonthYear(entry.startDate)} - ${formatMonthYear(entry.endDate)}}
+    \\resumeItemListStart
+    ${entry.workList.map((work)=>{
+      return `
+      \\item ${sanitizeInput(work)}
+      `
+    }).join("")}
+    \\resumeItemListEnd
+    `
       })
       .join("");
-    newString = `\\section{Work Experience}
-  \\CVSubHeadingListStart
+
+    newString = `\\section{Experience}
+    \\vspace{-0.4mm}
+    \\resumeSubHeadingListStart
   ${newString}
-  \\CVSubHeadingListEnd
+  \\resumeSubHeadingListEnd
+  \\vspace{-6mm}
   `;
     return newString;
   };
@@ -515,103 +446,71 @@ function ResumeWithPhoto() {
       return ``;
     }
 
-    let newString = "";
-    if (includeProjectLinks) {
-      newString = projectEntries
-        .map((entry) => {
-          return `\\CVSubheading
-    {${sanitizeInput(entry.projectName)}}{${formatMonthYear(
-            entry.startDate
-          )} - ${formatMonthYear(entry.endDate)}}
-    {\\href{${sanitizeInputForLink(
-      entry.link
-    )}}{\\color{blue}${sanitizeInputForDisplay(
-            sanitizeInput(entry.projectName)
-          )}}}{}
-    \\CVItemListStart
-      ${entry.achievements
-        .map((achievement) => {
-          return `\\CVItem{${sanitizeInput(achievement)}}`;
-        })
-        .join("")}
-    \\CVItemListEnd
-`;
-        })
-        .join("");
-    } else {
-      newString = projectEntries
-        .map((entry) => {
-          return `\\ProjectEntry{${entry.projectName}}{${formatMonthYear(
-            entry.startDate
-          )} - ${formatMonthYear(entry.endDate)}}
-  \\CVItemListStart
-    ${entry.achievements
-      .map((achievement) => {
-        return `\\CVItem{${sanitizeInput(achievement)}}`;
-      })
-      .join("")}
-  \\CVItemListEnd
-`;
-        })
-        .join("");
-    }
+    const newString = projectEntries
+      .map((entry)=> {
+        return `\\resumeProject
+    {${sanitizeInput(entry.projectName)}: ${sanitizeInput(entry.description)}}
+    {Tools: ${sanitizeInput(entry.toolsUsed)}}
+    {${formatMonthYear(entry.endDate)}}
+    {{}\\href{${sanitizeInputForLink(entry.projectLink)}}{\\textcolor{darkblue}{${sanitizeInput(entry.linkTitle)}}}}
+\\resumeItemListStart
+    ${entry.workDone.map((work)=>{
+      return `\\item ${sanitizeInput(work)}`
+    }).join("")}
+\\resumeItemListEnd`}).join("");
 
-    newString =
-      `
+
+    return `
 \\section{Projects}
-\\CVSubHeadingListStart
-` +
-      newString +
-      `\\CVSubHeadingListEnd
+\\vspace{-0.4mm}
+\\resumeSubHeadingListStart
+${newString}
+\\resumeSubHeadingListEnd
+\\vspace{-8mm}
 `;
-
-    return newString;
+  
   };
 
-  const parseHonorString = () => {
-    if (!includeProjects) {
+
+
+
+  const parseAchievementString = () => {
+    if (!includeAchievements) {
       return ``;
     }
-
-    const newString = `
-\\section{Honors and Achievments}
-\\CVSubHeadingListStart
-  ${honorEntries
-    .map((entry) => {
-      return `\\CVSubheading
-    {${sanitizeInput(entry.title)}}{${formatMonthYear(entry.date)}}
-    {${sanitizeInput(entry.description)}}{\\href{${sanitizeInputForLink(
-        entry.link
-      )}}{\\color{blue}${sanitizeInputForDisplay(
-        sanitizeInput(entry.linkTitle)
-      )}}}
-    `;
-    })
-    .join("")}
-\\CVSubHeadingListEnd
+    const newString = `\\section{Achievements} 
+\\vspace{-0.2mm}
+\\resumeSubHeadingListStart
+  ${achievementEntries
+    .map((entry: AchievementDetails) => {
+      return `
+      \\resumePOR{}{${sanitizeInput(entry.title)}}
+      {\\href{${sanitizeInputForLink(entry.link)}}{${sanitizeInput(entry.linkTitle)}}}
+      `}).join("")}
+\\resumeSubHeadingListEnd
+\\vspace{-6mm}
 `;
+
     return newString;
   };
 
   const parseClubString = () => {
-    if (!includeClubs) {
+    if (!includePositions) {
       return ``;
     }
-    const newString = `
-  \\section{Clubs And Societies}
-  \\CVSubHeadingListStart
-  ${clubEntries
-    .map((entry) => {
-      return `\\CVSubheading
-    {${sanitizeInput(entry.title)}}{${formatMonthYear(
-        entry.startDate
-      )} - ${formatMonthYear(entry.endDate)}}
-    {${sanitizeInput(entry.societyName)}} {}
-    `;
+    const newString = `\\section{Positions of Responsibility} % Removed \textbf{}
+\\vspace{-0.4mm}
+\\resumeSubHeadingListStart
+  ${positionEntries
+    .map((entry: PositionOfResponsibilityDetails) => {
+      return `\\resumePOR{${sanitizeInput(entry.positionName)} } 
+    {${sanitizeInput(entry.organizationName)}} 
+    {${formatMonthYear(entry.date)}}`;
     })
     .join("")}
-  \\CVSubHeadingListEnd
-  `;
+\\resumeSubHeadingListEnd
+\\vspace{-5mm}
+`;
     return newString;
   };
 
@@ -619,23 +518,19 @@ function ResumeWithPhoto() {
     if (!includeCertificates) {
       return ``;
     }
-    const newString = `
-  \\section{Certifications}
-  \\CVSubHeadingListStart
-  \\item \\small
-    \\begin{tabular*}{0.97\\textwidth}{l@{\\extracolsep{\\fill}}r}
-      ${certificateEntries
-        .map((entry) => {
-          return `
-        \\textbf{${sanitizeInput(entry.title)}} & 
-        \\href{${sanitizeInputForLink(
-          entry.link
-        )}}{\\color{blue}Certificate Link} \\\\
-        `;
-        })
-        .join("")}
-    \\end{tabular*}
-    \\end{itemize}
+
+    const newString = `\\section{Certifications} 
+\\vspace{-0.4mm}
+\\resumeSubHeadingListStart
+      ${certificateEntries.map((entry)=>{
+        return `
+        \\resumePOR
+    {${entry.title}} % Certification Name
+    {, \\href{${sanitizeInputForLink(entry.link)}}{Link}} % Issuer
+    {${entry.date}}
+    `}).join("")}
+    \\resumeSubHeadingListEnd
+    \\vspace{-6mm}
   `;
     return newString;
   };
@@ -644,231 +539,295 @@ function ResumeWithPhoto() {
       return ``;
     }
     const newString = `
-  \\section{Skills}
-  \\begin{itemize}[leftmargin=0.5cm, label={}]
-    \\small{\\item{
-      ${skills
-        .map((entry) => {
-          return `\\textbf{${sanitizeInput(entry.key)}}{: ${sanitizeInput(
-            entry.value
-          )}}`;
-        })
-        .join(" \\\\ ")}
-      }}
-      \\end{itemize}
+    \\section{Skills}
+\\vspace{-0.4mm}
+\\resumeHeadingSkillStart
+${skills.map((skill)=>{
+  return `\\resumeSubItem{${sanitizeInput(skill.key)}}{: ${sanitizeInput(skill.value)}}`
+}).join("")}
+\\resumeHeadingSkillEnd
+\\vspace{-2mm}
   `;
     return newString;
   };
 
-  const addLineBreakInSpacing = (input: string) => {
-    return input.replace(/ /g, "\\\\ ");
-  };
 
-    const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-      event.preventDefault();
-      if(skills.length === 0 || educationEntries.length === 0 ||
-       experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
-        if (includePicture && imageFile === null) toast.error("Please upload a profile picture");
-        if (skills.length === 0) toast.error("Please select at least one skill");
-        if (educationEntries.length === 0) toast.error("Please add at least one education entry");
-        if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
-        if (projectEntries.length === 0) toast.error("Please add at least one project entry");
+
+  const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    if(skills.length === 0 || educationEntries.length === 0 ||
+     experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
+      if (includePicture && imageFile === null) toast.error("Please upload a college logo");
+      if (skills.length === 0) toast.error("Please select at least one skill");
+      if (educationEntries.length === 0) toast.error("Please add at least one education entry");
+      if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
+      if (projectEntries.length === 0) toast.error("Please add at least one project entry");
       return;
     }
-      setGlobalId(generateUUID());
-      console.log(globalId)
+    setIsLoading(true);
+    setGlobalId(generateUUID());
+    console.log(globalId)
 
-    const Code:string = String.raw`
-    \documentclass[A4,11pt]{article}
+  const Code:string = String.raw`
 
-    \usepackage{latexsym}
-    \usepackage[empty]{fullpage}
-    \usepackage{titlesec}
-    \usepackage{marvosym}
-    \usepackage[usenames,dvipsnames]{color}
-    \usepackage{verbatim}
-    \usepackage{enumitem}
-    \usepackage[hidelinks]{hyperref}
-    \usepackage[english]{babel}
-    \usepackage{tabularx}
-    \usepackage{tikz}
-    \input{glyphtounicode}
-    \usepackage{palatino}
 
-    % Adjust margins
-    \addtolength{\oddsidemargin}{-1cm}
-    \addtolength{\evensidemargin}{-1cm}
-    \addtolength{\textwidth}{2cm}
-    \addtolength{\topmargin}{-1cm}
-    \addtolength{\textheight}{2cm}
 
-    \urlstyle{same}
+\documentclass[a4paper,11pt]{article}
 
-    \raggedbottom
-    \raggedright
-    \setlength{\tabcolsep}{0cm}
+% Package imports
+\usepackage{latexsym}
+\usepackage{xcolor}
+\usepackage{float}
+\usepackage{ragged2e}
+\usepackage[empty]{fullpage}
+\usepackage{wrapfig}
+\usepackage{tabularx}
+\usepackage{titlesec}
+\usepackage{geometry}
+\usepackage{marvosym}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{multicol}
+\usepackage{graphicx}
+% \usepackage{lmodern} % Removed lmodern
+\usepackage{palatino} % Added palatino for Palatino font
+\usepackage[T1]{fontenc}
 
-    % Sections formatting
-    \titleformat{\section}{
-    \vspace{-4pt}\scshape\raggedright\large
-    }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+\usepackage[hidelinks]{hyperref}
+\usepackage{microtype}
+\usepackage{tabularx} % Required for tables that stretch to page width
+\usepackage{array} % Required for vertical centering in tables
 
-    % Ensure that .pdf is machine readable/ATS parsable
-    \pdfgentounicode=1
+% Color definitions
+\definecolor{darkblue}{RGB}{0,0,139}
 
-    %-----CUSTOM COMMANDS FOR FORMATTING SECTIONS----------------------------------
+% Page layout
+\geometry{left=1.4cm, top=0.8cm, right=1.2cm, bottom=1cm}
+\setlength{\multicolsep}{0pt} 
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+\setlength{\footskip}{4.08pt}
 
-    \newcommand{\ProjectEntry}[2]{%
-      \item
-      \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-        \textbf{#1} & #2 \\
-      \end{tabular*}\vspace{-5pt}
+% Hyperlink setup
+\hypersetup{
+    colorlinks=true,
+    linkcolor=darkblue,
+    filecolor=darkblue,
+    urlcolor=darkblue,
+}
+
+% Custom box settings
+\usepackage[most]{tcolorbox}
+\tcbset{
+    frame code={},
+    center title,
+    left=0pt,
+    right=0pt,
+    top=0pt,
+    bottom=0pt,
+    colback=gray!20,
+    colframe=white,
+    width=\dimexpr\textwidth\relax,
+    enlarge left by=-2mm,
+    boxsep=4pt,
+    arc=0pt,outer arc=0pt,
+}
+
+% URL style
+\urlstyle{same}
+
+% Text alignment
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Section formatting
+\titleformat{\section}{
+  \vspace{-4pt}\scshape\raggedright\large\bfseries % \scshape and \bfseries will use Palatino
+}{}{0em}{}[\color{black}\titlerule \vspace{-7pt}]
+
+% Custom commands
+\newcommand{\resumeItem}[2]{
+  \item{
+    \textbf{#1}{\hspace{0.5mm}#2 \vspace{-0.5mm}}
+  }
+}
+
+\newcommand{\resumePOR}[3]{
+\vspace{0.5mm}\item
+    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1}\hspace{0.3mm}#2 & \textit{\small{#3}} 
+    \end{tabular*}
+    \vspace{-2mm}
+}
+
+\newcommand{\resumeSubheading}[4]{
+\vspace{0.5mm}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\footnotesize{#4}} \\
+        \textit{\footnotesize{#3}} &  \footnotesize{#2}\\
+    \end{tabular*}
+    \vspace{-2.4mm}
+}
+
+\newcommand{\resumeProject}[4]{
+\vspace{0.5mm}\item
+    \begin{tabular*}{0.98\textwidth}[t]{l@{\extracolsep{\fill}}r}
+        \textbf{#1} & \textit{\footnotesize{#3}} \\
+        \footnotesize{\textit{#2}} & \footnotesize{#4}
+    \end{tabular*}
+    \vspace{-2.4mm}
+}
+
+\newcommand{\resumeSubItem}[2]{\resumeItem{#1}{#2}\vspace{-4pt}}
+
+\renewcommand{\labelitemi}{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\renewcommand{\labelitemii}{$\vcenter{\hbox{\tiny$\circ$}}$}
+
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=*,labelsep=1mm]}
+\newcommand{\resumeHeadingSkillStart}{\begin{itemize}[leftmargin=*,itemsep=1.7mm, rightmargin=2ex]}
+\newcommand{\resumeItemListStart}{\begin{itemize}[leftmargin=*,labelsep=1mm,itemsep=0.5mm]}
+
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}\vspace{2mm}}
+\newcommand{\resumeHeadingSkillEnd}{\end{itemize}\vspace{-2mm}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-2mm}}
+\newcommand{\cvsection}[1]{%
+\vspace{2mm}
+\begin{tcolorbox}
+    \textbf{\large #1}
+\end{tcolorbox}
+    \vspace{-4mm}
+}
+
+\newcolumntype{L}{>{\raggedright\arraybackslash}X}%
+\newcolumntype{R}{>{\raggedleft\arraybackslash}X}%
+\newcolumntype{C}{>{\centering\arraybackslash}X}%
+
+% Commands for icon sizing and positioning
+\newcommand{\socialicon}[1]{\raisebox{-0.05em}{\resizebox{!}{1em}{#1}}}
+\newcommand{\ieeeicon}[1]{\raisebox{-0.3em}{\resizebox{!}{1.3em}{#1}}}
+
+% Font options (these are still available if needed for specific parts, but Palatino is now global)
+\newcommand{\headerfonti}{\fontfamily{phv}\selectfont} % Helvetica-like (similar to Arial/Calibri)
+\newcommand{\headerfontii}{\fontfamily{ptm}\selectfont} % Times-like (similar to Times New Roman)
+\newcommand{\headerfontiii}{\fontfamily{ppl}\selectfont} % Palatino (elegant serif)
+\newcommand{\headerfontiv}{\fontfamily{pbk}\selectfont} % Bookman (readable serif)
+\newcommand{\headerfontv}{\fontfamily{pag}\selectfont} % Avant Garde-like (similar to Trebuchet MS)
+\newcommand{\headerfontvi}{\fontfamily{cmss}\selectfont} % Computer Modern Sans Serif
+\newcommand{\headerfontvii}{\fontfamily{qhv}\selectfont} % Quasi-Helvetica (another Arial/Calibri alternative)
+\newcommand{\headerfontviii}{\fontfamily{qpl}\selectfont} % Quasi-Palatino (another elegant serif option)
+\newcommand{\headerfontix}{\fontfamily{qtm}\selectfont} % Quasi-Times (another Times New Roman alternative)
+\newcommand{\headerfontx}{\fontfamily{bch}\selectfont} % Charter (clean serif font)
+
+% Define personal information
+\newcommand{\name}{${name}} % Your Name
+\newcommand{\course}{${educationEntries[0].degree}} 
+\newcommand{\phone}{${phoneNumber}} % Your Phone Number
+\newcommand{\emailb}{${email}} % Email
+
+
+\begin{document}
+% \fontfamily{cmr}\selectfont % Removed to allow Palatino to be the default
+
+%----------HEADING-----------------
+\parbox{2.35cm}{%
+ \includegraphics[width=2cm]{image-${globalId}} % Example if a logo is to be added
+}
+\parbox{\dimexpr\linewidth-2.8cm\relax}{
+\begin{tabularx}{\linewidth}{L r}
+  \textbf{\LARGE \scshape \name} & +91-\phone \\ % Name styled with small caps
+  \course & \href{mailto:\emailb}{\emailb} \\
+  ${sanitizeInput(educationEntries[0].branch)} & \href{${sanitizeInputForLink(linkedInLink)}}{${sanitizeInputForDisplay(linkedInLink)}} \\
+  ${sanitizeInput(educationEntries[0].instituteName)}
+  & \href{${sanitizeInputForLink(githubLink)}}{${sanitizeInputForDisplay(githubLink)}} \\
+\end{tabularx}
+}
+\vspace{-2mm}
+
+\section{Education} % Removed \textbf{}
+\vspace{1mm}
+\setlength{\tabcolsep}{5pt}
+\begin{tabularx}{\textwidth}{|>{\centering\arraybackslash}X|>{\centering\arraybackslash}p{8cm}|>{\centering\arraybackslash}p{3cm}|>{\centering\arraybackslash}p{2.5cm}|}
+  \hline
+  \textbf{Degree/Certificate} & \textbf{Institute/Board} & \textbf{CGPA/Percentage} & \textbf{Year} \\
+  \hline
+  ${parseEducationString()}
+\end{tabularx}
+\vspace{-4mm}
+
+%---------Experience Section---------
+${parseExperienceString()}
+
+
+%-----------Projects-----------------
+${parseProjectString()}
+
+%-----------Skills-----------------
+${parseSkillString()}
+
+%-----------Certifications-----------------
+${parseCertificateString()}
+
+
+
+%-----------ACHIEVEMENTS-----------------
+${parseAchievementString()}
+
+%-----------Positions of Responsibility-----------------
+${parseClubString()}
+    
+\end{document}
+  `
+
+  const formData = new FormData()
+    formData.append('payload', Code)
+    if(imageFile){
+      formData.append('imageFile', imageFile)
     }
+    formData.append('globalId', globalId)
+    api.post('/' , formData, {responseType: 'blob',
+        headers:{
+        'Content-Type': 'multipart/form-data'
+    }})
+    .then((res)=>{
+      const file = new Blob([res.data], { type: 'application/pdf' });
+      const fileURL = URL.createObjectURL(file);
+      setPdfUrl(fileURL);
+      toast.success('Resume generated successfully!');
+    })
+    .catch((err)=>{
+      console.error(err);
+      toast.error('Failed to generate resume. Please try again.');
+    })
+    .finally(() => {
+      setIsLoading(false);
+    });
+  }
 
-    \newcommand{\CVItem}[1]{
-    \item\small{
-      {#1 \vspace{-2pt}}
-    }
-    }
-
-    \newcommand{\CVSubheading}[4]{
-    \vspace{-2pt}\item
-      \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-        \textbf{#1} & #2 \\
-        \small#3 & \small #4 \\
-      \end{tabular*}\vspace{-7pt}
-    }
-
-    \newcommand{\CVSubSubheading}[2]{
-      \item
-      \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-        \text{\small#1} & \text{\small #2} \\
-      \end{tabular*}\vspace{-7pt}
-    }
-
-    \newcommand{\CVSubItem}[1]{\CVItem{#1}\vspace{-4pt}}
-
-    \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
-
-    \newcommand{\CVSubHeadingListStart}{\begin{itemize}[leftmargin=0.5cm, label={}]}
-    % \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]} % Uncomment for US
-    \newcommand{\CVSubHeadingListEnd}{\end{itemize}}
-    \newcommand{\CVItemListStart}{\begin{itemize}}
-    \newcommand{\CVItemListEnd}{\end{itemize}\vspace{-5pt}}
-
-    %------------------------------------------------------------------------------
-    % CV STARTS HERE  %
-    %------------------------------------------------------------------------------
-    \begin{document}
-
-    %-----HEADING------------------------------------------------------------------
-    \begin{comment}
-    In Europe it is common to include a picture of ones self in the CV. Select
-    which heading appropriate for the document you are creating.
-    \end{comment}
-
-    ${includePicture? `
-      \\begin{minipage}[c]{0.05\\textwidth}
-    \\-\\
-    \\end{minipage}
-    \\begin{minipage}[c]{0.2\\textwidth}
-    \\begin{tikzpicture}
-      \\clip (0,0) circle (1.75cm);
-      \\node at (0,0) {\\includegraphics[width = 4cm]{image-${globalId}}};
-      % if necessary the picture may be moved by changing the at (coordinates)
-      % width defines the 'zoom' of the picture
-    \\end{tikzpicture}
-    \\hfill\\vline\\hfill
-    \\end{minipage}
-    \\begin{minipage}[c]{0.4\\textwidth}
-    \\textbf{\\Huge \\scshape{${addLineBreakInSpacing(sanitizeInput(name))}}} \\\\ \\vspace{1pt}
-      % \\scshape sets small capital letters, remove if desired
-      \\small{${sanitizeInput(phoneNumber)}} \\\\
-      \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}}\\\\
-      ${linkedInLink!=='' ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}} ` : ``} ${githubLink!=='' ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}  ` : ``}  ${portfolioLink!=='' ? `\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}` : ``}
-    \\end{minipage}
-      ` : `
-       %Without picture
-    \\begin{center}
-        \\textbf{\\Huge \\scshape ${sanitizeInput(name)}} \\\\ \\vspace{1pt} %\\scshape sets small capital letters, remove if desired
-        \\small ${sanitizeInput(phoneNumber)} $|$
-        \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}} ${portfolioLink ? `$|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:``} ${linkedInLink || githubLink ? ` $|$ \\\\ ` : ``}
-        ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}` : ``} ${githubLink && linkedInLink ? ` $|$` : ``}
-        % you should adjust you linked in profile name to be professional and recognizable
-        ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}` : ``}
-    \\end{center}
-      `}
-    \begin{comment}
-    This CV was written for specifically for positions I was applying for in
-    academia, and then modified to be a template.
-
-    A standard CV is about two pages long where as a resume in the US is one page.
-    sections can be added and removed here with this in mind. In my experience,
-    education, and applicable work experience and skills are the most import things
-    to include on a resume. For a CV the Europass CV suggests the categories: Work
-    Experience, Education and Training, Language Skills, Digital Skills,
-    Communication and Interpersonal Skills, Conferences and Seminars, Creative Works
-    Driver's License, Hobbies and Interests, Honors and Awards, Management and
-    Leadership Skills, Networks and Memberships, Organizational Skills, Projects,
-    Publications, Recommendations, Social and Political Activities, Volunteering.
-
-    Your goal is to convey a who, what , when, where, why for every item you share.
-    The who is obviously you, but I believe the rest should be done in that order.
-    For example below. An employer cares most about the degree held and typically
-    less about the institution or where it is located (This is still good
-    information though). Whatever order you choose be consistent throughout.
-    \end{comment}
-
-    %-----EDUCATION----------------------------------------------------------------
-    \section{Education}
-    \CVSubHeadingListStart
-    ${parseEducationString()}
-    \CVSubHeadingListEnd
-
-    %-----WORK EXPERIENCE----------------------------------------------------------
-    ${parseExperienceString()}
-    %-----PROJECTS AND RESEARCH----------------------------------------------------
-
-    ${parseProjectString()}
-
-    %-----HONORS AND AWARDS--------------------------------------------------------
-    ${parseHonorString()}
-
-    %-----CLUBS AND SOCIETIES--------------------------------------------------------
-    ${parseClubString()}
-
-    %-----Certifications-------------------------------------------------------------------
-    ${parseCertificateString()}
-
-    %-----SKILLS-------------------------------------------------------------------
-    ${parseSkillString()}
-
-    %-----Positions of Responsibility--------------------------------------------------------
-    ${parsePositionString()}
-
-    %------------------------------------------------------------------------------
-    \end{document}`
-
-    const formData = new FormData()
-      formData.append('payload', Code)
-      if(imageFile && includePicture){
-        formData.append('imageFile', imageFile)
-      }
-      formData.append('globalId', globalId)
-      api.post('/' , formData, {responseType: 'blob',
-          headers:{
-          'Content-Type': 'multipart/form-data'
-      }})
-      .then((res)=>{
-        const file = new Blob([res.data], { type: 'application/pdf' });
-        const fileURL = URL.createObjectURL(file);
-        setPdfUrl(fileURL);
-
-      })
-      .catch((err)=>{
-        console.log(err)
-      })
-    }
+  // Add this function to handle the AI-generated form data
+  const handleAIGeneratedData = (data: FormDataStore) => {
+    setName(data.name || '');
+    setEmail(data.email || '');
+    setPhoneNumber(data.phoneNumber || '');
+    setGithubLink(data.githubLink || '');
+    setLinkedInLink(data.linkedInLink || '');
+   
+    setEducationEntries(data.educationEntries || []);
+    setExperienceEntries(data.experienceEntries || []);
+    setProjectEntries(data.projectEntries || []);
+    setSkills(data.skills || []);
+    setCertificateEntries(data.certificateEntries || []);
+    setAchievementEntries(data.achievementEntries || []);
+    setPositionEntries(data.positionEntries || []);
+    setIncludeSkills(data.includeSkills || false);
+    setIncludeCertificates(data.includeCertificates || false);
+    setIncludeAchievements(data.includeAchievements || false);
+    setIncludePositions(data.includePositions || false);
+    setIncludeProjects(data.includeProjects || false);
+  };
 
   return (
     <>
@@ -878,6 +837,26 @@ function ResumeWithPhoto() {
           onSubmit={handleFormSubmit}
           className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10"
         >
+          {/* Add AI Generator Button at the top */}
+          
+          <div className="flex justify-end ">
+           
+            <div className=" bg-black rounded-xl flex justify-center items-center">
+              <div className="relative inline-flex rounded-xl  group">
+                <div className="absolute transitiona-all  rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
+                <button
+                  type="button"
+                  
+                  onClick={() => setChatbotModalOpen(true)}
+                  className="relative  inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                >
+                  Generate with AI
+                </button>
+              </div>
+            </div>
+            
+          </div>
+
           {/* Personal Information Section */}
           <div className="mb-8 border-b border-white/10 pb-6">
             <div className="mb-6">
@@ -889,13 +868,11 @@ function ResumeWithPhoto() {
               <div className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-light text-white">
-                    Profile Photo
+                    College Logo
                   </h3>
                   <div
-                    className={`relative w-24 h-24 rounded-full overflow-hidden border-2 border-white/20 bg-white/5 flex items-center justify-center cursor-pointer hover:border-white/30 transition-colors ${
-                      !includePicture ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    onClick={() => includePicture && setModalOpen(true)}
+                    className={`relative w-24 h-24 rounded-full overflow-hidden border-2 border-white/20 bg-white/5 flex items-center justify-center cursor-pointer hover:border-white/30 transition-colors `}
+                    onClick={() => setModalOpen(true)}
                   >
                     {imageFile ? (
                       <>
@@ -934,28 +911,14 @@ function ResumeWithPhoto() {
                       </div>
                     )}
                   </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={includePicture}
-                      onChange={(e) => {
-                        setIncludePicture(e.target.checked);
-                        if (!e.target.checked) {
-                          setImageFile(null);
-                        }
-                      }}
-                      className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
-                    />
-                    <span className="ml-2 text-[#44BCFF]">
-                      Include in Resume
-                    </span>
-                  </label>
+                 
                 </div>
               </div>
               {modalOpen && (
                 <Modal
                   updateAvatar={updateAvatar}
                   closeModal={() => setModalOpen(false)}
+                  isCircle={false}
                 />
               )}
               <div className="mb-4">
@@ -1035,7 +998,7 @@ function ResumeWithPhoto() {
                 >
                   LinkedIn Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
-                    Tip: Remove the https://, also if URL is too long,{" "}
+                    Tip: Write full url with https://, also if URL is too long,{" "}
                     <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
                       edit in Linkedin
                     </a>
@@ -1063,7 +1026,7 @@ function ResumeWithPhoto() {
                 >
                   GitHub Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
-                    Tip: Remove the https://
+                    Tip: Write full url with https://
                   </span>
                 </label>
                 <Tooltip
@@ -1081,30 +1044,7 @@ function ResumeWithPhoto() {
                   />
                 </Tooltip>
               </div>
-              <div className="mb-4">
-                <label
-                  htmlFor="portfolioLink"
-                  className="block text-[#44BCFF] text-sm font-bold mb-2"
-                >
-                  Portfolio Link{" "}
-                  <span className=" mx-0.5 text-xs text-white">
-                    Tip: Remove the https://
-                  </span>
-                </label>
-                <Tooltip
-                  title="Not Allowed Here"
-                  message="Making Text Bold is not allowed here"
-                >
-                  <input
-                    type="text"
-                    id="portfolioLink"
-                    name="portfolioLink"
-                    value={portfolioLink}
-                    onChange={(e) => setPortfolioLink(e.target.value)}
-                    className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                  />
-                </Tooltip>
-              </div>
+              
             </div>
           </div>
 
@@ -1162,13 +1102,9 @@ function ResumeWithPhoto() {
                       </Tooltip>
                     </div>
 
-                    <div className="mb-4">
+                    {index==0 &&<div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
                         Degree*{" "}
-                        <span className=" mx-0.5 text-xs text-white">
-                          Tip: For School, write Secondary/High School or Senior
-                          Secondary.
-                        </span>
                       </label>
                       <Tooltip
                         title="Not Allowed Here"
@@ -1190,9 +1126,37 @@ function ResumeWithPhoto() {
                           required
                         />
                       </Tooltip>
+                    </div>}
+
+                     <div className="mb-4">
+                      <label className="block text-[#44BCFF] font-medium mb-2">
+                        Degree (In Abbrevation)*{" "}
+                        <span className=" mx-0.5 text-xs text-white">
+                          Ex. : B.Tech,MBA (Leave Empty For School)
+                        </span>
+                      </label>
+                      <Tooltip
+                        title="Not Allowed Here"
+                        message="Making Text Bold is not allowed here"
+                      >
+                        <input
+                          type="text"
+                          value={entry.degreeAbbreviation}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setEducationEntries,
+                              educationEntries,
+                              index,
+                              "degreeAbbreviation",
+                              e.target.value
+                            )
+                          }
+                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
+                        />
+                      </Tooltip>
                     </div>
 
-                    <div className="mb-4">
+                    {index==0 && <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
                         Branch*{" "}
                         <span className=" mx-0.5 text-xs text-white">
@@ -1217,6 +1181,35 @@ function ResumeWithPhoto() {
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
                           required
+                        />
+                      </Tooltip>
+                    </div>}
+
+                  <div className="mb-4">
+                      <label className="block text-[#44BCFF] font-medium mb-2">
+                        Branch (In Abbreviation)*{" "}
+                        <span className=" mx-0.5 text-xs text-white">
+                          Ex. CSE,Hons. (Leave Empty For School)
+                        </span>
+                      </label>
+                      <Tooltip
+                        title="Not Allowed Here"
+                        message="Making Text Bold is not allowed here"
+                      >
+                        <input
+                          type="text"
+                          value={entry.branchAbbreviation}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setEducationEntries,
+                              educationEntries,
+                              index,
+                              "branchAbbreviation",
+                              e.target.value
+                            )
+                          }
+                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
+                          
                         />
                       </Tooltip>
                     </div>
@@ -1249,33 +1242,11 @@ function ResumeWithPhoto() {
 
                     <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Start Date*
+                        Month Of Passing*
                       </label>
                       <input
                         type="month"
-                        value={entry.startDate}
-                        onChange={(e) =>
-                          handleInputChange(
-                            setEducationEntries,
-                            educationEntries,
-                            index,
-                            "startDate",
-                            e.target.value
-                          )
-                        }
-                        className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                        required
-                      />
-                    </div>
-
-                    <div className="mb-4">
-                      <label className="block text-[#44BCFF] font-medium mb-2">
-                        End Date*
-                      </label>
-                      <input
-                        type={entry.endDate === "Present" ? "text" : "month"}
                         value={entry.endDate}
-                        disabled={entry.endDate === "Present"}
                         onChange={(e) =>
                           handleInputChange(
                             setEducationEntries,
@@ -1285,37 +1256,12 @@ function ResumeWithPhoto() {
                             e.target.value
                           )
                         }
-                        className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10 ${
-                          entry.endDate === "Present"
-                            ? "opacity-50 cursor-not-allowed"
-                            : ""
-                        }`}
+                        className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10`}
                         required
                       />
-                      <input
-                        type="checkbox"
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "endDate",
-                              "Present"
-                            );
-                          } else {
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "endDate",
-                              ""
-                            );
-                          }
-                        }}
-                      />
+                      
 
-                      <label htmlFor="">Currently Pursuing</label>
+                    
                     </div>
 
                     <div className="mb-4 md:col-span-2">
@@ -1327,7 +1273,7 @@ function ResumeWithPhoto() {
                           <input
                             type="radio"
                             name={`gradeType-${entry.id}`}
-                            checked={entry.gradeType === "cgpa"}
+                            checked={entry.gradeType.toUpperCase() === "CGPA"}
                             onChange={() =>
                               handleInputChange(
                                 setEducationEntries,
@@ -1345,7 +1291,7 @@ function ResumeWithPhoto() {
                           <input
                             type="radio"
                             name={`gradeType-${entry.id}`}
-                            checked={entry.gradeType === "percentage"}
+                            checked={entry.gradeType.toUpperCase() === "PERCENTAGE"}
                             onChange={() =>
                               handleInputChange(
                                 setEducationEntries,
@@ -1361,7 +1307,7 @@ function ResumeWithPhoto() {
                         </label>
                       </div>
 
-                      {entry.gradeType === "cgpa" ? (
+                      {entry.gradeType.toUpperCase() === "CGPA" ? (
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
                             CGPA
@@ -1742,17 +1688,15 @@ function ResumeWithPhoto() {
           <div className="mb-8 border-b border-white/10 pb-6">
             <div className="mb-6 flex justify-between items-center">
               <h2 className="text-2xl font-light text-white">Projects</h2>
-              <div className="flex items-center gap-4">
-                <label className="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeProjects}
-                    onChange={(e) => setIncludeProjects(e.target.checked)}
-                    className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                  />
-                  <span className="ml-2 text-white">Include Section</span>
-                </label>
-              </div>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includeProjects}
+                  onChange={(e) => setIncludeProjects(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                />
+                <span className="ml-2 text-white">Include Section</span>
+              </label>
             </div>
             {includeProjects && (
               <div className="space-y-6">
@@ -1838,13 +1782,13 @@ function ResumeWithPhoto() {
                         >
                           <input
                             type="text"
-                            value={entry.tools}
+                            value={entry.toolsUsed}
                             onChange={(e) =>
                               handleInputChange(
                                 setProjectEntries,
                                 projectEntries,
                                 index,
-                                "tools",
+                                "toolsUsed",
                                 e.target.value
                               )
                             }
@@ -1856,30 +1800,39 @@ function ResumeWithPhoto() {
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Link Type*
+                          Link Title*{" "}
+                          <span className="mx-0.5 text-xs text-white">
+                            Tip: The text to display for the link (e.g., "GitHub", "Live Demo", etc.)
+                          </span>
                         </label>
-                        <select
-                          value={entry.linkType}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setProjectEntries,
-                              projectEntries,
-                              index,
-                              "linkType",
-                              e.target.value as 'github' | 'website'
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                          required
+                        <Tooltip
+                          title="Not Allowed Here"
+                          message="Making Text Bold is not allowed here"
                         >
-                          <option value="github">GitHub</option>
-                          <option value="website">Website</option>
-                        </select>
+                          <input
+                            type="text"
+                            value={entry.linkTitle}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "linkTitle",
+                                e.target.value
+                              )
+                            }
+                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </Tooltip>
                       </div>
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Project Link*
+                          Project Link*{" "}
+                          <span className="mx-0.5 text-xs text-white">
+                            Tip: The actual URL of the project
+                          </span>
                         </label>
                         <Tooltip
                           title="Not Allowed Here"
@@ -1887,13 +1840,13 @@ function ResumeWithPhoto() {
                         >
                           <input
                             type="url"
-                            value={entry.link}
+                            value={entry.projectLink}
                             onChange={(e) =>
                               handleInputChange(
                                 setProjectEntries,
                                 projectEntries,
                                 index,
-                                "link",
+                                "projectLink",
                                 e.target.value
                               )
                             }
@@ -1949,25 +1902,17 @@ function ResumeWithPhoto() {
                         <div className="mt-2">
                           <input
                             type="checkbox"
+                            checked={entry.endDate === "Present"}
                             onChange={(e) => {
-                              if (e.target.checked) {
-                                handleInputChange(
-                                  setProjectEntries,
-                                  projectEntries,
-                                  index,
-                                  "endDate",
-                                  "Present"
-                                );
-                              } else {
-                                handleInputChange(
-                                  setProjectEntries,
-                                  projectEntries,
-                                  index,
-                                  "endDate",
-                                  ""
-                                );
-                              }
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "endDate",
+                                e.target.checked ? "Present" : ""
+                              );
                             }}
+                            className="form-checkbox h-4 w-4 text-white focus:ring-white"
                           />
                           <label className="ml-2 text-white">Currently Working</label>
                         </div>
@@ -1975,37 +1920,37 @@ function ResumeWithPhoto() {
 
                       <div className="col-span-full">
                         <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                          Achievements:*{" "}
+                          Work Done:*{" "}
                           <span className="mx-0.5 text-xs text-white">
                             Tip: Use Bold For Highlighting but don't overdo it
                           </span>
                         </h4>
-                        {entry.achievements.map((achievement, achievementIndex) => (
+                        {entry.workDone.map((work, workIndex) => (
                           <div
-                            key={`${entry.id}-achievement-${achievementIndex}`}
+                            key={`${entry.id}-work-${workIndex}`}
                             className="mb-2 flex items-center space-x-4"
                           >
                             <label className="block text-[#44BCFF] font-medium mb-1">
-                              Achievement {achievementIndex + 1}:
+                              Work {workIndex + 1}:
                             </label>
                             <input
                               type="text"
-                              value={achievement}
+                              value={work}
                               onKeyDown={(e) =>
                                 handleKeyActionOnSublist(
                                   e,
                                   setProjectEntries,
-                                  "achievements",
+                                  "workDone",
                                   index,
-                                  achievementIndex
+                                  workIndex
                                 )
                               }
                               onChange={(e) =>
                                 handleSubListInputChange(
                                   setProjectEntries,
                                   index,
-                                  "achievements",
-                                  achievementIndex,
+                                  "workDone",
+                                  workIndex,
                                   e.target.value
                                 )
                               }
@@ -2017,8 +1962,8 @@ function ResumeWithPhoto() {
                                 removeItemFromSubList(
                                   setProjectEntries,
                                   index,
-                                  "achievements",
-                                  achievementIndex
+                                  "workDone",
+                                  workIndex
                                 )
                               }
                               className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
@@ -2034,13 +1979,13 @@ function ResumeWithPhoto() {
                               addItemToSubList(
                                 setProjectEntries,
                                 index,
-                                "achievements",
+                                "workDone",
                                 ""
                               )
                             }
                             className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
                           >
-                            Add Achievement
+                            Add Work
                           </button>
                         </div>
                       </div>
@@ -2155,394 +2100,8 @@ function ResumeWithPhoto() {
             </div>
           </div>
 
-          {/* Honors and Achievements Section */}
-          <div className="mb-8 border-b pb-6">
-            <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-light text-white">Achievements</h2>
-              <label className="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={includeHonors}
-                  onChange={(e) => setIncludeHonors(e.target.checked)}
-                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                />
-                <span className="ml-2 text-white">Include Section</span>
-              </label>
-            </div>
-            <div className={`${!includeHonors ? "opacity-50 pointer-events-none" : ""}`}>
-              {includeHonors && (
-                <div className="space-y-6">
-                  {honorEntries.map((entry, index) => (
-                    <div
-                      key={entry.id}
-                      className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
-                    >
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-light text-[#44BCFF]">
-                          Achievement #{index + 1}
-                        </h3>
-                        <button
-                          type="button"
-                          onClick={() => removeEntry(setHonorEntries, index)}
-                          className="text-red-400 hover:text-red-300 focus:outline-none"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Title*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              value={entry.title}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Link Title*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              value={entry.linkTitle}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "linkTitle",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-
-                        <div className="col-span-full">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Link*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="url"
-                              value={entry.link}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "link",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => addEntry(setHonorEntries, defaultHonorEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                >
-                  <PlusIcon className="w-4 h-4" /> Add Achievement
-                </button>
-              </div>
-            </div>
-          </div>
-
-          {/* Clubs and Societies Section */}
-          <div className="mb-8 border-b  pb-6">
-            <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-light text-white">
-                Clubs and Societies
-              </h2>
-              <label className="inline-flex items-center cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={includeClubs}
-                  onChange={(e) => setIncludeClubs(e.target.checked)}
-                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                />
-                <span className="ml-2 text-white">Include Section</span>
-              </label>
-            </div>
-            <div
-              className={`${
-                !includeClubs ? "opacity-50 pointer-events-none" : ""
-              }`}
-            >
-              {includeClubs && (
-                <div className="space-y-6">
-                  {clubEntries.map((entry, index) => (
-                    <div
-                      key={entry.id}
-                      className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
-                    >
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-light text-[#44BCFF]">
-                          Club #{index + 1}
-                        </h3>
-                        <button
-                          type="button"
-                          onClick={() => removeEntry(setClubEntries, index)}
-                          className="text-red-400 hover:text-red-300 focus:outline-none"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Position Title*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              value={entry.title}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setClubEntries,
-                                  clubEntries,
-                                  index,
-                                  "title",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Society/Club Name*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              value={entry.societyName}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setClubEntries,
-                                  clubEntries,
-                                  index,
-                                  "societyName",
-                                  e.target.value
-                                )
-                              }
-                              className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Start Date*
-                          </label>
-                          <input
-                            type="month"
-                            value={entry.startDate}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setClubEntries,
-                                clubEntries,
-                                index,
-                                "startDate",
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            End Date*
-                          </label>
-                          <input
-                            type={
-                              entry.endDate === "Present" ? "text" : "month"
-                            }
-                            value={entry.endDate}
-                            disabled={entry.endDate === "Present"}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setClubEntries,
-                                clubEntries,
-                                index,
-                                "endDate",
-                                e.target.value
-                              )
-                            }
-                            className={`w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
-                              entry.endDate === "Present"
-                                ? "bg-gray-500 cursor-not-allowed"
-                                : ""
-                            }`}
-                            required
-                          />
-                          <input
-                            type="checkbox"
-                            onChange={(e) => {
-                              if (e.target.checked) {
-                                handleInputChange(
-                                  setClubEntries,
-                                  clubEntries,
-                                  index,
-                                  "endDate",
-                                  "Present"
-                                );
-                              } else {
-                                handleInputChange(
-                                  setClubEntries,
-                                  clubEntries,
-                                  index,
-                                  "endDate",
-                                  ""
-                                );
-                              }
-                            }}
-                          />
-                          <label className="ml-2 text-[#DFD0B8]">
-                            Currently Active
-                          </label>
-                        </div>
-
-                        <div className="col-span-full">
-                          <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                            Achievements:*{" "}
-                            <span className="mx-0.5 text-xs text-white">
-                              Tip: Use Bold For Highlighting but don't overdo it
-                            </span>
-                          </h4>
-                          {entry.achievements.map(
-                            (achievement, achievementIndex) => (
-                              <div
-                                key={`${entry.id}-achievement-${achievementIndex}`}
-                                className="mb-2 flex items-center space-x-4"
-                              >
-                                <label className="block text-[#44BCFF] font-medium mb-1">
-                                  Achievement {achievementIndex + 1}:
-                                </label>
-                                <input
-                                  type="text"
-                                  value={achievement}
-                                  onKeyDown={(e) =>
-                                    handleKeyActionOnSublist(
-                                      e,
-                                      setClubEntries,
-                                      "achievements",
-                                      index,
-                                      achievementIndex
-                                    )
-                                  }
-                                  onChange={(e) =>
-                                    handleSubListInputChange(
-                                      setClubEntries,
-                                      index,
-                                      "achievements",
-                                      achievementIndex,
-                                      e.target.value
-                                    )
-                                  }
-                                  className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    removeItemFromSubList(
-                                      setClubEntries,
-                                      index,
-                                      "achievements",
-                                      achievementIndex
-                                    )
-                                  }
-                                  className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
-                                >
-                                  Remove
-                                </button>
-                              </div>
-                            )
-                          )}
-                          <div className="mt-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                addItemToSubList(
-                                  setClubEntries,
-                                  index,
-                                  "achievements",
-                                  ""
-                                )
-                              }
-                              className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
-                            >
-                              Add Achievement
-                            </button>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => addEntry(setClubEntries, defaultClubEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                >
-                  <PlusIcon className="w-4 h-4" /> Add Club/Society
-                </button>
-              </div>
-            </div>
-          </div>
-
           {/* Certifications Section */}
-          <div className="mb-8 border-b pb-6">
+          <div className="mb-8 border-b  pb-6">
             <div className="mb-6 flex justify-between items-center">
               <h2 className="text-2xl font-light text-white">Certifications</h2>
               <label className="inline-flex items-center cursor-pointer">
@@ -2555,7 +2114,11 @@ function ResumeWithPhoto() {
                 <span className="ml-2 text-white">Include Section</span>
               </label>
             </div>
-            <div className={`${!includeCertificates ? "opacity-50 pointer-events-none" : ""}`}>
+            <div
+              className={`${
+                !includeCertificates ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
               {includeCertificates && (
                 <div className="space-y-6">
                   {certificateEntries.map((entry, index) => (
@@ -2569,7 +2132,9 @@ function ResumeWithPhoto() {
                         </h3>
                         <button
                           type="button"
-                          onClick={() => removeEntry(setCertificateEntries, index)}
+                          onClick={() =>
+                            removeEntry(setCertificateEntries, index)
+                          }
                           className="text-red-400 hover:text-red-300 focus:outline-none"
                         >
                           Remove
@@ -2596,7 +2161,7 @@ function ResumeWithPhoto() {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
@@ -2604,30 +2169,10 @@ function ResumeWithPhoto() {
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Date*
-                          </label>
-                          <input
-                            type="month"
-                            value={entry.date}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setCertificateEntries,
-                                certificateEntries,
-                                index,
-                                "date",
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </div>
-
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
                             Certificate Link*{" "}
                             <span className="mx-0.5 text-xs text-white">
-                              Tip: The URL of your certificate or verification page
+                              Tip: The URL of your certificate or verification
+                              page
                             </span>
                           </label>
                           <Tooltip
@@ -2646,7 +2191,34 @@ function ResumeWithPhoto() {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Date*{" "}
+                           
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="month"
+                              value={entry.date}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setCertificateEntries,
+                                  certificateEntries,
+                                  index,
+                                  "date",
+                                  e.target.value
+                                )
+                              }
+                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
@@ -2659,7 +2231,9 @@ function ResumeWithPhoto() {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setCertificateEntries, defaultCertificateEntry)}
+                  onClick={() =>
+                    addEntry(setCertificateEntries, defaultCertificateEntry)
+                  }
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Certificate
@@ -2668,10 +2242,119 @@ function ResumeWithPhoto() {
             </div>
           </div>
 
-          {/* Positions of Responsibility Section */}
-          <div className="mb-8 border-b pb-6">
+           {/* Honors and Achievements Section */}
+           <div className="mb-8 border-b  pb-6">
             <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-light text-white">Positions of Responsibility</h2>
+              <h2 className="text-2xl font-light text-white">
+                Honors and Achievements
+              </h2>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includeAchievements}
+                  onChange={(e) => setIncludeAchievements(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                />
+                <span className="ml-2 text-white">Include Section</span>
+              </label>
+            </div>
+            <div
+              className={`${
+                !includeAchievements ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
+              {includeAchievements && (
+                <div className="space-y-6">
+                  {achievementEntries.map((entry, index) => (
+                    <div
+                      key={entry.id}
+                      className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
+                    >
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-light text-[#44BCFF]">
+                          Achievement #{index + 1}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => removeEntry(setAchievementEntries, index)}
+                          className="text-red-400 hover:text-red-300 focus:outline-none"
+                        >
+                          Remove
+                        </button>
+                      </div>
+                      <div className="space-y-4">
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Title*</label>
+                          <input
+                            type="text"
+                            value={entry.title}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setAchievementEntries,
+                                achievementEntries,
+                                index,
+                                "title",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Link Title*</label>
+                          <input
+                            type="text"
+                            value={entry.linkTitle}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setAchievementEntries,
+                                achievementEntries,
+                                index,
+                                "linkTitle",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Link*</label>
+                          <input
+                            type="text"
+                            value={entry.link}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setAchievementEntries,
+                                achievementEntries,
+                                index,
+                                "link",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry)}
+                    className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  >
+                    <PlusIcon className="w-4 h-4" /> Add Achievement
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Positions of Responsibility Section */}
+          <div className="mb-8 border-b  pb-6">
+            <div className="mb-6 flex justify-between items-center">
+              <h2 className="text-2xl font-light text-white">
+                Positions of Responsibility
+              </h2>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
@@ -2682,7 +2365,11 @@ function ResumeWithPhoto() {
                 <span className="ml-2 text-white">Include Section</span>
               </label>
             </div>
-            <div className={`${!includePositions ? "opacity-50 pointer-events-none" : ""}`}>
+            <div
+              className={`${
+                !includePositions ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
               {includePositions && (
                 <div className="space-y-6">
                   {positionEntries.map((entry, index) => (
@@ -2702,111 +2389,91 @@ function ResumeWithPhoto() {
                           Remove
                         </button>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div className="space-y-4">
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Position Name*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              value={entry.positionName}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setPositionEntries,
-                                  positionEntries,
-                                  index,
-                                  "positionName",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Position Name*</label>
+                          <input
+                            type="text"
+                            value={entry.positionName}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setPositionEntries,
+                                positionEntries,
+                                index,
+                                "positionName",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          />
                         </div>
-
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Society Name*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              value={entry.societyName}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setPositionEntries,
-                                  positionEntries,
-                                  index,
-                                  "societyName",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Organization Name*</label>
+                          <input
+                            type="text"
+                            value={entry.organizationName}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setPositionEntries,
+                                positionEntries,
+                                index,
+                                "organizationName",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          />
                         </div>
-
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Date*
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="month"
-                              value={entry.date}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setPositionEntries,
-                                  positionEntries,
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Date*</label>
+                          <input
+                            type="month"
+                            value={entry.date}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setPositionEntries,
+                                positionEntries,
+                                index,
+                                "date",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          />
                         </div>
                       </div>
                     </div>
                   ))}
+                  <button
+                    type="button"
+                    onClick={() => addEntry(setPositionEntries, defaultPositionEntry)}
+                    className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  >
+                    <PlusIcon className="w-4 h-4" /> Add Position
+                  </button>
                 </div>
               )}
-              <div className="mt-6 flex justify-end">
-                <button
-                  type="button"
-                  onClick={() => addEntry(setPositionEntries, defaultPositionEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                >
-                  <PlusIcon className="w-4 h-4" /> Add Position
-                </button>
-              </div>
             </div>
           </div>
 
           <div className="flex justify-center">
+           
             <div className=" bg-black rounded-xl flex justify-center items-center">
               <div className="relative inline-flex rounded-xl  group">
                 <div className="absolute transitiona-all  rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
-                <button
-                  type="submit"
-                  title="Get quote now"
-                  className="relative  inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                <button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Generate Resume
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Generating...
+                    </div>
+                  ) : (
+                    'Generate Resume'
+                  )}
                 </button>
               </div>
             </div>
@@ -2814,6 +2481,19 @@ function ResumeWithPhoto() {
         </form>
         <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={hello} />
       </div>
+
+      {/* Add ChatbotModal */}
+      {chatbotModalOpen && (
+        <ChatbotModal
+          closeModal={() => setChatbotModalOpen(false)}
+          updateFormData={handleAIGeneratedData}
+          prompt={prompt}
+          setPrompt={setPrompt}
+          api = {api}
+          // THIS format of string is required because it maps to enum in backend
+          resumeType= {"RESUME_WITH_PHOTO"}
+        />
+      )}
     </>
   );
 }

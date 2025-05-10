@@ -1,16 +1,18 @@
 import React, { useState } from 'react';
 import CloseIcon from "./CloseIcon";
-import axios, { AxiosInstance } from 'axios';
+import  { AxiosInstance } from 'axios';
 import { FormDataStore } from '../types/resumeWithPhoto';
-
+import toast from 'react-hot-toast';
 interface ChatbotModalProps<T> {
   closeModal: () => void;
   updateFormData: (data: T) => void;
   api:AxiosInstance
+  prompt:string
+  setPrompt:(prompt:string)=>void
+  resumeType:string
 }
 
-const ChatbotModal = <T extends FormDataStore>({ closeModal, updateFormData,api }: ChatbotModalProps<T>) => {
-  const [prompt, setPrompt] = useState('');
+const ChatbotModal = <T extends FormDataStore>({ closeModal, updateFormData,prompt,setPrompt,api,resumeType }: ChatbotModalProps<T>) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,8 +22,9 @@ const ChatbotModal = <T extends FormDataStore>({ closeModal, updateFormData,api 
     setError('');
     console.log("Submitting the form")
     try {
-      const response = await api.post('/convert-prompt-to-json', { prompt: prompt });
+      const response = await api.post('/convert-prompt-to-json', { prompt: prompt, type: resumeType });
       updateFormData(response.data);
+      toast.success('Resume generated successfully');
       closeModal();
     } catch (err) {
       setError('Failed to convert prompt. Please try again.');

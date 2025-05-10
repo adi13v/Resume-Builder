@@ -1,20 +1,19 @@
-export interface BaseEntry {
+export interface EducationDetails {
   id: string;
-}
-
-export interface EducationDetails extends BaseEntry {
   instituteName: string;
   degree: string;
+  degreeAbbreviation?: string
   branch: string;
+  branchAbbreviation?:string
   location: string;
-  startDate: string;
   endDate: string;
   gradeType: string;
-  cgpa?: string;
-  percentage?: string;
+  cgpa: string;
+  percentage: string;
 }
 
-export interface ExperienceDetails extends BaseEntry {
+export interface ExperienceDetails {
+  id: string;
   jobTitle: string;
   companyName: string;
   location: string;
@@ -23,39 +22,43 @@ export interface ExperienceDetails extends BaseEntry {
   workList: string[];
 }
 
-export interface ProjectDetails extends BaseEntry {
+export interface ProjectDetails {
+  id: string;
   projectName: string;
-  projectLinkTitle: string;
+  description: string;
+  toolsUsed: string;
+  linkTitle: string;
   projectLink: string;
-  featureList: string[];
   startDate: string;
   endDate: string;
+  workDone: string[];
 }
 
-export interface SkillDetails extends BaseEntry {
+export interface SkillDetails {
+  id: string;
   key: string;
   value: string;
 }
 
-export interface HonorDetails extends BaseEntry {
+export interface CertificateDetails {
+  id: string;
   title: string;
+  link: string;
   date: string;
-  description: string;
+}
+
+export interface AchievementDetails {
+  id: string;
+  title: string;
   linkTitle: string;
   link: string;
 }
 
-export interface ClubDetails extends BaseEntry {
-  title: string;
-  societyName: string;
-  startDate: string;
-  endDate: string;
-  achievements: string[];
-}
-
-export interface CertificateDetails extends BaseEntry {
-  title: string;
-  link: string;
+export interface PositionOfResponsibilityDetails {
+  id: string;
+  positionName: string;
+  organizationName: string;
+  date: string;
 }
 
 export interface FormDataStore {
@@ -69,14 +72,14 @@ export interface FormDataStore {
   experienceEntries: ExperienceDetails[];
   projectEntries: ProjectDetails[];
   skills: SkillDetails[];
-  honorEntries: HonorDetails[];
-  clubEntries: ClubDetails[];
   certificateEntries: CertificateDetails[];
+  achievementEntries: AchievementDetails[];
+  positionEntries: PositionOfResponsibilityDetails[];
   includeExperience: boolean;
   includeProjects: boolean;
   includeSkills: boolean;
-  includeHonors: boolean;
-  includeClubs: boolean;
   includeCertificates: boolean;
-  prompt?: string;
-} 
+  includeAchievements: boolean;
+  includePositions: boolean;
+  prompt: string;
+}

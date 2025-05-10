@@ -9,7 +9,7 @@ import setCanvasPreview from "../utils/setCanvasPreview";
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 
-const ImageCropper = ({ closeModal, updateAvatar }) => {
+const ImageCropper = ({ closeModal, updateAvatar, isCircle }) => {
   const imgRef = useRef(null);
   const previewCanvasRef = useRef(null);
   const [imgSrc, setImgSrc] = useState("");
@@ -58,22 +58,22 @@ const ImageCropper = ({ closeModal, updateAvatar }) => {
 
   return (
     <>
-      
-        
+      <label className="block mb-3 w-fit">
+        <span className="sr-only">Choose profile photo</span>
         <input
           type="file"
           accept="image/*"
           onChange={onSelectFile}
           className="block w-full text-sm text-slate-500 file:mr-4 file:py-1 file:px-2 file:rounded-full file:border-0 file:text-xs file:bg-gray-700 file:text-sky-300 hover:file:bg-gray-600"
         />
-      
+      </label>
       {error && <p className="text-red-400 text-xs">{error}</p>}
       {imgSrc && (
         <div className="flex flex-col items-center">
           <ReactCrop
             crop={crop}
             onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
-            circularCrop
+            circularCrop={isCircle}
             keepSelection
             aspect={ASPECT_RATIO}
             minWidth={MIN_DIMENSION}

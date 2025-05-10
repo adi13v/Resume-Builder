@@ -3,22 +3,28 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
 import subprocess
 import os
+from enum import Enum
 from typing import Optional
 from pydantic import BaseModel
 import json
 from google import genai
 import dotenv
-
+from models.resumewithphoto import ResumeWithPhotoModel,ResumeWithPhotoInstruction
 dotenv.load_dotenv()
 
 client = genai.Client(api_key=os.getenv("GEMINI_API_KEY"))
 
 
+
+
+class ResumeType(str,Enum):
+    RESUME_WITH_PHOTO = "RESUME_WITH_PHOTO"
+    
+MODEL_MAP = {ResumeType.RESUME_WITH_PHOTO:[ResumeWithPhotoModel,ResumeWithPhotoInstruction]}
 class PromptModel(BaseModel):
     prompt: str
-
-
-
+    type: ResumeType
+    
 app = FastAPI()
 DEMO_JSON = """
 {
@@ -35,8 +41,8 @@ DEMO_JSON = """
       "degree": "B.Tech",
       "branch": "Computer Science",
       "location": "New York, USA",
-      "startDate": "August 2020",
-      "endDate": "May 2024",
+      "startDate": "2020-05",
+      "endDate": "2024-05",
       "gradeType": "CGPA",
       "cgpa": "9.1"
     },
@@ -47,8 +53,8 @@ DEMO_JSON = """
       "jobTitle": "Software Engineer Intern",
       "companyName": "TechCorp",
       "location": "San Francisco",
-      "startDate": "June 2023",
-      "endDate": "August 2023",
+      "startDate": "2023-06",
+      "endDate": "2023-08",
       "workList": [
         "Built scalable backend services",
         "Implemented CI/CD pipelines"
@@ -65,8 +71,8 @@ DEMO_JSON = """
         "PDF generation using TeXLive",
         "JSON resume schema with Gemini API"
       ],
-      "startDate": "Jan 2024",
-      "endDate": "Apr 2024"
+      "startDate": "2024-01",
+      "endDate": "2024-04"
     }
   ],
   "skills": [
@@ -80,7 +86,7 @@ DEMO_JSON = """
     {
       "id": "1",
       "title": "Best Intern Award",
-      "date": "August 2023",
+      "date": "2023-08",
       "description": "Recognized for outstanding contributions at TechCorp",
       "linkTitle": "Certificate",
       "link": "https://example.com/certificate"
@@ -91,8 +97,8 @@ DEMO_JSON = """
       "id": "1",
       "title": "Technical Head",
       "societyName": "Code Club",
-      "startDate": "Jan 2022",
-      "endDate": "Dec 2023",
+      "startDate": "2022-01",
+      "endDate": "2023-12",
       "achievements": [
         "Organized 10+ hackathons",
         "Mentored juniors"
@@ -126,20 +132,15 @@ app.add_middleware(
 
 @app.post("/convert-prompt-to-json")
 def call_llm(prompt: PromptModel):
-    
-    response = client.models.generate_content(model="gemini-1.5-flash", contents=f"""You are a resume parsing assistant who enhances resume by providing keywords like enhanced,integrated,spearheded,Lead,etc. Based on the input text provided, convert the user's information into a strictly formatted JSON string matching the following example:
-                {DEMO_JSON}
-             Instructions:
-             - Use industry standard so that ATS score of resume can be maximized.
-             - Use placeholder values like "January 1111" or "Location Placeholder" or if certain data is missing.
-             - Ensure every required field is present in the JSON.
-             - education is important apart from that don't include fields for which you can't infer susbtantial data.
-             - Whatver the user provides, add some buzzwords, and more dense text with some related information to the one provided
-             -Add skill inferred from experience,projects,other data given by the user and also the ones provided by the user
-             Now, convert the following user input into a similar structure to the one provided in example json :
-             
-             {prompt}  
-             """)
+    type = prompt.type
+    response = client.models.generate_content(
+      model="gemini-1.5-flash",
+      contents=f"${MODEL_MAP[type][1]} \n {prompt}",
+        config={
+            "response_mime_type": "application/json",
+            "response_schema": MODEL_MAP[type][0],
+        },
+    )
     final = response.text.strip().removeprefix("```json\n").removesuffix("\n```")
     return json.loads(final)
 

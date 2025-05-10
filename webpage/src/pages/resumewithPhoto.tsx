@@ -52,7 +52,7 @@ const defaultEducationEntry: EducationDetails = {
   branch: "Computer Science",
   location: "Cambridge, Massachusetts",
   startDate: "2020-09",
-  endDate: "2022-05",
+  endDate: "Present",
   gradeType: "cgpa",
   cgpa: "3.9",
   percentage: "",
@@ -235,6 +235,7 @@ const defaultCertificateEntry2: CertificateDetails = {
 
 function ResumeWithPhoto() {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
     defaultEducationEntry2,
@@ -283,12 +284,12 @@ function ResumeWithPhoto() {
   const [includeProjects, setIncludeProjects] = useState(true);
   const [includeSkills, setIncludeSkills] = useState(true);
   const [includeHonors, setIncludeHonors] = useState(true);
-  const [includeClubs, setIncludeClubs] = useState(true);
-  const [includeCertificates, setIncludeCertificates] = useState(true);
+  const [includeClubs, setIncludeClubs] = useState(false);
+  const [includeCertificates, setIncludeCertificates] = useState(false);
   const [includeProjectLinks, setIncludeProjectLinks] = useState(true);
   const [includePicture, setIncludePicture] = useState(true);
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
-
+  const [prompt, setPrompt] = useState<string>("");
   const updateAvatar = async (imageUrl: string) => {
     try {
       const response = await fetch(imageUrl);
@@ -329,6 +330,7 @@ function ResumeWithPhoto() {
       includeHonors: includeHonors,
       includeClubs: includeClubs,
       includeCertificates: includeCertificates,
+      prompt: prompt,
     };
     debouncedStoreRef.current(store);
   }, [
@@ -351,6 +353,7 @@ function ResumeWithPhoto() {
     includeHonors,
     includeClubs,
     includeCertificates,
+    prompt,
   ]);
 
   useEffect(() => {
@@ -386,8 +389,19 @@ function ResumeWithPhoto() {
       setIncludeHonors(store.includeHonors);
       setIncludeClubs(store.includeClubs);
       setIncludeCertificates(store.includeCertificates);
+      setPrompt(store.prompt || "");
     }
   }, []);
+
+
+  useEffect(()=>{
+    if(includeProjects){
+      setIncludeProjectLinks(true)
+    }
+    else{
+      setIncludeProjectLinks(false)
+    }
+  },[includeProjects])
 
   const parseEducationString = () => {
     const newString: string | void = educationEntries
@@ -401,7 +415,7 @@ function ResumeWithPhoto() {
     {${sanitizeInput(entry.instituteName)} $|$ ${sanitizeInput(
           entry.location
         )}}{${
-          entry.gradeType === "cgpa"
+          entry.gradeType.toUpperCase() === "CGPA"
             ? `CGPA: ${entry.cgpa}`
             : `Percentage: ${entry.percentage}`
         }}
@@ -500,7 +514,7 @@ function ResumeWithPhoto() {
   };
 
   const parseHonorString = () => {
-    if (!includeProjects) {
+    if (!includeHonors) {
       return ``;
     }
 
@@ -604,8 +618,9 @@ function ResumeWithPhoto() {
       if (educationEntries.length === 0) toast.error("Please add at least one education entry");
       if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
       if (projectEntries.length === 0) toast.error("Please add at least one project entry");
-    return;
-  }
+      return;
+    }
+    setIsLoading(true);
     setGlobalId(generateUUID());
     console.log(globalId)
 
@@ -713,10 +728,9 @@ function ResumeWithPhoto() {
   \\end{minipage}
   \\begin{minipage}[c]{0.4\\textwidth}
   \\textbf{\\Huge \\scshape{${addLineBreakInSpacing(sanitizeInput(name))}}} \\\\ \\vspace{1pt}
-    % \\scshape sets small capital letters, remove if desired
     \\small{${sanitizeInput(phoneNumber)}} \\\\
     \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}}\\\\
-    ${linkedInLink!=='' ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}} ` : ``} ${githubLink!=='' ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}  ` : ``}  ${portfolioLink!=='' ? `\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}` : ``}
+    ${linkedInLink!=='' ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}\\\\}` : ``}${githubLink!=='' ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}\\\\}`:``}${portfolioLink!==''?`\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}` : ``}
   \\end{minipage}
     ` : `
      %Without picture
@@ -726,29 +740,10 @@ function ResumeWithPhoto() {
       \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}} ${portfolioLink ? `$|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:``} ${linkedInLink || githubLink ? ` $|$ \\\\ ` : ``}
       ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}` : ``} ${githubLink && linkedInLink ? ` $|$` : ``}
       % you should adjust you linked in profile name to be professional and recognizable
-      ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}` : ``}
+      ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}`:``}
   \\end{center}
     `}
-  \begin{comment}
-  This CV was written for specifically for positions I was applying for in
-  academia, and then modified to be a template.
 
-  A standard CV is about two pages long where as a resume in the US is one page.
-  sections can be added and removed here with this in mind. In my experience,
-  education, and applicable work experience and skills are the most import things
-  to include on a resume. For a CV the Europass CV suggests the categories: Work
-  Experience, Education and Training, Language Skills, Digital Skills,
-  Communication and Interpersonal Skills, Conferences and Seminars, Creative Works
-  Driver's License, Hobbies and Interests, Honors and Awards, Management and
-  Leadership Skills, Networks and Memberships, Organizational Skills, Projects,
-  Publications, Recommendations, Social and Political Activities, Volunteering.
-
-  Your goal is to convey a who, what , when, where, why for every item you share.
-  The who is obviously you, but I believe the rest should be done in that order.
-  For example below. An employer cares most about the degree held and typically
-  less about the institution or where it is located (This is still good
-  information though). Whatever order you choose be consistent throughout.
-  \end{comment}
 
   %-----EDUCATION----------------------------------------------------------------
   \section{Education}
@@ -791,11 +786,15 @@ function ResumeWithPhoto() {
       const file = new Blob([res.data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       setPdfUrl(fileURL);
-
+      toast.success('Resume generated successfully!');
     })
     .catch((err)=>{
-      console.log(err)
+      console.error(err);
+      toast.error('Failed to generate resume. Please try again.');
     })
+    .finally(() => {
+      setIsLoading(false);
+    });
   }
 
   // Add this function to handle the AI-generated form data
@@ -813,6 +812,11 @@ function ResumeWithPhoto() {
     setHonorEntries(data.honorEntries || []);
     setClubEntries(data.clubEntries || []);
     setCertificateEntries(data.certificateEntries || []);
+    setIncludeClubs(data.includeClubs || false);
+    setIncludeCertificates(data.includeCertificates || false);
+    setIncludeProjects(data.includeProjects || false);
+    setIncludeSkills(data.includeSkills || false);
+    setIncludeHonors(data.includeHonors || false);
   };
 
   return (
@@ -824,14 +828,23 @@ function ResumeWithPhoto() {
           className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10"
         >
           {/* Add AI Generator Button at the top */}
-          <div className="mb-8 flex justify-end">
-            <button
-              type="button"
-              onClick={() => setChatbotModalOpen(true)}
-              className="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-500 text-white rounded-lg hover:from-blue-600 hover:to-purple-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all duration-200"
-            >
-              Generate with AI
-            </button>
+          
+          <div className="flex justify-end ">
+           
+            <div className=" bg-black rounded-xl flex justify-center items-center">
+              <div className="relative inline-flex rounded-xl  group">
+                <div className="absolute transitiona-all  rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
+                <button
+                  type="button"
+                  
+                  onClick={() => setChatbotModalOpen(true)}
+                  className="relative  inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                >
+                  Generate with AI
+                </button>
+              </div>
+            </div>
+            
           </div>
 
           {/* Personal Information Section */}
@@ -991,7 +1004,7 @@ function ResumeWithPhoto() {
                 >
                   LinkedIn Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
-                    Tip: Remove the https://, also if URL is too long,{" "}
+                    Tip: Write full url with https://, also if URL is too long,{" "}
                     <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
                       edit in Linkedin
                     </a>
@@ -1019,7 +1032,7 @@ function ResumeWithPhoto() {
                 >
                   GitHub Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
-                    Tip: Remove the https://
+                    Tip: Write full url with https://
                   </span>
                 </label>
                 <Tooltip
@@ -1044,7 +1057,7 @@ function ResumeWithPhoto() {
                 >
                   Portfolio Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
-                    Tip: Remove the https://
+                    Tip: Write full url with https://
                   </span>
                 </label>
                 <Tooltip
@@ -1283,7 +1296,7 @@ function ResumeWithPhoto() {
                           <input
                             type="radio"
                             name={`gradeType-${entry.id}`}
-                            checked={entry.gradeType === "cgpa"}
+                            checked={entry.gradeType.toUpperCase() === "CGPA"}
                             onChange={() =>
                               handleInputChange(
                                 setEducationEntries,
@@ -1301,7 +1314,7 @@ function ResumeWithPhoto() {
                           <input
                             type="radio"
                             name={`gradeType-${entry.id}`}
-                            checked={entry.gradeType === "percentage"}
+                            checked={entry.gradeType.toUpperCase() === "PERCENTAGE"}
                             onChange={() =>
                               handleInputChange(
                                 setEducationEntries,
@@ -1317,7 +1330,7 @@ function ResumeWithPhoto() {
                         </label>
                       </div>
 
-                      {entry.gradeType === "cgpa" ? (
+                      {entry.gradeType.toUpperCase() === "CGPA" ? (
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
                             CGPA
@@ -2661,12 +2674,19 @@ function ResumeWithPhoto() {
             <div className=" bg-black rounded-xl flex justify-center items-center">
               <div className="relative inline-flex rounded-xl  group">
                 <div className="absolute transitiona-all  rounded-xl duration-1000 opacity-70 -inset-px bg-gradient-to-r from-[#44BCFF] via-[#FF44EC] to-[#FF675E] blur-lg group-hover:opacity-100 group-hover:-inset-1 group-hover:duration-200 animate-tilt"></div>
-                <button
-                  type="submit"
-                  title="Get quote now"
-                  className="relative  inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900"
+                <button 
+                  type="submit" 
+                  disabled={isLoading}
+                  className="relative inline-flex items-center justify-center px-8 py-4 text-lg font-bold text-white transition-all duration-200 bg-gray-900 font-pj rounded-xl focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Generate Resume
+                  {isLoading ? (
+                    <div className="flex items-center gap-2">
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      Generating...
+                    </div>
+                  ) : (
+                    'Generate Resume'
+                  )}
                 </button>
               </div>
             </div>
@@ -2680,7 +2700,11 @@ function ResumeWithPhoto() {
         <ChatbotModal
           closeModal={() => setChatbotModalOpen(false)}
           updateFormData={handleAIGeneratedData}
+          prompt={prompt}
+          setPrompt={setPrompt}
           api = {api}
+          // THIS format of string is required because it maps to enum in backend
+          resumeType= {"RESUME_WITH_PHOTO"}
         />
       )}
     </>

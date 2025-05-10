@@ -51,9 +51,13 @@ const sanitizeInput = (input:string) => {
   
   return sanitizedInput;
 }
-
+// This is meant for places where verbatim links need to be shown
+// I know a little confusing name but need to use this for places like github links where What you write is what you wnt to see
 const sanitizeInputForDisplay = (input:string) => {
-  return input.replace(/https?:\/\//, '');
+  input = input.replace(/https?:\/\//, '');
+  input = input.replace(/www\./, '');
+  input = input.replace(/\\/g, '/');
+  return input;
 }
 
 const sanitizeInputForLink = (input:string) => {
@@ -62,7 +66,11 @@ const sanitizeInputForLink = (input:string) => {
   if (!trimmedInput.startsWith("http://") && !trimmedInput.startsWith("https://")){
     return "https://" + trimmedInput;
   }
-  return trimmedInput;
+  console.log(input)
+  input = input.replace(/\\/g, '/');
+  console.log(input)
+  input = input.replace(/\s/g, '');
+  return input;
 }
 
 
