@@ -22,7 +22,7 @@ function debounce<T extends (...args:Parameters<T>)=> void>(func:T,delay:number)
   }
 
   // Function to format date from YYYY-MM to MMM YYYY
-function formatMonthYear(dateString) {
+function formatMonthYear(dateString:string) {
   if (!dateString || !dateString.match(/^\d{4}-\d{2}$/)) {
     return 'Present';
   }

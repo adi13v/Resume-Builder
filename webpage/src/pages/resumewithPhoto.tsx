@@ -263,7 +263,7 @@ function ResumeWithPhoto() {
   const [githubLink, setGithubLink] = useState<string>("");
   const [linkedInLink, setLinkedInLink] = useState<string>("");
   const [globalId, setGlobalId] = useState<string>(generateUUID());
-  console.log(globalId);
+  
   const storageKeyName = `formData-${window.location.pathname}`;
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
@@ -308,7 +308,18 @@ function ResumeWithPhoto() {
     localStorage.setItem(storageKeyName, JSON.stringify(store));
   };
   const debouncedStoreRef = useRef(debounce(loadToStore, 1000));
+  const formRef = useRef<HTMLFormElement>(null);
+  const [triggerSubmit, setTriggerSubmit] = useState(false);
 
+
+  useEffect(() => {
+    if (triggerSubmit) {
+      formRef.current?.requestSubmit();
+      setTriggerSubmit(false);
+    }
+  }, [triggerSubmit]);
+
+  
   useEffect(() => {
     const store = {
       name: name,
@@ -360,7 +371,7 @@ function ResumeWithPhoto() {
     const data = localStorage.getItem(storageKeyName);
     if (data) {
       const store = JSON.parse(data) as FormDataStore;
-      console.log("store", store);
+   
       setName(store.name);
       setEmail(store.email);
       setPhoneNumber(store.phoneNumber);
@@ -611,18 +622,27 @@ function ResumeWithPhoto() {
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(skills.length === 0 || educationEntries.length === 0 ||
-     experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
-      if (includePicture && imageFile === null) toast.error("Please upload a profile picture");
-      if (skills.length === 0) toast.error("Please select at least one skill");
-      if (educationEntries.length === 0) toast.error("Please add at least one education entry");
-      if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
-      if (projectEntries.length === 0) toast.error("Please add at least one project entry");
-      return;
-    }
+       if (educationEntries.length === 0) {toast.error("Please add at least one education entry");
+      return
+       }
+      if (includePicture && imageFile === null) {toast.error("Please upload a profile picture");
+        return
+      }
+      if (includeSkills && skills.length === 0) {toast.error("Please select at least one skill");
+        return
+      }
+      
+      if (includeExperience && experienceEntries.length === 0) {toast.error("Please add at least one experience entry");
+        return
+      }
+      if (includeProjects && projectEntries.length === 0) {toast.error("Please add at least one project entry");
+        return
+      }
+
+    
     setIsLoading(true);
     setGlobalId(generateUUID());
-    console.log(globalId)
+  
 
   const Code:string = String.raw`
   \documentclass[A4,11pt]{article}
@@ -816,13 +836,16 @@ function ResumeWithPhoto() {
     setIncludeCertificates(data.includeCertificates || false);
     setIncludeProjects(data.includeProjects || false);
     setIncludeSkills(data.includeSkills || false);
+    setIncludeExperience(data.includeExperience || false);
     setIncludeHonors(data.includeHonors || false);
+    setTriggerSubmit(true);
   };
 
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 font-sans min-h-screen w-[100%] overflow-x-hidden bg-gray-950">
         <form
+          ref={formRef}
           action=""
           onSubmit={handleFormSubmit}
           className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10"
@@ -925,6 +948,7 @@ function ResumeWithPhoto() {
                 <Modal
                   updateAvatar={updateAvatar}
                   closeModal={() => setModalOpen(false)}
+                  isCircle={true}
                 />
               )}
               <div className="mb-4">

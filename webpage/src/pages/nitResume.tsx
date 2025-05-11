@@ -312,6 +312,18 @@ function ResumeWithPhoto() {
     localStorage.setItem(storageKeyName, JSON.stringify(store));
   };
   const debouncedStoreRef = useRef(debounce(loadToStore, 1000));
+  const formRef = useRef<HTMLFormElement>(null);
+  const [triggerSubmit, setTriggerSubmit] = useState(false);
+  
+
+
+  useEffect(() => {
+    if (triggerSubmit) {
+      formRef.current?.requestSubmit();
+      setTriggerSubmit(false);
+    }
+  }, [triggerSubmit]);
+
 
   useEffect(() => {
     const store = {
@@ -364,7 +376,7 @@ function ResumeWithPhoto() {
     const data = localStorage.getItem(storageKeyName);
     if (data) {
       const store = JSON.parse(data) as FormDataStore;
-      console.log("store", store);
+    
       setName(store.name);
       setEmail(store.email);
       setPhoneNumber(store.phoneNumber);
@@ -555,18 +567,25 @@ ${skills.map((skill)=>{
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if(skills.length === 0 || educationEntries.length === 0 ||
-     experienceEntries.length === 0 || projectEntries.length === 0 || (includePicture && imageFile === null)) {
-      if (includePicture && imageFile === null) toast.error("Please upload a college logo");
-      if (skills.length === 0) toast.error("Please select at least one skill");
-      if (educationEntries.length === 0) toast.error("Please add at least one education entry");
-      if (experienceEntries.length === 0) toast.error("Please add at least one experience entry");
-      if (projectEntries.length === 0) toast.error("Please add at least one project entry");
-      return;
-    }
+    
+      if (includePicture && imageFile === null) {toast.error("Please upload a college logo"); 
+        return}
+      if (includeSkills && skills.length === 0) {toast.error("Please select at least one skill"); 
+        return}
+      if (educationEntries.length === 0) {toast.error("Please add at least one education entry"); 
+        return}
+      if (includeExperience && experienceEntries.length === 0) {toast.error("Please add at least one experience entry"); 
+        return}
+      if (includeProjects && projectEntries.length === 0) {toast.error("Please add at least one project entry");
+        return}
+      if (includeAchievements && achievementEntries.length === 0) {toast.error("Please add at least one achievement entry");
+        return}
+      if (includePositions && positionEntries.length === 0) {toast.error("Please add at least one position entry");
+        return}
+     
     setIsLoading(true);
     setGlobalId(generateUUID());
-    console.log(globalId)
+  
 
   const Code:string = String.raw`
 
@@ -814,7 +833,6 @@ ${parseClubString()}
     setPhoneNumber(data.phoneNumber || '');
     setGithubLink(data.githubLink || '');
     setLinkedInLink(data.linkedInLink || '');
-   
     setEducationEntries(data.educationEntries || []);
     setExperienceEntries(data.experienceEntries || []);
     setProjectEntries(data.projectEntries || []);
@@ -827,12 +845,15 @@ ${parseClubString()}
     setIncludeAchievements(data.includeAchievements || false);
     setIncludePositions(data.includePositions || false);
     setIncludeProjects(data.includeProjects || false);
+    setIncludeExperience(data.includeExperience || false);
+    setTriggerSubmit(true);
   };
 
   return (
     <>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 font-sans min-h-screen w-[100%] overflow-x-hidden bg-gray-950">
         <form
+          ref={formRef}
           action=""
           onSubmit={handleFormSubmit}
           className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10"
@@ -1259,9 +1280,7 @@ ${parseClubString()}
                         className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10`}
                         required
                       />
-                      
-
-                    
+                          
                     </div>
 
                     <div className="mb-4 md:col-span-2">
@@ -2491,7 +2510,7 @@ ${parseClubString()}
           setPrompt={setPrompt}
           api = {api}
           // THIS format of string is required because it maps to enum in backend
-          resumeType= {"RESUME_WITH_PHOTO"}
+          resumeType= {"NIT_RESUME"}
         />
       )}
     </>

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import CloseIcon from "./CloseIcon";
 import  { AxiosInstance } from 'axios';
 import { FormDataStore } from '../types/resumeWithPhoto';
+import { FormDataStore as NITFormDataStore } from '../types/nitResume';
+
 import toast from 'react-hot-toast';
 interface ChatbotModalProps<T> {
   closeModal: () => void;
@@ -12,7 +14,7 @@ interface ChatbotModalProps<T> {
   resumeType:string
 }
 
-const ChatbotModal = <T extends FormDataStore>({ closeModal, updateFormData,prompt,setPrompt,api,resumeType }: ChatbotModalProps<T>) => {
+const ChatbotModal = <T extends FormDataStore | NITFormDataStore>({ closeModal, updateFormData,prompt,setPrompt,api,resumeType }: ChatbotModalProps<T>) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -20,11 +22,11 @@ const ChatbotModal = <T extends FormDataStore>({ closeModal, updateFormData,prom
     e.preventDefault();
     setLoading(true);
     setError('');
-    console.log("Submitting the form")
     try {
       const response = await api.post('/convert-prompt-to-json', { prompt: prompt, type: resumeType });
       updateFormData(response.data);
-      toast.success('Resume generated successfully');
+      toast.success('Ai Data Generated Successfully');
+      
       closeModal();
     } catch (err) {
       setError('Failed to convert prompt. Please try again.');
