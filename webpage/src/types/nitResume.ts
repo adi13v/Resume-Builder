@@ -67,7 +67,6 @@ export interface FormDataStore {
   phoneNumber: string;
   githubLink: string;
   linkedInLink: string;
-  portfolioLink: string;
   educationEntries: EducationDetails[];
   experienceEntries: ExperienceDetails[];
   projectEntries: ProjectDetails[];

@@ -3,7 +3,7 @@ import CloseIcon from "./CloseIcon";
 import  { AxiosInstance } from 'axios';
 import { FormDataStore } from '../types/resumeWithPhoto';
 import { FormDataStore as NITFormDataStore } from '../types/nitResume';
-
+import {FormDataStore as JakesFormDataStore} from '../types/jakesResume';
 import toast from 'react-hot-toast';
 interface ChatbotModalProps<T> {
   closeModal: () => void;
@@ -14,7 +14,7 @@ interface ChatbotModalProps<T> {
   resumeType:string
 }
 
-const ChatbotModal = <T extends FormDataStore | NITFormDataStore>({ closeModal, updateFormData,prompt,setPrompt,api,resumeType }: ChatbotModalProps<T>) => {
+const ChatbotModal = <T extends FormDataStore | NITFormDataStore | JakesFormDataStore>({ closeModal, updateFormData,prompt,setPrompt,api,resumeType }: ChatbotModalProps<T>) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 

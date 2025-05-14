@@ -3,10 +3,14 @@ import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import hello from "../assets/hello.pdf";
+
+import NIT_Resume_With_Logo from "../assets/NIT-Resume-With-Logo.pdf"
+import NIT_Resume_With_Photo from "../assets/NIT-Resume-With-Photo.pdf"
+import NIT_Resume_Without_Photo from "../assets/NIT-Resume-Without-Photo.pdf"
 import Tooltip from "../components/Tooltip";
 import Modal from "../components/Modal";
 import ChatbotModal from "../components/ChatbotModal";
+
 import {
   generateUUID,
   handleInputChange,
@@ -22,6 +26,7 @@ import {
   removeEntry,
   handleKeyActiononList,
   handleKeyActionOnSublist,
+  NITEnum
 } from "../helper/helperFunctions";
 import { 
   EducationDetails, 
@@ -36,210 +41,135 @@ import {
 import PdfBox from "../components/PdfBox";
 
 const api = axios.create({
-  baseURL: `http://localhost:8000`,
+  baseURL: `https://resume-builder-aditya.onrender.com`,
 });
 
-const presets = [
-  "Languages",
-  "Frameworks",
-  "Libraries",
-  "Developer Tools",
-  "Soft Skills",
-];
-
-enum RestrictionType {
-  ALREADY_BOLD = "already_bold",
-  ALREADY_ITALIC = "already_italic",
-  NOT_ALLOWED = "not_allowed",
-}
 
 const defaultEducationEntry: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd",
-  instituteName: "Massachusetts Institute of Technology",
-  degree: "Master of Science",
-  branch: "Computer Science",
-  location: "Cambridge, Massachusetts",
-  degreeAbbreviation: "M.Tech",
-  branchAbbreviation: "CSE",
-  endDate: "Present",
-  gradeType: "cgpa",
-  cgpa: "3.9",
-  percentage: "",
-};
-
-const defaultEducationEntry2: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd2",
-  instituteName: "Stanford University",
-  degree: "Bachelor of Science",
-  branch: "Computer Science",
-  degreeAbbreviation: "B.Tech",
-  branchAbbreviation: "CSE",
-  location: "Stanford, California",
-  endDate: "2020-05",
-  gradeType: "cgpa",
-  cgpa: "3.8",
-  percentage: "",
-};
-
-const defaultEducationEntry3: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd3",
-  instituteName: "University of California, Berkeley",
-  degree: "Bachelor of Arts",
-  branch: "Mathematics",
-  location: "Berkeley, California",
-  degreeAbbreviation: "B.A",
-  branchAbbreviation: "Hons.",
-  endDate: "2016-05",
-  gradeType: "CGPA",
-  cgpa: "3.7",
-  percentage: "",
-};
-
-const defaultExperienceEntry: ExperienceDetails = {
-  id: "cvhu7654wdfghj",
-  jobTitle: "Senior Software Engineer",
-  companyName: "Google",
-  location: "Mountain View, California",
-  startDate: "2022-06",
-  endDate: "Present",
-  workList: [
-    "Led development of scalable microservices architecture handling 1M+ daily requests",
-    "Implemented CI/CD pipeline reducing deployment time by 40%",
-    "Mentored junior developers and conducted code reviews for team of 5 engineers",
-  ],
-};
+    "id": "edu1",
+    "instituteName": "NIT Trichy",
+    "degree": "Bachelor of Technology",
+    "degreeAbbreviation": "B.Tech",
+    "branch": "Computer Science and Engineering",
+    "branchAbbreviation": "CSE",
+    "location": "Tiruchirappalli, India",
+    "endDate": "2023-05",
+    "gradeType": "CGPA",
+    "cgpa": "9.2",
+    "percentage": ""
+  }
+const defaultExperienceEntry1: ExperienceDetails = {
+    "id": "exp1",
+    "jobTitle": "Software Engineering Intern",
+    "companyName": "Google",
+    "location": "Bangalore, India",
+    "startDate": "2022-05",
+    "endDate": "2022-08",
+    "workList": [
+      "Developed scalable RESTful APIs with FastAPI and PostgreSQL, improving system throughput by 35%",
+      "Contributed to production deployment of a microservice used by 10M+ users with Kubernetes & Docker",
+      "Wrote unit and integration tests achieving 95% test coverage, reducing bugs by 40%"
+    ]
+  }
 
 const defaultExperienceEntry2: ExperienceDetails = {
-  id: "cvhu7654wdfghj2",
-  jobTitle: "Software Engineer",
-  companyName: "Microsoft",
-  location: "Redmond, Washington",
-  startDate: "2020-06",
-  endDate: "2022-05",
-  workList: [
-    "Developed and maintained Azure cloud services with 99.99% uptime",
-    "Optimized database queries reducing response time by 30%",
-    "Collaborated with cross-functional teams to deliver features on schedule",
-  ],
-};
+    "id": "exp2",
+    "jobTitle": "Backend Developer (Freelance)",
+    "companyName": "TechStart Inc.",
+    "location": "Remote",
+    "startDate": "2021-12",
+    "endDate": "2022-03",
+    "workList": [
+      "Built JWT-based authentication and OAuth2 flows for secure API endpoints",
+      "Designed and deployed CI/CD pipelines using GitHub Actions and Docker",
+      "Optimized database queries, improving response time by 50%"
+    ]
+  }
 
-const defaultProjectEntry: ProjectDetails = {
-  id: "0okmhgfdr543edf",
-  projectName: "AI-Powered Resume Builder",
-  description: "A modern resume builder with AI-powered content suggestions",
-  toolsUsed: "React, TypeScript, Node.js, LaTeX",
-  linkTitle: "GitHub",
-  projectLink: "https://github.com/username/resume-builder",
-  startDate: "2023-01",
-  endDate: "2023-06",
-  workDone: [
-    "Implemented real-time LaTeX PDF generation with custom templates",
-    "Integrated AI-powered content suggestions and grammar checking",
-    "Developed responsive design with dark/light mode support",
-    "Added local storage for draft saving and auto-recovery"
-  ]
-};
+const defaultProjectEntry1: ProjectDetails = {
+    "id": "proj1",
+    "projectName": "Smart Resume Optimizer",
+    "description": "An ATS-aware resume generation and optimization tool with LaTeX output and NLP-based job description analysis.",
+    "toolsUsed": "FastAPI, OpenAI API, LaTeX, TailwindCSS",
+    "linkTitle": "GitHub Repo",
+    "projectLink": "https://github.com/aryanmehta/resume-optimizer",
+    "startDate": "2023-01",
+    "endDate": "2023-03",
+    "workDone": [
+      "Integrated OpenAI API to analyze job descriptions and recommend skill alignment",
+      "Enabled LaTeX resume generation with custom section toggles",
+      "Used FastAPI background tasks for file management and async processing"
+    ]
+  }
 
 const defaultProjectEntry2: ProjectDetails = {
-  id: "0okmhgfdr543edf2",
-  projectName: "Distributed Task Scheduler",
-  description: "A distributed task scheduling system with high reliability",
-  toolsUsed: "Go, Raft, Docker, Kubernetes",
-  linkTitle: "GitHub",
-  projectLink: "https://github.com/username/task-scheduler",
-  startDate: "2022-07",
-  endDate: "2022-12",
-  workDone: [
-    "Implemented distributed consensus using Raft algorithm",
-    "Achieved 99.9% task execution reliability",
-    "Scaled to handle 100K+ concurrent tasks",
-    "Added monitoring and alerting system"
-  ]
-};
+    "id": "proj2",
+    "projectName": "Decentralized Chat Platform",
+    "description": "Peer-to-peer video and text chat system with end-to-end encryption and real-time messaging.",
+    "toolsUsed": "WebRTC, Socket.IO, React, MongoDB",
+    "linkTitle": "Live Demo",
+    "projectLink": "https://chat.aryanmehta.dev",
+    "startDate": "2022-07",
+    "endDate": "2022-10",
+    "workDone": [
+      "Implemented real-time messaging with Socket.IO and MongoDB Atlas",
+      "Enabled secure peer-to-peer video calling using WebRTC and TURN servers",
+      "Built a responsive UI with React, Tailwind, and dark/light themes"
+    ]
+  }
 
-const defaultEmptySkillEntry: SkillDetails = {
-  id: "3edfty7unbvcxae567j",
-  key: "",
-  value: "",
-};
-const defaultSkillEntry: SkillDetails = {
-  id: "3edfty7unbvcxae567j",
-  key: "Languages",
-  value: "Python, JavaScript, TypeScript, Java, C++",
-};
+  const defaultSkillEntry1: SkillDetails = { "id": "sk1", "key": "Languages", "value": "Python, JavaScript, C++, SQL" }
+  const defaultSkillEntry2: SkillDetails = { "id": "sk2", "key": "Frameworks", "value": "FastAPI, React, Node.js, Express" }
+  const defaultSkillEntry3: SkillDetails = { "id": "sk3", "key": "DevOps", "value": "Docker, GitHub Actions, NGINX, Kubernetes" }
+  const defaultSkillEntry4: SkillDetails = { "id": "sk4", "key": "Databases", "value": "PostgreSQL, MongoDB, Redis" }
+  const defaultSkillEntry5: SkillDetails = { "id": "sk5", "key": "Cloud Platforms", "value": "AWS EC2/S3, Firebase, Railway" }
 
-const defaultSkillEntry2: SkillDetails = {
-  id: "3edfty7unbvcxae567j2",
-  key: "Frameworks",
-  value: "React, Node.js, Express, Django, Spring Boot",
-};
+  const defaultCertificateEntry1: CertificateDetails = {
+    "id": "cert1",
+    "title": "AWS Certified Cloud Practitioner",
+    "link": "https://www.credly.com/badges/aws-certificate",
+    "date": "2023-03"
+  }
 
-const defaultSkillEntry3: SkillDetails = {
-  id: "3edfty7unbvcxae567j3",
-  key: "Developer Tools",
-  value: "Git, Docker, Kubernetes, AWS, Azure, CI/CD",
-};
+  const defaultCertificateEntry2: CertificateDetails = {
+    "id": "cert2",
+    "title": "Full Stack Web Development Specialization - Coursera",
+    "link": "https://coursera.org/verify/certificate",
+    "date": "2022-09"
+  }
 
-const defaultSkillEntry4: SkillDetails = {
-  id: "3edfty7unbvcxae567j4",
-  key: "Databases",
-  value: "MongoDB, PostgreSQL, Redis, MySQL",
-};
+  const defaultAchievementEntry1: AchievementDetails = {
+    "id": "ach1",
+    "title": "SIH 2022 Finalist",
+    "linkTitle": "Certificate",
+    "link": "https://smartindiahackathon.com"
+  }
 
-const defaultSkillEntry5: SkillDetails = {
-  id: "3edfty7unbvcxae567j5",
-  key: "Soft Skills",
-  value: "Leadership, Team Collaboration, Problem Solving, Communication",
-};
+  const defaultAchievementEntry2: AchievementDetails = {
+    "id": "ach2",
+    "title": "CodeChef April Challenge – Top 1%",
+    "linkTitle": "Contest Link",
+    "link": "https://www.codechef.com/rankings"
+  }
 
-const defaultAchievementEntry: AchievementDetails = {
-  id: "honor1",
-  title: "Dean's List",
-  linkTitle: "Certificate",
-  link: "https://example.com/certificate"
-};
+  const defaultPositionEntry1: PositionOfResponsibilityDetails = {
+    "id": "pos1",
+    "positionName": "Technical Head",
+    "organizationName": "TechFusion Coding Club",
+    "date": "2021-2023"
+  }
 
-const defaultAchievementEntry2: AchievementDetails = {
-  id: "honor2",
-  title: "Best Project Award",
-  linkTitle: "Profile Link",
-  link: "https://example.com/profile"
-};
+  const defaultPositionEntry2: PositionOfResponsibilityDetails = {
+    "id": "pos2",
+    "positionName": "Open Source Mentor",
+    "organizationName": "Hacktoberfest NIT Trichy",
+    "date": "2022"
+  }
 
-const defaultClubEntry: PositionOfResponsibilityDetails = {
-  id: "club1",
-  positionName: "Technical Lead",
-  organizationName: "KIIT MLSA",
-  date: "2023-01"
-};
 
-const defaultClubEntry2: PositionOfResponsibilityDetails = {
-  id: "club2",
-  positionName: "Public Speaking Mentor",
-  organizationName: "KIIT MUN Society",
-  date: "2022-08"
-};
 
-const defaultCertificateEntry: CertificateDetails = {
-  id: "cert1",
-  title: "AWS Cloud Practitioner",
-  link: "https://example.com/certificate1"
-};
-
-const defaultCertificateEntry2: CertificateDetails = {
-  id: "cert2",
-  title: "Google Cloud Professional Data Engineer",
-  link: "https://example.com/certificate2",
-};
-
-const defaultPositionEntry: PositionOfResponsibilityDetails = {
-  id: "pos1",
-  positionName: "Technical Lead",
-  organizationName: "KIIT MLSA",
-  date: "2023-01"
-};
-
-function ResumeWithPhoto() {
+function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
+  const FormatType = defaultPhotoSetting
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [globalId, setGlobalId] = useState<string>(generateUUID());
@@ -254,7 +184,7 @@ function ResumeWithPhoto() {
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
   const [prompt, setPrompt] = useState<string>("");
   const storageKeyName = `formData-${window.location.pathname}`;
-
+  
   // Section toggles
   const [includeExperience, setIncludeExperience] = useState(true);
   const [includeProjects, setIncludeProjects] = useState(true);
@@ -262,36 +192,38 @@ function ResumeWithPhoto() {
   const [includeCertificates, setIncludeCertificates] = useState(true);
   const [includeAchievements, setIncludeAchievements] = useState(true);
   const [includePositions, setIncludePositions] = useState(true);
-  const [includePicture, setIncludePicture] = useState(true);
-
+  
   // Form data states
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
-    defaultEducationEntry2,
-    defaultEducationEntry3,
+    
   ]);
   const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
-    defaultExperienceEntry,
+    defaultExperienceEntry1,
     defaultExperienceEntry2,
   ]);
   const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
-    defaultProjectEntry,
+    defaultProjectEntry1,
+    defaultProjectEntry2,
   ]);
   const [skills, setSkills] = useState<SkillDetails[]>([
-    defaultSkillEntry,
+    defaultSkillEntry1,
     defaultSkillEntry2,
     defaultSkillEntry3,
     defaultSkillEntry4,
     defaultSkillEntry5,
   ]);
   const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([
-    defaultCertificateEntry,
+    defaultCertificateEntry1,
+    defaultCertificateEntry2,
   ]);
   const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([
-    defaultAchievementEntry,
+    defaultAchievementEntry1,
+    defaultAchievementEntry2,
   ]);
   const [positionEntries, setPositionEntries] = useState<PositionOfResponsibilityDetails[]>([
-    defaultPositionEntry,
+    defaultPositionEntry1,
+    defaultPositionEntry2,
   ]);
 
   const updateAvatar = async (imageUrl: string) => {
@@ -568,7 +500,7 @@ ${skills.map((skill)=>{
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     
-      if (includePicture && imageFile === null) {toast.error("Please upload a college logo"); 
+      if (FormatType !== NITEnum.None && imageFile === null) {toast.error("Please upload a college logo"); 
         return}
       if (includeSkills && skills.length === 0) {toast.error("Please select at least one skill"); 
         return}
@@ -588,9 +520,6 @@ ${skills.map((skill)=>{
   
 
   const Code:string = String.raw`
-
-
-
 \documentclass[a4paper,11pt]{article}
 
 % Package imports
@@ -753,9 +682,9 @@ ${skills.map((skill)=>{
 
 %----------HEADING-----------------
 \parbox{2.35cm}{%
- \includegraphics[width=2cm]{image-${globalId}} % Example if a logo is to be added
+${FormatType!==NITEnum.None ? `\\includegraphics[width=2cm]{image-${globalId}}` : ""}
 }
-\parbox{\dimexpr\linewidth-2.8cm\relax}{
+\parbox{\dimexpr\linewidth${FormatType !== NITEnum.None ? "-2.8cm" : ""}\relax}{
 \begin{tabularx}{\linewidth}{L r}
   \textbf{\LARGE \scshape \name} & +91-\phone \\ % Name styled with small caps
   \course & \href{mailto:\emailb}{\emailb} \\
@@ -803,7 +732,7 @@ ${parseClubString()}
 
   const formData = new FormData()
     formData.append('payload', Code)
-    if(imageFile){
+    if(FormatType !== NITEnum.None && imageFile){
       formData.append('imageFile', imageFile)
     }
     formData.append('globalId', globalId)
@@ -886,10 +815,10 @@ ${parseClubString()}
               </h2>
             </div>
             <div className="space-y-6">
-              <div className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
+             {FormatType !== NITEnum.None && <div className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
                 <div className="flex justify-between items-center mb-4">
                   <h3 className="text-lg font-light text-white">
-                    College Logo
+                    {FormatType === NITEnum.Logo ? "College Logo" : "Profile Photo"}
                   </h3>
                   <div
                     className={`relative w-24 h-24 rounded-full overflow-hidden border-2 border-white/20 bg-white/5 flex items-center justify-center cursor-pointer hover:border-white/30 transition-colors `}
@@ -926,15 +855,13 @@ ${parseClubString()}
                       </>
                     ) : (
                       <div className="text-white text-sm text-center p-2">
-                        {includePicture
-                          ? "Click to add photo"
-                          : "Photo disabled"}
+                        Click to add photo
                       </div>
                     )}
                   </div>
                  
                 </div>
-              </div>
+              </div>}
               {modalOpen && (
                 <Modal
                   updateAvatar={updateAvatar}
@@ -2498,7 +2425,7 @@ ${parseClubString()}
             </div>
           </div>
         </form>
-        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={hello} />
+        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={FormatType === NITEnum.Logo ? NIT_Resume_With_Logo : FormatType === NITEnum.Photo ? NIT_Resume_With_Photo : NIT_Resume_Without_Photo} />
       </div>
 
       {/* Add ChatbotModal */}
@@ -2517,4 +2444,4 @@ ${parseClubString()}
   );
 }
 
-export default ResumeWithPhoto;
+export default NITResume;

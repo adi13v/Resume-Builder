@@ -1,16 +1,15 @@
 import "../App.css";
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import hello from "../assets/hello.pdf";
+import Resume_With_photo_Photo_Enabled from "../assets/Resume_With_photo_Photo_Enabled.pdf";
+import Resume_With_photo_Photo_Disabled from "../assets/Resume_With_photo_Photo_Disabled.pdf";
 import Tooltip from "../components/Tooltip";
 import Modal from "../components/Modal";
 import ChatbotModal from "../components/ChatbotModal";
 import {
   generateUUID,
-  BaseEntry,
   handleInputChange,
   sanitizeInputForDisplay,
   formatMonthYear,
@@ -28,212 +27,190 @@ import {
 import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, HonorDetails, ClubDetails, CertificateDetails, FormDataStore } from "../types/resumeWithPhoto";
 import PdfBox from "../components/PdfBox";
 const api = axios.create({
-  baseURL: `http://localhost:8000`,
+  baseURL: `https://resume-builder-aditya.onrender.com`,
 });
 
-const presets = [
-  "Languages",
-  "Frameworks",
-  "Libraries",
-  "Developer Tools",
-  "Soft Skills",
-];
-
-enum RestrictionType {
-  ALREADY_BOLD = "already_bold",
-  ALREADY_ITALIC = "already_italic",
-  NOT_ALLOWED = "not_allowed",
-}
 
 const defaultEducationEntry: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd",
-  instituteName: "Massachusetts Institute of Technology",
-  degree: "Master of Science",
-  branch: "Computer Science",
-  location: "Cambridge, Massachusetts",
-  startDate: "2020-09",
-  endDate: "Present",
-  gradeType: "cgpa",
-  cgpa: "3.9",
+  id: "edu1",
+  instituteName: "Placeholder Institute of Technology",
+  degree: "Bachelor of Technology",
+  branch: "Computer Science and Engineering",
+  location: "Bangalore, India",
+  startDate: "2019-08",
+  endDate: "2023-05",
+  gradeType: "CGPA",
+  cgpa: "9.1",
   percentage: "",
 };
 
 const defaultEducationEntry2: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd2",
-  instituteName: "Stanford University",
-  degree: "Bachelor of Science",
-  branch: "Computer Science",
-  location: "Stanford, California",
-  startDate: "2016-09",
-  endDate: "2020-05",
-  gradeType: "cgpa",
-  cgpa: "3.8",
-  percentage: "",
+  id: "edu2",
+  instituteName: "Placeholder Senior Secondary School",
+  degree: "Senior Secondary",
+  branch: "",
+  location: "Delhi, India",
+  startDate: "2017-06",
+  endDate: "2019-05",
+  gradeType: "Percentage",
+  cgpa: "",
+  percentage: "94",
 };
 
 const defaultEducationEntry3: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd3",
-  instituteName: "University of California, Berkeley",
-  degree: "Bachelor of Arts",
-  branch: "Mathematics",
-  location: "Berkeley, California",
-  startDate: "2014-09",
-  endDate: "2016-05",
-  gradeType: "CGPA",
-  cgpa: "3.7",
-  percentage: "",
+  id: "edu3",
+  instituteName: "Placeholder Secondary School",
+  degree: "Secondary",
+  branch: "",
+  location: "Delhi, India",
+  startDate: "2015-06",
+  endDate: "2017-05",
+  gradeType: "Percentage",
+  cgpa: "",
+  percentage: "96",
 };
 
 const defaultExperienceEntry: ExperienceDetails = {
-  id: "cvhu7654wdfghj",
-  jobTitle: "Senior Software Engineer",
-  companyName: "Google",
-  location: "Mountain View, California",
-  startDate: "2022-06",
-  endDate: "Present",
+  id: "exp1",
+  jobTitle: "Software Engineering Intern",
+  companyName: "Placeholder Technologies Pvt Ltd",
+  location: "Remote",
+  startDate: "2022-05",
+  endDate: "2022-08",
   workList: [
-    "Led development of scalable microservices architecture handling 1M+ daily requests",
-    "Implemented CI/CD pipeline reducing deployment time by 40%",
-    "Mentored junior developers and conducted code reviews for team of 5 engineers",
+    "Developed scalable REST APIs using FastAPI and PostgreSQL, reducing response time by 30%",
+    "Collaborated in an Agile team to ship production-level features for a fintech dashboard used by 10,000+ users",
+    "Integrated Docker-based CI/CD pipelines to streamline deployment across multiple environments",
   ],
 };
 
 const defaultExperienceEntry2: ExperienceDetails = {
-  id: "cvhu7654wdfghj2",
-  jobTitle: "Software Engineer",
-  companyName: "Microsoft",
-  location: "Redmond, Washington",
-  startDate: "2020-06",
-  endDate: "2022-05",
+  id: "exp2",
+  jobTitle: "Backend Developer (Freelance)",
+  companyName: "StartupHub Inc.",
+  location: "Remote",
+  startDate: "2021-12",
+  endDate: "2022-03",
   workList: [
-    "Developed and maintained Azure cloud services with 99.99% uptime",
-    "Optimized database queries reducing response time by 30%",
-    "Collaborated with cross-functional teams to deliver features on schedule",
+    "Designed a microservices-based architecture to decouple services and enhance system modularity",
+    "Implemented JWT authentication, OAuth2, and role-based access control improving platform security",
+    "Increased API performance by 45% through async optimization and query indexing",
   ],
 };
 
 const defaultProjectEntry: ProjectDetails = {
-  id: "0okmhgfdr543edf",
-  projectName: "AI-Powered Resume Builder",
-  projectLinkTitle: "Github Link",
-  projectLink: "https://github.com/username/resume-builder",
+  id: "proj1",
+  projectName: "AI Resume Optimizer",
+  projectLinkTitle: "Project Link",
+  projectLink: "https://www.placeholder.com",
   startDate: "2023-01",
-  endDate: "2023-06",
+  endDate: "2023-03",
   featureList: [
-    "Real-time LaTeX PDF generation with custom templates",
-    "AI-powered content suggestions and grammar checking",
-    "Responsive design with dark/light mode support",
-    "Local storage for draft saving and auto-recovery",
+    "Built a resume parsing tool with OpenAI API to optimize ATS score using NLP techniques",
+    "Enabled LaTeX-based PDF resume generation with image and data upload",
+    "Integrated file cleanup and async subprocess management using FastAPI background tasks",
   ],
 };
 
 const defaultProjectEntry2: ProjectDetails = {
-  id: "0okmhgfdr543edf2",
-  projectName: "Distributed Task Scheduler",
-  projectLinkTitle: "Github Link",
-  projectLink: "https://github.com/username/task-scheduler",
+  id: "proj2",
+  projectName: "Decentralized Chat App",
+  projectLinkTitle: "GitHub Link",
+  projectLink: "https://www.placeholder.com",
   startDate: "2022-07",
-  endDate: "2022-12",
+  endDate: "2022-10",
   featureList: [
-    "Implemented distributed consensus using Raft algorithm",
-    "Achieved 99.9% task execution reliability",
-    "Scaled to handle 100K+ concurrent tasks",
-    "Added monitoring and alerting system",
+    "Implemented peer-to-peer WebRTC-based video calling and Socket.IO-based real-time messaging",
+    "Built a responsive frontend with React and TailwindCSS, supporting light/dark modes",
+    "Used MongoDB Atlas for scalable chat history storage with encryption",
   ],
 };
 
-const defaultEmptySkillEntry: SkillDetails = {
-  id: "3edfty7unbvcxae567j",
-  key: "",
-  value: "",
-};
 const defaultSkillEntry: SkillDetails = {
-  id: "3edfty7unbvcxae567j",
+  id: "sk1",
   key: "Languages",
-  value: "Python, JavaScript, TypeScript, Java, C++",
+  value: "Python, JavaScript, C++",
 };
 
 const defaultSkillEntry2: SkillDetails = {
-  id: "3edfty7unbvcxae567j2",
+  id: "sk2",
   key: "Frameworks",
-  value: "React, Node.js, Express, Django, Spring Boot",
+  value: "FastAPI, React, Node.js, Express",
 };
 
 const defaultSkillEntry3: SkillDetails = {
-  id: "3edfty7unbvcxae567j3",
-  key: "Developer Tools",
-  value: "Git, Docker, Kubernetes, AWS, Azure, CI/CD",
+  id: "sk3",
+  key: "DevOps",
+  value: "Docker, GitHub Actions, Render, NGINX",
 };
 
 const defaultSkillEntry4: SkillDetails = {
-  id: "3edfty7unbvcxae567j4",
-  key: "Databases",
-  value: "MongoDB, PostgreSQL, Redis, MySQL",
+  id: "sk4",
+  key: "Tools",
+  value: "Postman, Figma, VS Code, MongoDB Compass",
 };
 
 const defaultSkillEntry5: SkillDetails = {
-  id: "3edfty7unbvcxae567j5",
-  key: "Soft Skills",
-  value: "Leadership, Team Collaboration, Problem Solving, Communication",
+  id: "sk5",
+  key: "Cloud",
+  value: "AWS EC2, S3, Firebase, Railway",
 };
 
 const defaultHonorEntry: HonorDetails = {
-  id: "honor1",
-  title: "Dean's List",
-  date: "2023-05",
-  description:
-    "Recognition for academic excellence in Computer Science program",
-  linkTitle: "Certificate",
-  link: "https://example.com/certificate",
+  id: "hon1",
+  title: "Smart India Hackathon Finalist",
+  date: "2022-08",
+  description: "Developed an AI-driven compliance audit tool that reached top 5 among 500+ national teams",
+  linkTitle: "Certificate Link",
+  link: "https://www.placeholder.com",
 };
 
 const defaultHonorEntry2: HonorDetails = {
-  id: "honor2",
-  title: "Best Project Award",
-  date: "2022-12",
-  description:
-    "Awarded for outstanding performance in the annual project competition",
-  linkTitle: "Profile Link",
-  link: "https://example.com/profile",
+  id: "hon2",
+  title: "CodeChef Long Challenge Top 1%",
+  date: "2023-04",
+  description: "Achieved global rank under 150 in April Long Challenge among 20,000+ coders",
+  linkTitle: "Contest Link",
+  link: "https://www.placeholder.com",
 };
 
 const defaultClubEntry: ClubDetails = {
   id: "club1",
-  title: "Web Development Lead",
-  societyName: "KIIT MLSA",
-  startDate: "2023-01",
-  endDate: "2024-01",
+  title: "Technical Head",
+  societyName: "Coding Club - TechFusion",
+  startDate: "2021-07",
+  endDate: "2023-03",
   achievements: [
-    "Led a team of 20+ members in developing and maintaining the society's website",
-    "Organized monthly coding workshops and hackathons",
+    "Led workshops on Git, DevOps, and Competitive Programming with 300+ participants",
+    "Mentored 10+ juniors in open-source development under Hacktoberfest",
   ],
 };
 
 const defaultClubEntry2: ClubDetails = {
   id: "club2",
-  title: "Public Speaking Mentor",
-  societyName: "KIIT MUN Society",
-  startDate: "2022-08",
-  endDate: "2023-08",
+  title: "Technical Head",
+  societyName: "Coding Club - TechFusion",
+  startDate: "2021-07",
+  endDate: "2023-03",
   achievements: [
-    "Mentored 50+ students in public speaking and debate",
-    "Organized inter-college MUN conference with 200+ participants",
+    "Led workshops on Git, DevOps, and Competitive Programming with 300+ participants",
+    "Mentored 10+ juniors in open-source development under Hacktoberfest",
   ],
 };
 
 const defaultCertificateEntry: CertificateDetails = {
   id: "cert1",
-  title: "AWS Cloud Practitioner",
-  link: "https://example.com/certificate1",
+  title: "AWS Certified Cloud Practitioner",
+  link: "https://www.placeholder.com",
 };
 
 const defaultCertificateEntry2: CertificateDetails = {
   id: "cert2",
-  title: "Google Cloud Professional Data Engineer",
-  link: "https://example.com/certificate2",
+  title: "Full Stack Development - Coursera",
+  link: "https://www.placeholder.com",
 };
 
-function ResumeWithPhoto() {
+function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
@@ -284,10 +261,10 @@ function ResumeWithPhoto() {
   const [includeProjects, setIncludeProjects] = useState(true);
   const [includeSkills, setIncludeSkills] = useState(true);
   const [includeHonors, setIncludeHonors] = useState(true);
-  const [includeClubs, setIncludeClubs] = useState(false);
-  const [includeCertificates, setIncludeCertificates] = useState(false);
+  const [includeClubs, setIncludeClubs] = useState(true);
+  const [includeCertificates, setIncludeCertificates] = useState(true);
   const [includeProjectLinks, setIncludeProjectLinks] = useState(true);
-  const [includePicture, setIncludePicture] = useState(true);
+  const [includePicture, setIncludePicture] = useState(defaultPhotoSetting);
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
   const [prompt, setPrompt] = useState<string>("");
   const updateAvatar = async (imageUrl: string) => {
@@ -414,11 +391,22 @@ function ResumeWithPhoto() {
     }
   },[includeProjects])
 
+
+  const setDefaultPdf = useMemo(() => {
+    console.log("hello")
+    if(includePicture){
+      return Resume_With_photo_Photo_Enabled
+    }
+    else{
+      return Resume_With_photo_Photo_Disabled
+    }
+  },[includePicture])
+
   const parseEducationString = () => {
     const newString: string | void = educationEntries
       .map((entry) => {
         return `\\CVSubheading
-    {{${sanitizeInput(entry.degree)} $|$ \\emph{\\small{${sanitizeInput(
+    {{${sanitizeInput(entry.degree)} ${entry.branch===''?``: `$|$`} \\emph{\\small{${sanitizeInput(
           entry.branch
         )}}}}} {${formatMonthYear(entry.startDate)} -- ${formatMonthYear(
           entry.endDate
@@ -562,7 +550,12 @@ function ResumeWithPhoto() {
     {${sanitizeInput(entry.title)}}{${formatMonthYear(
         entry.startDate
       )} - ${formatMonthYear(entry.endDate)}}
-    {${sanitizeInput(entry.societyName)}} {}
+    {${sanitizeInput(entry.societyName)}}{}
+    \\CVItemListStart
+    ${entry.achievements.map((achievement)=>{
+    return `\\CVItem{${sanitizeInput(achievement)}}`
+    }).join("")}
+    \\CVItemListEnd
     `;
     })
     .join("")}
@@ -1209,7 +1202,7 @@ function ResumeWithPhoto() {
                             )
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                          required
+                          
                         />
                       </Tooltip>
                     </div>
@@ -2110,7 +2103,7 @@ function ResumeWithPhoto() {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setSkills, defaultEmptySkillEntry)}
+                  onClick={() => addEntry(setSkills, defaultSkillEntry)}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Skill
@@ -2271,7 +2264,7 @@ function ResumeWithPhoto() {
                                 )
                               }
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                             
                             />
                           </Tooltip>
                         </div>
@@ -2300,7 +2293,7 @@ function ResumeWithPhoto() {
                                 )
                               }
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                            
                             />
                           </Tooltip>
                         </div>
@@ -2716,7 +2709,7 @@ function ResumeWithPhoto() {
             </div>
           </div>
         </form>
-        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={hello} />
+        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={setDefaultPdf} />
       </div>
 
       {/* Add ChatbotModal */}

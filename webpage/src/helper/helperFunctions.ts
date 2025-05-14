@@ -4,6 +4,12 @@ function generateUUID() {
   return uuidv4();
 }
 
+enum NITEnum {
+  Photo,
+  Logo,
+  None
+}
+
 interface BaseEntry {
   id: string; // Or the appropriate ID type
 }
@@ -44,11 +50,17 @@ const sanitizeInput = (input:string) => {
 
   // Dont Disrupt The order because if __bold__ becomes \textbf and 
   // then We change \ to \backslash, then even \textbf will suffer
-  let sanitizedInput = input.replace(/\\/g, '\\textbackslash ');
+  let sanitizedInput = input.replace(/\\/g, '\\textbackslash');
+  sanitizedInput = sanitizedInput.replace(/%/g, '\\%');
+  sanitizedInput = sanitizedInput.replace(/&/g, '\\&');
+  sanitizedInput = sanitizedInput.replace(/#/g, '\\#');
+  sanitizedInput = sanitizedInput.replace(/\$/g, '\\$');
+  sanitizedInput = sanitizedInput.replace(/~/g, '\\~');
+  sanitizedInput = sanitizedInput.replace(/{/g, '\\{');
+  sanitizedInput = sanitizedInput.replace(/}/g, '\\}');
   sanitizedInput = sanitizedInput.replace(/__bold\[(.*?)\]__/g, '\\textbf{$1}');
   sanitizedInput = sanitizedInput.replace(/__italic\[(.*?)\]__/g, '\\textit{$1}');
-  sanitizedInput = sanitizedInput.replace(/%/g, '\\%');
-  
+  sanitizedInput = sanitizedInput.replace(/_/g, '\\_');
   return sanitizedInput;
 }
 // This is meant for places where verbatim links need to be shown
@@ -210,5 +222,6 @@ export {
   debounce,
   handleKeyActiononList,
   handleKeyActionOnSublist,
-  type BaseEntry
+  type BaseEntry,
+  NITEnum
 }

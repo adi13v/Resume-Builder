@@ -1,16 +1,15 @@
 import "../App.css";
 import axios from "axios";
-import { useState, useRef, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import hello from "../assets/hello.pdf";
+
+import Jake_Resume_Without_Grade from "../assets/Jake_Resume_Without_Grade.pdf";
+import Jake_Resume_With_Grade from "../assets/Jake_Resume_With_Grade.pdf";
 import Tooltip from "../components/Tooltip";
-import Modal from "../components/Modal";
 import ChatbotModal from "../components/ChatbotModal";
 import {
   generateUUID,
-  BaseEntry,
   handleInputChange,
   sanitizeInputForDisplay,
   formatMonthYear,
@@ -25,25 +24,12 @@ import {
   handleKeyActiononList,
   handleKeyActionOnSublist,
 } from "../helper/helperFunctions";
-import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, HonorDetails, ClubDetails, CertificateDetails, FormDataStore } from "../types/resumeWithPhoto";
+import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, FormDataStore, CertificateDetails, ClubDetails, AchievementDetails } from "../types/jakeResume";
 import PdfBox from "../components/PdfBox";
+
 const api = axios.create({
-  baseURL: `http://localhost:8000`,
+  baseURL: `https://resume-builder-aditya.onrender.com`,
 });
-
-const presets = [
-  "Languages",
-  "Frameworks",
-  "Libraries",
-  "Developer Tools",
-  "Soft Skills",
-];
-
-enum RestrictionType {
-  ALREADY_BOLD = "already_bold",
-  ALREADY_ITALIC = "already_italic",
-  NOT_ALLOWED = "not_allowed",
-}
 
 const defaultEducationEntry: EducationDetails = {
   id: "dfcvbhu7654efghnbvcd",
@@ -55,33 +41,7 @@ const defaultEducationEntry: EducationDetails = {
   endDate: "Present",
   gradeType: "cgpa",
   cgpa: "3.9",
-  percentage: "",
-};
-
-const defaultEducationEntry2: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd2",
-  instituteName: "Stanford University",
-  degree: "Bachelor of Science",
-  branch: "Computer Science",
-  location: "Stanford, California",
-  startDate: "2016-09",
-  endDate: "2020-05",
-  gradeType: "cgpa",
-  cgpa: "3.8",
-  percentage: "",
-};
-
-const defaultEducationEntry3: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd3",
-  instituteName: "University of California, Berkeley",
-  degree: "Bachelor of Arts",
-  branch: "Mathematics",
-  location: "Berkeley, California",
-  startDate: "2014-09",
-  endDate: "2016-05",
-  gradeType: "CGPA",
-  cgpa: "3.7",
-  percentage: "",
+  percentage: ""
 };
 
 const defaultExperienceEntry: ExperienceDetails = {
@@ -98,20 +58,6 @@ const defaultExperienceEntry: ExperienceDetails = {
   ],
 };
 
-const defaultExperienceEntry2: ExperienceDetails = {
-  id: "cvhu7654wdfghj2",
-  jobTitle: "Software Engineer",
-  companyName: "Microsoft",
-  location: "Redmond, Washington",
-  startDate: "2020-06",
-  endDate: "2022-05",
-  workList: [
-    "Developed and maintained Azure cloud services with 99.99% uptime",
-    "Optimized database queries reducing response time by 30%",
-    "Collaborated with cross-functional teams to deliver features on schedule",
-  ],
-};
-
 const defaultProjectEntry: ProjectDetails = {
   id: "0okmhgfdr543edf",
   projectName: "AI-Powered Resume Builder",
@@ -120,81 +66,22 @@ const defaultProjectEntry: ProjectDetails = {
   startDate: "2023-01",
   endDate: "2023-06",
   featureList: [
-    "Real-time LaTeX PDF generation with custom templates",
-    "AI-powered content suggestions and grammar checking",
-    "Responsive design with dark/light mode support",
-    "Local storage for draft saving and auto-recovery",
-  ],
+    "Implemented real-time LaTeX PDF generation",
+    "Added AI-powered content suggestions",
+    "Built responsive UI with dark/light mode"
+  ]
 };
 
-const defaultProjectEntry2: ProjectDetails = {
-  id: "0okmhgfdr543edf2",
-  projectName: "Distributed Task Scheduler",
-  projectLinkTitle: "Github Link",
-  projectLink: "https://github.com/username/task-scheduler",
-  startDate: "2022-07",
-  endDate: "2022-12",
-  featureList: [
-    "Implemented distributed consensus using Raft algorithm",
-    "Achieved 99.9% task execution reliability",
-    "Scaled to handle 100K+ concurrent tasks",
-    "Added monitoring and alerting system",
-  ],
-};
-
-const defaultEmptySkillEntry: SkillDetails = {
-  id: "3edfty7unbvcxae567j",
-  key: "",
-  value: "",
-};
 const defaultSkillEntry: SkillDetails = {
   id: "3edfty7unbvcxae567j",
   key: "Languages",
   value: "Python, JavaScript, TypeScript, Java, C++",
 };
 
-const defaultSkillEntry2: SkillDetails = {
-  id: "3edfty7unbvcxae567j2",
-  key: "Frameworks",
-  value: "React, Node.js, Express, Django, Spring Boot",
-};
-
-const defaultSkillEntry3: SkillDetails = {
-  id: "3edfty7unbvcxae567j3",
-  key: "Developer Tools",
-  value: "Git, Docker, Kubernetes, AWS, Azure, CI/CD",
-};
-
-const defaultSkillEntry4: SkillDetails = {
-  id: "3edfty7unbvcxae567j4",
-  key: "Databases",
-  value: "MongoDB, PostgreSQL, Redis, MySQL",
-};
-
-const defaultSkillEntry5: SkillDetails = {
-  id: "3edfty7unbvcxae567j5",
-  key: "Soft Skills",
-  value: "Leadership, Team Collaboration, Problem Solving, Communication",
-};
-
-const defaultHonorEntry: HonorDetails = {
-  id: "honor1",
-  title: "Dean's List",
-  date: "2023-05",
-  description:
-    "Recognition for academic excellence in Computer Science program",
-  linkTitle: "Certificate",
-  link: "https://example.com/certificate",
-};
-
-const defaultHonorEntry2: HonorDetails = {
-  id: "honor2",
-  title: "Best Project Award",
-  date: "2022-12",
-  description:
-    "Awarded for outstanding performance in the annual project competition",
-  linkTitle: "Profile Link",
-  link: "https://example.com/profile",
+const defaultCertificateEntry: CertificateDetails = {
+  id: "cert1",
+  title: "AWS Cloud Practitioner",
+  link: "https://example.com/certificate1",
 };
 
 const defaultClubEntry: ClubDetails = {
@@ -209,53 +96,32 @@ const defaultClubEntry: ClubDetails = {
   ],
 };
 
-const defaultClubEntry2: ClubDetails = {
-  id: "club2",
-  title: "Public Speaking Mentor",
-  societyName: "KIIT MUN Society",
-  startDate: "2022-08",
-  endDate: "2023-08",
-  achievements: [
-    "Mentored 50+ students in public speaking and debate",
-    "Organized inter-college MUN conference with 200+ participants",
-  ],
+const defaultAchievementEntry: AchievementDetails = {
+  id: "achievement1",
+  title: "Dean's List",
+  linkTitle: "Certificate",
+  link: "https://example.com/certificate",
 };
 
-const defaultCertificateEntry: CertificateDetails = {
-  id: "cert1",
-  title: "AWS Cloud Practitioner",
-  link: "https://example.com/certificate1",
-};
-
-const defaultCertificateEntry2: CertificateDetails = {
-  id: "cert2",
-  title: "Google Cloud Professional Data Engineer",
-  link: "https://example.com/certificate2",
-};
-
-function JakeResume() {
+function JakeResume({defaultGradeSetting}:{defaultGradeSetting:boolean}) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
-    defaultEducationEntry2,
-    defaultEducationEntry3,
   ]);
 
-  const [experienceEntries, setExperienceEntries] = useState<
-    ExperienceDetails[]
-  >([defaultExperienceEntry, defaultExperienceEntry2]);
+  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
+    defaultExperienceEntry,
+  ]);
+  
   const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
     defaultProjectEntry,
-    defaultProjectEntry2,
   ]);
+  
   const [skills, setSkills] = useState<SkillDetails[]>([
     defaultSkillEntry,
-    defaultSkillEntry2,
-    defaultSkillEntry3,
-    defaultSkillEntry4,
-    defaultSkillEntry5,
   ]);
+  
   const [name, setName] = useState<string>("Jake Smith");
   const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
   const [phoneNumber, setPhoneNumber] = useState<string>("6386419509");
@@ -265,44 +131,28 @@ function JakeResume() {
   const [globalId, setGlobalId] = useState<string>(generateUUID());
   
   const storageKeyName = `formData-${window.location.pathname}`;
-  const [imageFile, setImageFile] = useState<File | null>(null);
-  const [modalOpen, setModalOpen] = useState(false);
-  const [honorEntries, setHonorEntries] = useState<HonorDetails[]>([
-    defaultHonorEntry,
-    defaultHonorEntry2,
+  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([
+    defaultCertificateEntry,
   ]);
   const [clubEntries, setClubEntries] = useState<ClubDetails[]>([
     defaultClubEntry,
-    defaultClubEntry2,
   ]);
-  const [certificateEntries, setCertificateEntries] = useState<
-    CertificateDetails[]
-  >([defaultCertificateEntry, defaultCertificateEntry2]);
+  const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([
+    defaultAchievementEntry,
+  ]);
 
   // Add new state variables for section toggles
   const [includeExperience, setIncludeExperience] = useState(true);
   const [includeProjects, setIncludeProjects] = useState(true);
   const [includeSkills, setIncludeSkills] = useState(true);
-  const [includeHonors, setIncludeHonors] = useState(true);
-  const [includeClubs, setIncludeClubs] = useState(false);
   const [includeCertificates, setIncludeCertificates] = useState(false);
-  const [includeProjectLinks, setIncludeProjectLinks] = useState(true);
-  const [includePicture, setIncludePicture] = useState(true);
+  const [includeClubs, setIncludeClubs] = useState(false);
+  const [includeAchievements, setIncludeAchievements] = useState(false);
+  
+  const [includeGrade, setIncludeGrade] = useState(defaultGradeSetting);
+  
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
   const [prompt, setPrompt] = useState<string>("");
-  const updateAvatar = async (imageUrl: string) => {
-    try {
-      const response = await fetch(imageUrl);
-      const blob = await response.blob();
-      const newFile = new File([blob], "image.png", {
-        type: blob.type || "image/png",
-      });
-      setImageFile(newFile);
-      setModalOpen(false);
-    } catch (error) {
-      console.error("Failed to fetch or convert image:", error);
-    }
-  };
 
   const loadToStore = (store: FormDataStore) => {
     localStorage.setItem(storageKeyName, JSON.stringify(store));
@@ -312,6 +162,15 @@ function JakeResume() {
   const [triggerSubmit, setTriggerSubmit] = useState(false);
 
 
+  const selectedPdf = useMemo(()=>{
+    if(includeGrade){
+      return Jake_Resume_With_Grade
+    }
+    else{
+      return Jake_Resume_Without_Grade
+    }
+  },[includeGrade])
+
   useEffect(() => {
     if (triggerSubmit) {
       formRef.current?.requestSubmit();
@@ -319,7 +178,6 @@ function JakeResume() {
     }
   }, [triggerSubmit]);
 
-  
   useEffect(() => {
     const store = {
       name: name,
@@ -332,15 +190,16 @@ function JakeResume() {
       experienceEntries: experienceEntries,
       projectEntries: projectEntries,
       skills: skills,
-      honorEntries: honorEntries,
-      clubEntries: clubEntries,
       certificateEntries: certificateEntries,
+      clubEntries: clubEntries,
+      includeGrade: includeGrade,
+      achievementEntries: achievementEntries,
       includeExperience: includeExperience,
       includeProjects: includeProjects,
       includeSkills: includeSkills,
-      includeHonors: includeHonors,
-      includeClubs: includeClubs,
       includeCertificates: includeCertificates,
+      includeClubs: includeClubs,
+      includeAchievements: includeAchievements,
       prompt: prompt,
     };
     debouncedStoreRef.current(store);
@@ -355,15 +214,16 @@ function JakeResume() {
     experienceEntries,
     projectEntries,
     skills,
-    honorEntries,
-    clubEntries,
     certificateEntries,
+    clubEntries,
+    achievementEntries,
+    includeGrade,
     includeExperience,
     includeProjects,
     includeSkills,
-    includeHonors,
-    includeClubs,
     includeCertificates,
+    includeClubs,
+    includeAchievements,
     prompt,
   ]);
 
@@ -371,7 +231,6 @@ function JakeResume() {
     const data = localStorage.getItem(storageKeyName);
     if (data) {
       const store = JSON.parse(data) as FormDataStore;
-   
       setName(store.name);
       setEmail(store.email);
       setPhoneNumber(store.phoneNumber);
@@ -382,88 +241,73 @@ function JakeResume() {
       setExperienceEntries(store.experienceEntries);
       setProjectEntries(store.projectEntries);
       setSkills(store.skills);
-      setHonorEntries(
-        store.honorEntries || [defaultHonorEntry, defaultHonorEntry2]
-      );
-      setClubEntries(
-        store.clubEntries || [defaultClubEntry, defaultClubEntry2]
-      );
-      setCertificateEntries(
-        store.certificateEntries || [
-          defaultCertificateEntry,
-          defaultCertificateEntry2,
-        ]
-      );
+      setCertificateEntries(store.certificateEntries || [defaultCertificateEntry]);
+      setClubEntries(store.clubEntries || [defaultClubEntry]);
+      setAchievementEntries(store.achievementEntries || [defaultAchievementEntry]);
       setIncludeExperience(store.includeExperience);
       setIncludeProjects(store.includeProjects);
       setIncludeSkills(store.includeSkills);
-      setIncludeHonors(store.includeHonors);
-      setIncludeClubs(store.includeClubs);
       setIncludeCertificates(store.includeCertificates);
+      setIncludeClubs(store.includeClubs);
+      setIncludeAchievements(store.includeAchievements);
       setPrompt(store.prompt || "");
+      setIncludeGrade(store.includeGrade || defaultGradeSetting);
     }
   }, []);
 
-
-  useEffect(()=>{
-    if(includeProjects){
-      setIncludeProjectLinks(true)
-    }
-    else{
-      setIncludeProjectLinks(false)
-    }
-  },[includeProjects])
+  
 
   const parseEducationString = () => {
-    const newString: string | void = educationEntries
+    let newString: string|void
+    if (includeGrade){
+    newString = educationEntries.map((entry)=>{
+      return `\\resumeSubheading
+      {${sanitizeInput(entry.degree)} ${entry.branch?`in ${sanitizeInput(entry.branch)}`:""}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
+      {${sanitizeInput(entry.instituteName)},${sanitizeInput(entry.location)}}{${entry.gradeType.toUpperCase() === "CGPA" ? `CGPA: ${entry.cgpa?sanitizeInput(entry.cgpa):""}` : `Percentage: ${entry.percentage?sanitizeInput(entry.percentage):""}`}}
+
+  `
+    }).join("")
+    }
+    else{
+      newString=  educationEntries
       .map((entry) => {
-        return `\\CVSubheading
-    {{${sanitizeInput(entry.degree)} $|$ \\emph{\\small{${sanitizeInput(
-          entry.branch
-        )}}}}} {${formatMonthYear(entry.startDate)} -- ${formatMonthYear(
-          entry.endDate
-        )}}
-    {${sanitizeInput(entry.instituteName)} $|$ ${sanitizeInput(
-          entry.location
-        )}}{${
-          entry.gradeType.toUpperCase() === "CGPA"
-            ? `CGPA: ${entry.cgpa}`
-            : `Percentage: ${entry.percentage}`
-        }}
+        return `\\resumeSubheading
+  {${sanitizeInput(entry.instituteName)}}{${sanitizeInput(entry.location)}}
+  {${sanitizeInput(entry.degree)}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
   `;
       })
       .join("");
+    }
 
-    return newString;
+    return `\\section{Education}
+  \\resumeSubHeadingListStart
+  ${newString}
+  \\resumeSubHeadingListEnd
+  `
   };
 
   const parseExperienceString = () => {
     if (!includeExperience) {
       return ``;
     }
-    let newString: string | void = experienceEntries
-      .map((entry) => {
-        return `\\CVSubheading
-    {${sanitizeInput(entry.jobTitle)}}{${formatMonthYear(
-          entry.startDate
-        )} -- ${formatMonthYear(entry.endDate)}}
-    {${sanitizeInput(entry.companyName)}}{${sanitizeInput(entry.location)}}
-    \\CVItemListStart
-      ${entry.workList
-        .map((work) => {
-          return `\\CVItem{${sanitizeInput(work)}}`;
-        })
-        .join("")}
-    \\CVItemListEnd
-      `;
-      })
-      .join("");
-    newString = `\\section{Work Experience}
-  \\CVSubHeadingListStart
-  ${newString}
-  \\CVSubHeadingListEnd
-  `;
-    return newString;
+    return `\\section{Experience}
+      \\resumeSubHeadingListStart
+      ${experienceEntries.map((entry)=>{
+        return `\\resumeSubheading
+        {${sanitizeInput(entry.jobTitle)}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
+        {${sanitizeInput(entry.companyName)}}{${sanitizeInput(entry.location)}}
+         \\resumeItemListStart
+         ${entry.workList.map((work)=>{
+          return `
+          \\resumeItem{${sanitizeInput(work)}}
+          `
+         }).join("")}
+         \\resumeItemListEnd
+        `
+      }).join("")}
+      \\resumeSubHeadingListEnd
+    `
+    
   };
 
   const parseProjectString = () => {
@@ -471,163 +315,96 @@ function JakeResume() {
       return ``;
     }
 
-    let newString = "";
-    if (includeProjectLinks) {
-      newString = projectEntries
-        .map((entry) => {
-          return `\\CVSubheading
-    {${sanitizeInput(entry.projectName)}}{${formatMonthYear(
-            entry.startDate
-          )} - ${formatMonthYear(entry.endDate)}}
-    {\\href{${sanitizeInputForLink(
-      entry.projectLink
-    )}}{\\color{blue}${sanitizeInputForDisplay(
-            sanitizeInput(entry.projectLinkTitle)
-          )}}}{}
-    \\CVItemListStart
-      ${entry.featureList
-        .map((feature) => {
-          return `\\CVItem{${sanitizeInput(feature)}}`;
-        })
-        .join("")}
-    \\CVItemListEnd
-`;
-        })
-        .join("");
-    } else {
-      newString = projectEntries
-        .map((entry) => {
-          return `\\ProjectEntry{${entry.projectName}}{${formatMonthYear(
-            entry.startDate
-          )} - ${formatMonthYear(entry.endDate)}}
-  \\CVItemListStart
-    ${entry.featureList
-      .map((feature) => {
-        return `\\CVItem{${sanitizeInput(feature)}}`;
-      })
-      .join("")}
-  \\CVItemListEnd
-`;
-        })
-        .join("");
-    }
-
-    newString =
+    return `\\section{Projects}
+    \\resumeSubHeadingListStart
+    ${projectEntries.map((entry)=>{
+      return ` \\resumeProjectHeading
+      {\\textbf{${entry.projectName}} ${entry.projectLink!==''?`$|$ \\href{${sanitizeInputForLink(entry.projectLink)}}{\\color{blue}${sanitizeInput(entry.projectLinkTitle)}}`:``}  } {${formatMonthYear(entry.startDate)}-- ${formatMonthYear(entry.endDate)}}
+          \\resumeItemListStart
+          ${entry.featureList.map((feature)=>{
+            return `
+            \\resumeItem{${sanitizeInput(feature)}}`
+          }).join("")}
+          \\resumeItemListEnd
       `
-\\section{Projects}
-\\CVSubHeadingListStart
-` +
-      newString +
-      `\\CVSubHeadingListEnd
-`;
+    }).join("")}
+    \\resumeSubHeadingListEnd
+`}
 
-    return newString;
-  };
+const parseClubString = () => {
+  if (!includeClubs) {
+    return ``;
+  }
+  return `\\section{Clubs And Societies}
+  \\resumeSubHeadingListStart
+  ${clubEntries.map((entry)=>{
+    return `\\resumeSubheading
+    {${sanitizeInput(entry.title)}}{${formatMonthYear(entry.startDate)} -- ${formatMonthYear(entry.endDate)}}
+    {${sanitizeInput(entry.societyName)}}{}
+    \\resumeItemListStart
+    ${entry.achievements.map((achievement)=>{
+      return `\\resumeItem{${sanitizeInput(achievement)}}`
+    }).join("")}
+    \\resumeItemListEnd
+    `
+  }).join("")}
+  \\resumeSubHeadingListEnd
+  `
+}
 
-  const parseHonorString = () => {
-    if (!includeHonors) {
-      return ``;
-    }
-
-    const newString = `
-\\section{Honors and Achievments}
-\\CVSubHeadingListStart
-  ${honorEntries
-    .map((entry) => {
-      return `\\CVSubheading
-    {${sanitizeInput(entry.title)}}{${formatMonthYear(entry.date)}}
-    {${sanitizeInput(entry.description)}}{\\href{${sanitizeInputForLink(
-        entry.link
-      )}}{\\color{blue}${sanitizeInputForDisplay(
-        sanitizeInput(entry.linkTitle)
-      )}}}
-    `;
-    })
-    .join("")}
-\\CVSubHeadingListEnd
-`;
-    return newString;
-  };
-
-  const parseClubString = () => {
-    if (!includeClubs) {
-      return ``;
-    }
-    const newString = `
-  \\section{Clubs And Societies}
-  \\CVSubHeadingListStart
-  ${clubEntries
-    .map((entry) => {
-      return `\\CVSubheading
-    {${sanitizeInput(entry.title)}}{${formatMonthYear(
-        entry.startDate
-      )} - ${formatMonthYear(entry.endDate)}}
-    {${sanitizeInput(entry.societyName)}} {}
-    `;
-    })
-    .join("")}
-  \\CVSubHeadingListEnd
-  `;
-    return newString;
-  };
 
   const parseCertificateString = () => {
     if (!includeCertificates) {
       return ``;
     }
-    const newString = `
-  \\section{Certifications}
-  \\CVSubHeadingListStart
-  \\item \\small
-    \\begin{tabular*}{0.97\\textwidth}{l@{\\extracolsep{\\fill}}r}
-      ${certificateEntries
-        .map((entry) => {
-          return `
-        \\textbf{${sanitizeInput(entry.title)}} & 
-        \\href{${sanitizeInputForLink(
-          entry.link
-        )}}{\\color{blue}Certificate Link} \\\\
-        `;
-        })
-        .join("")}
-    \\end{tabular*}
-    \\end{itemize}
-  `;
-    return newString;
-  };
+      return `\\section{Certifications}
+\\begin{itemize}[leftmargin=0.15in, itemsep=2pt, parsep=0pt, label={}]
+  \\small ${certificateEntries.map((entry)=>{
+    return `\\item \\textbf{${sanitizeInput(entry.title)}${entry.link!==''?`:`:``}} {${entry.link!==''?`\\href{${sanitizeInputForLink(entry.link)}}{\\color{blue}Certificate Link}`:``}}`
+  }).join("")}
+
+\\end{itemize}`;
+    
+    };
+
+  const parseAchievementString = () => {
+    if (!includeAchievements) {
+      return ``;
+    }
+
+    return `\\section{Achievements}
+\\begin{itemize}[leftmargin=0.15in, itemsep=1pt, parsep=0pt, label={}]
+\\small ${achievementEntries.map((entry)=>{
+  return `\\item \\textbf{${sanitizeInput(entry.title)}} {\\href{${sanitizeInputForLink(entry.link)}}{\\color{blue}${sanitizeInput(entry.linkTitle)}}}`
+}).join("")}
+\\end{itemize}`;
+}
+
+
   const parseSkillString = () => {
     if (!includeSkills) {
       return ``;
     }
-    const newString = `
-  \\section{Skills}
-  \\begin{itemize}[leftmargin=0.5cm, label={}]
-    \\small{\\item{
-      ${skills
-        .map((entry) => {
-          return `\\textbf{${sanitizeInput(entry.key)}}{: ${sanitizeInput(
-            entry.value
-          )}}`;
-        })
-        .join(" \\\\ ")}
-      }}
-      \\end{itemize}
-  `;
-    return newString;
-  };
+  
+    return `\\section{Technical Skills}
+ \\begin{itemize}[leftmargin=0.15in,itemsep=2pt, label={}]
+ \\small{\\item{
+ ${skills.map((skill)=>{
+  return `\\textbf{${sanitizeInput(skill.key)}}{: ${sanitizeInput(skill.value)}} \\\\`
+ }).join("")}
+}}
+ \\end{itemize}
+ `
+  }
 
-  const addLineBreakInSpacing = (input: string) => {
-    return input.replace(/ /g, "\\\\ ");
-  };
+
 
   const handleFormSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
        if (educationEntries.length === 0) {toast.error("Please add at least one education entry");
       return
        }
-      if (includePicture && imageFile === null) {toast.error("Please upload a profile picture");
-        return
-      }
+    
       if (includeSkills && skills.length === 0) {toast.error("Please select at least one skill");
         return
       }
@@ -644,169 +421,153 @@ function JakeResume() {
     setGlobalId(generateUUID());
   
 
-  const Code:string = String.raw`
-  \documentclass[A4,11pt]{article}
+  const Code:string = String.raw`\documentclass[letterpaper,11pt]{article}
+\usepackage{latexsym}
+\usepackage[empty]{fullpage}
+\usepackage{titlesec}
+\usepackage{marvosym}
+\usepackage[usenames,dvipsnames]{color}
+\usepackage{verbatim}
+\usepackage{enumitem}
+\usepackage[hidelinks]{hyperref}
+\usepackage{fancyhdr}
+\usepackage[english]{babel}
+\usepackage{tabularx}
+\input{glyphtounicode}
 
-  \usepackage{latexsym}
-  \usepackage[empty]{fullpage}
-  \usepackage{titlesec}
-  \usepackage{marvosym}
-  \usepackage[usenames,dvipsnames]{color}
-  \usepackage{verbatim}
-  \usepackage{enumitem}
-  \usepackage[hidelinks]{hyperref}
-  \usepackage[english]{babel}
-  \usepackage{tabularx}
-  \usepackage{tikz}
-  \input{glyphtounicode}
-  \usepackage{palatino}
 
-  % Adjust margins
-  \addtolength{\oddsidemargin}{-1cm}
-  \addtolength{\evensidemargin}{-1cm}
-  \addtolength{\textwidth}{2cm}
-  \addtolength{\topmargin}{-1cm}
-  \addtolength{\textheight}{2cm}
+%----------FONT OPTIONS----------
+% sans-serif
+% \usepackage[sfdefault]{FiraSans}
+% \usepackage[sfdefault]{roboto}
+% \usepackage[sfdefault]{noto-sans}
+% \usepackage[default]{sourcesanspro}
 
-  \urlstyle{same}
+% serif
+% \usepackage{CormorantGaramond}
+% \usepackage{charter}
 
-  \raggedbottom
-  \raggedright
-  \setlength{\tabcolsep}{0cm}
 
-  % Sections formatting
-  \titleformat{\section}{
+\pagestyle{fancy}
+\fancyhf{} % clear all header and footer fields
+\fancyfoot{}
+\renewcommand{\headrulewidth}{0pt}
+\renewcommand{\footrulewidth}{0pt}
+
+% Adjust margins
+\addtolength{\oddsidemargin}{-0.5in}
+\addtolength{\evensidemargin}{-0.5in}
+\addtolength{\textwidth}{1in}
+\addtolength{\topmargin}{-.5in}
+\addtolength{\textheight}{1.0in}
+
+\urlstyle{same}
+
+\raggedbottom
+\raggedright
+\setlength{\tabcolsep}{0in}
+
+% Sections formatting
+\titleformat{\section}{
   \vspace{-4pt}\scshape\raggedright\large
-  }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
+}{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
 
-  % Ensure that .pdf is machine readable/ATS parsable
-  \pdfgentounicode=1
+% Ensure that generate pdf is machine readable/ATS parsable
+\pdfgentounicode=1
 
-  %-----CUSTOM COMMANDS FOR FORMATTING SECTIONS----------------------------------
-
-  \newcommand{\ProjectEntry}[2]{%
-    \item
-    \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & #2 \\
-    \end{tabular*}\vspace{-5pt}
-  }
-
-  \newcommand{\CVItem}[1]{
+%-------------------------
+% Custom commands
+\newcommand{\resumeItem}[1]{
   \item\small{
     {#1 \vspace{-2pt}}
   }
-  }
+}
 
-  \newcommand{\CVSubheading}[4]{
+\newcommand{\resumeSubheading}[4]{
   \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
       \textbf{#1} & #2 \\
-      \small#3 & \small #4 \\
+      \textit{\small#3} & \textit{\small #4} \\
     \end{tabular*}\vspace{-7pt}
-  }
+}
 
-  \newcommand{\CVSubSubheading}[2]{
+\newcommand{\resumeSubSubheading}[2]{
     \item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \text{\small#1} & \text{\small #2} \\
+      \textit{\small#1} & \textit{\small #2} \\
     \end{tabular*}\vspace{-7pt}
-  }
+}
 
-  \newcommand{\CVSubItem}[1]{\CVItem{#1}\vspace{-4pt}}
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
+}
 
-  \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
+\newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
 
-  \newcommand{\CVSubHeadingListStart}{\begin{itemize}[leftmargin=0.5cm, label={}]}
-  % \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]} % Uncomment for US
-  \newcommand{\CVSubHeadingListEnd}{\end{itemize}}
-  \newcommand{\CVItemListStart}{\begin{itemize}}
-  \newcommand{\CVItemListEnd}{\end{itemize}\vspace{-5pt}}
+\renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
 
-  %------------------------------------------------------------------------------
-  % CV STARTS HERE  %
-  %------------------------------------------------------------------------------
-  \begin{document}
+\newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
+\newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
+\newcommand{\resumeItemListStart}{\begin{itemize}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
-  %-----HEADING------------------------------------------------------------------
-  \begin{comment}
-  In Europe it is common to include a picture of ones self in the CV. Select
-  which heading appropriate for the document you are creating.
-  \end{comment}
-
-  ${includePicture? `
-    \\begin{minipage}[c]{0.05\\textwidth}
-  \\-\\
-  \\end{minipage}
-  \\begin{minipage}[c]{0.2\\textwidth}
-  \\begin{tikzpicture}
-    \\clip (0,0) circle (1.75cm);
-    \\node at (0,0) {\\includegraphics[width = 4cm]{image-${globalId}}};
-    % if necessary the picture may be moved by changing the at (coordinates)
-    % width defines the 'zoom' of the picture
-  \\end{tikzpicture}
-  \\hfill\\vline\\hfill
-  \\end{minipage}
-  \\begin{minipage}[c]{0.4\\textwidth}
-  \\textbf{\\Huge \\scshape{${addLineBreakInSpacing(sanitizeInput(name))}}} \\\\ \\vspace{1pt}
-    \\small{${sanitizeInput(phoneNumber)}} \\\\
-    \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}}\\\\
-    ${linkedInLink!=='' ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}\\\\}` : ``}${githubLink!=='' ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}\\\\}`:``}${portfolioLink!==''?`\\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}` : ``}
-  \\end{minipage}
-    ` : `
-     %Without picture
-  \\begin{center}
-      \\textbf{\\Huge \\scshape ${sanitizeInput(name)}} \\\\ \\vspace{1pt} %\\scshape sets small capital letters, remove if desired
-      \\small ${sanitizeInput(phoneNumber)} $|$
-      \\href{mailto:${sanitizeInput(email)}}{\\underline{${sanitizeInput(email)}}} ${portfolioLink ? `$|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:``} ${linkedInLink || githubLink ? ` $|$ \\\\ ` : ``}
-      ${linkedInLink ? `\\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}` : ``} ${githubLink && linkedInLink ? ` $|$` : ``}
-      % you should adjust you linked in profile name to be professional and recognizable
-      ${githubLink ? `\\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}`:``}
-  \\end{center}
-    `}
+%-------------------------------------------
+%%%%%%  RESUME STARTS HERE  %%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-  %-----EDUCATION----------------------------------------------------------------
-  \section{Education}
-  \CVSubHeadingListStart
-  ${parseEducationString()}
-  \CVSubHeadingListEnd
+\begin{document}
 
-  %-----WORK EXPERIENCE----------------------------------------------------------
-  ${parseExperienceString()}
-  %-----PROJECTS AND RESEARCH----------------------------------------------------
+%----------HEADING----------
+% \begin{tabular*}{\textwidth}{l@{\extracolsep{\fill}}r}
+%   \textbf{\href{http://sourabhbajaj.com/}{\Large Sourabh Bajaj}} & Email : \href{mailto:sourabh@sourabhbajaj.com}{sourabh@sourabhbajaj.com}\\
+%   \href{http://sourabhbajaj.com/}{http://www.sourabhbajaj.com} & Mobile : +1-123-456-7890 \\
+% \end{tabular*}
 
-  ${parseProjectString()}
+\begin{center}
+    \textbf{\Huge \scshape ${sanitizeInput(name)}} \\ \vspace{1pt}
+    \small ${sanitizeInput(phoneNumber)} $|$ \href{mailto:${sanitizeInput(email)}}{\underline{${sanitizeInput(email)}}} 
+    ${linkedInLink!==''?` $|$ \\href{${sanitizeInputForLink(linkedInLink)}}{\\underline{${sanitizeInputForDisplay(linkedInLink)}}}`:""}
+    ${githubLink!==''?` $|$ \\href{${sanitizeInputForLink(githubLink)}}{\\underline{${sanitizeInputForDisplay(githubLink)}}}`:""}
+    ${portfolioLink!==''?` $|$ \\href{${sanitizeInputForLink(portfolioLink)}}{\\underline{${sanitizeInputForDisplay(portfolioLink)}}}`:""}
+\end{center}
 
-  %-----HONORS AND AWARDS--------------------------------------------------------
-  ${parseHonorString()}
-
-  %-----CLUBS AND SOCIETIES--------------------------------------------------------
-  ${parseClubString()}
-
-  %-----Certifications-------------------------------------------------------------------
-  ${parseCertificateString()}
-
-  %-----SKILLS-------------------------------------------------------------------
-  ${parseSkillString()}
-
-  %------------------------------------------------------------------------------
-  \end{document}`
+%-----------EDUCATION-----------
+${parseEducationString()}
+%-----------EXPERIENCE-----------
+${parseExperienceString()}
+%-----------PROJECTS-----------
+${parseProjectString()}
+%-----------Clubs And Societies-----------
+${parseClubString()}
+%%---Certifications----------
+${parseCertificateString()}
+%%---Achievements----------
+${parseAchievementString()}
+%%---PROGRAMMING SKILLS-----------
+${parseSkillString()}
+\end{document}
+`
 
   const formData = new FormData()
     formData.append('payload', Code)
-    if(imageFile && includePicture){
-      formData.append('imageFile', imageFile)
-    }
     formData.append('globalId', globalId)
     api.post('/' , formData, {responseType: 'blob',
         headers:{
         'Content-Type': 'multipart/form-data'
     }})
     .then((res)=>{
+      if(res.status === 200){
       const file = new Blob([res.data], { type: 'application/pdf' });
       const fileURL = URL.createObjectURL(file);
       setPdfUrl(fileURL);
       toast.success('Resume generated successfully!');
+    }
+    else{
+      toast.error('Failed to generate resume. Please try again.');
+    }
     })
     .catch((err)=>{
       console.error(err);
@@ -819,25 +580,25 @@ function JakeResume() {
 
   // Add this function to handle the AI-generated form data
   const handleAIGeneratedData = (data: FormDataStore) => {
-    setName(data.name || '');
-    setEmail(data.email || '');
-    setPhoneNumber(data.phoneNumber || '');
-    setGithubLink(data.githubLink || '');
-    setLinkedInLink(data.linkedInLink || '');
-    setPortfolioLink(data.portfolioLink || '');
+    setName(data.name || "");
+    setEmail(data.email || "");
+    setPhoneNumber(data.phoneNumber || "");
+    setGithubLink(data.githubLink || "");
+    setLinkedInLink(data.linkedInLink || "");
+    setPortfolioLink(data.portfolioLink || "");
     setEducationEntries(data.educationEntries || []);
     setExperienceEntries(data.experienceEntries || []);
     setProjectEntries(data.projectEntries || []);
     setSkills(data.skills || []);
-    setHonorEntries(data.honorEntries || []);
-    setClubEntries(data.clubEntries || []);
-    setCertificateEntries(data.certificateEntries || []);
+    setCertificateEntries(data.certificateEntries || [defaultCertificateEntry]);
+    setClubEntries(data.clubEntries || [defaultClubEntry]);
+    setAchievementEntries(data.achievementEntries || [defaultAchievementEntry]);
     setIncludeClubs(data.includeClubs || false);
-    setIncludeCertificates(data.includeCertificates || false);
+    setIncludeAchievements(data.includeAchievements || false);
     setIncludeProjects(data.includeProjects || false);
     setIncludeSkills(data.includeSkills || false);
     setIncludeExperience(data.includeExperience || false);
-    setIncludeHonors(data.includeHonors || false);
+    setIncludeCertificates(data.includeCertificates || false);
     setTriggerSubmit(true);
   };
 
@@ -878,79 +639,8 @@ function JakeResume() {
               </h2>
             </div>
             <div className="space-y-6">
-              <div className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
-                <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-light text-white">
-                    Profile Photo
-                  </h3>
-                  <div
-                    className={`relative w-24 h-24 rounded-full overflow-hidden border-2 border-white/20 bg-white/5 flex items-center justify-center cursor-pointer hover:border-white/30 transition-colors ${
-                      !includePicture ? "opacity-50 cursor-not-allowed" : ""
-                    }`}
-                    onClick={() => includePicture && setModalOpen(true)}
-                  >
-                    {imageFile ? (
-                      <>
-                        <img
-                          src={URL.createObjectURL(imageFile)}
-                          alt="Profile"
-                          className="w-full h-full object-cover"
-                        />
-                        <button
-                          type="button"
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            setImageFile(null);
-                          }}
-                          className="absolute bottom-1 right-1 bg-red-600 text-white rounded-full p-1 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500"
-                        >
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            className="h-4 w-4"
-                            viewBox="0 0 20 20"
-                            fill="currentColor"
-                          >
-                            <path
-                              fillRule="evenodd"
-                              d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                              clipRule="evenodd"
-                            />
-                          </svg>
-                        </button>
-                      </>
-                    ) : (
-                      <div className="text-white text-sm text-center p-2">
-                        {includePicture
-                          ? "Click to add photo"
-                          : "Photo disabled"}
-                      </div>
-                    )}
-                  </div>
-                  <label className="inline-flex items-center cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={includePicture}
-                      onChange={(e) => {
-                        setIncludePicture(e.target.checked);
-                        if (!e.target.checked) {
-                          setImageFile(null);
-                        }
-                      }}
-                      className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
-                    />
-                    <span className="ml-2 text-[#44BCFF]">
-                      Include in Resume
-                    </span>
-                  </label>
-                </div>
-              </div>
-              {modalOpen && (
-                <Modal
-                  updateAvatar={updateAvatar}
-                  closeModal={() => setModalOpen(false)}
-                  isCircle={true}
-                />
-              )}
+              
+             
               <div className="mb-4">
                 <label
                   htmlFor="name"
@@ -1102,18 +792,25 @@ function JakeResume() {
           </div>
 
           {/* Education Section */}
-          <div className="mb-8 border-b border-white/10 pb-6">
-            <div className="mb-6">
+          <div className="mb-8 border-b pb-6">
+            <div className="mb-6 flex justify-between items-center">
               <h2 className="text-2xl font-light text-white">Education</h2>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includeGrade}
+                  onChange={(e) => setIncludeGrade(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                />
+                <span className="ml-2 text-white">Include Grade <span className="text-xs text-gray-400">Will Cause Slight Format Change</span></span>
+                
+              </label>
             </div>
             <div className="space-y-6">
               {educationEntries.map((entry, index) => (
-                <div
-                  key={entry.id}
-                  className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
-                >
+                <div key={entry.id} className="bg-white/5 p-6 rounded-lg">
                   <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-light text-white">
+                    <h3 className="text-lg font-light text-[#44BCFF]">
                       Education #{index + 1}
                     </h3>
                     <button
@@ -1125,122 +822,87 @@ function JakeResume() {
                     </button>
                   </div>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="mb-4">
+                    <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Institute Name*{" "}
-                        <span className=" mx-0.5 text-xs text-white">
-                          Tip: Write Institute Name without any abbreviations.
-                        </span>
+                        Institute Name*
                       </label>
-                      <Tooltip
-                        title="Not Allowed Here"
-                        message="Making Text Bold is not allowed here"
-                      >
-                        <input
-                          type="text"
-                          placeholder="Massachusetts Institute of Technology"
-                          value={entry.instituteName}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "instituteName",
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                          required
-                        />
-                      </Tooltip>
+                      <input
+                        type="text"
+                        value={entry.instituteName}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setEducationEntries,
+                            educationEntries,
+                            index,
+                            "instituteName",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                        required
+                      />
                     </div>
-
-                    <div className="mb-4">
+                    <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Degree*{" "}
-                        <span className=" mx-0.5 text-xs text-white">
-                          Tip: For School, write Secondary/High School or Senior
-                          Secondary.
-                        </span>
+                        Degree*
                       </label>
-                      <Tooltip
-                        title="Not Allowed Here"
-                        message="Making Text Bold is not allowed here"
-                      >
-                        <input
-                          type="text"
-                          value={entry.degree}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "degree",
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                          required
-                        />
-                      </Tooltip>
+                      <input
+                        type="text"
+                        value={entry.degree}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setEducationEntries,
+                            educationEntries,
+                            index,
+                            "degree",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                        required
+                      />
                     </div>
-
-                    <div className="mb-4">
+                    <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Branch*{" "}
-                        <span className=" mx-0.5 text-xs text-white">
-                          Tip: Write your specialization or major.
-                        </span>
+                        Branch*
                       </label>
-                      <Tooltip
-                        title="Not Allowed Here"
-                        message="Making Text Bold is not allowed here"
-                      >
-                        <input
-                          type="text"
-                          value={entry.branch}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "branch",
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                          required
-                        />
-                      </Tooltip>
+                      <input
+                        type="text"
+                        value={entry.branch}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setEducationEntries,
+                            educationEntries,
+                            index,
+                            "branch",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                       
+                      />
                     </div>
-
-                    <div className="mb-4">
+                    <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
                         Location*
                       </label>
-                      <Tooltip
-                        title="Not Allowed Here"
-                        message="Making Text Bold is not allowed here"
-                      >
-                        <input
-                          type="text"
-                          value={entry.location}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "location",
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                          required
-                        />
-                      </Tooltip>
+                      <input
+                        type="text"
+                        value={entry.location}
+                        onChange={(e) =>
+                          handleInputChange(
+                            setEducationEntries,
+                            educationEntries,
+                            index,
+                            "location",
+                            e.target.value
+                          )
+                        }
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                        required
+                      />
                     </div>
-
-                    <div className="mb-4">
+                    <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
                         Start Date*
                       </label>
@@ -1256,12 +918,11 @@ function JakeResume() {
                             e.target.value
                           )
                         }
-                        className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
+                        className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                         required
                       />
                     </div>
-
-                    <div className="mb-4">
+                    <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
                         End Date*
                       </label>
@@ -1278,96 +939,62 @@ function JakeResume() {
                             e.target.value
                           )
                         }
-                        className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10 ${
+                        className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
                           entry.endDate === "Present"
                             ? "opacity-50 cursor-not-allowed"
                             : ""
                         }`}
                         required
                       />
-                      <input
-                        type="checkbox"
-                        onChange={(e) => {
-                          if (e.target.checked) {
+                      <div className="mt-2 flex items-center">
+                        <input
+                          type="checkbox"
+                          checked={entry.endDate === "Present"}
+                          onChange={(e) => {
                             handleInputChange(
                               setEducationEntries,
                               educationEntries,
                               index,
                               "endDate",
-                              "Present"
+                              e.target.checked ? "Present" : ""
                             );
-                          } else {
-                            handleInputChange(
-                              setEducationEntries,
-                              educationEntries,
-                              index,
-                              "endDate",
-                              ""
-                            );
-                          }
-                        }}
-                      />
-
-                      <label htmlFor="">Currently Pursuing</label>
-                    </div>
-
-                    <div className="mb-4 md:col-span-2">
-                      <label className="block text-[#44BCFF] font-medium mb-2">
-                        Grade Format
-                      </label>
-                      <div className="flex space-x-4 mb-2">
-                        <label className="inline-flex items-center text-[#44BCFF]">
-                          <input
-                            type="radio"
-                            name={`gradeType-${entry.id}`}
-                            checked={entry.gradeType.toUpperCase() === "CGPA"}
-                            onChange={() =>
-                              handleInputChange(
-                                setEducationEntries,
-                                educationEntries,
-                                index,
-                                "gradeType",
-                                "cgpa"
-                              )
-                            }
-                            className="form-radio h-4 w-4 text-white focus:ring-white"
-                          />
-                          <span className="ml-2">CGPA</span>
-                        </label>
-                        <label className="inline-flex items-center text-[#44BCFF]">
-                          <input
-                            type="radio"
-                            name={`gradeType-${entry.id}`}
-                            checked={entry.gradeType.toUpperCase() === "PERCENTAGE"}
-                            onChange={() =>
-                              handleInputChange(
-                                setEducationEntries,
-                                educationEntries,
-                                index,
-                                "gradeType",
-                                "percentage"
-                              )
-                            }
-                            className="form-radio h-4 w-4 text-white focus:ring-white"
-                          />
-                          <span className="ml-2">Percentage</span>
-                        </label>
+                          }}
+                          className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                        />
+                        <label className="ml-2 text-white">Currently Pursuing</label>
                       </div>
-
-                      {entry.gradeType.toUpperCase() === "CGPA" ? (
+                    </div>
+                    {includeGrade && (
+                      <>
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            CGPA
+                            Grade Type*
                           </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
+                          <select
+                            value={entry.gradeType}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setEducationEntries,
+                                educationEntries,
+                                index,
+                                "gradeType",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
                           >
+                            <option value="cgpa">CGPA</option>
+                            <option value="percentage">Percentage</option>
+                          </select>
+                        </div>
+                        {entry.gradeType === "cgpa" ? (
+                          <div>
+                            <label className="block text-[#44BCFF] font-medium mb-2">
+                              CGPA*
+                            </label>
                             <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              max="10"
+                              type="text"
                               value={entry.cgpa}
                               onChange={(e) =>
                                 handleInputChange(
@@ -1378,24 +1005,17 @@ function JakeResume() {
                                   e.target.value
                                 )
                               }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
                             />
-                          </Tooltip>
-                        </div>
-                      ) : (
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Percentage
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
+                          </div>
+                        ) : (
+                          <div>
+                            <label className="block text-[#44BCFF] font-medium mb-2">
+                              Percentage*
+                            </label>
                             <input
-                              type="number"
-                              step="0.01"
-                              min="0"
-                              max="100"
+                              type="text"
                               value={entry.percentage}
                               onChange={(e) =>
                                 handleInputChange(
@@ -1406,24 +1026,20 @@ function JakeResume() {
                                   e.target.value
                                 )
                               }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
+                              className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
-                          </Tooltip>
-                        </div>
-                      )}
-                    </div>
+                          </div>
+                        )}
+                      </>
+                    )}
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="mt-6 flex justify-end">
               <button
                 type="button"
-                onClick={() =>
-                  addEntry(setEducationEntries, defaultEducationEntry)
-                }
-                className="px-4 py-2 flex items-center gap-2  transition-colors"
+                onClick={() => addEntry(setEducationEntries, defaultEducationEntry)}
+                className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <PlusIcon className="w-4 h-4" /> Add Education
               </button>
@@ -1732,58 +1348,41 @@ function JakeResume() {
           </div>
 
           {/* Projects Section */}
-          <div className="mb-8 border-b border-white/10 pb-6">
+          <div className="mb-8 border-b pb-6">
             <div className="mb-6 flex justify-between items-center">
               <h2 className="text-2xl font-light text-white">Projects</h2>
-              <div className="flex items-center gap-4">
-                <label className="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeProjectLinks}
-                    onChange={(e) => setIncludeProjectLinks(e.target.checked)}
-                    className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                  />
-                  <span className="ml-2 text-white">Include Project Links</span>
-                </label>
-                <label className="inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={includeProjects}
-                    onChange={(e) => setIncludeProjects(e.target.checked)}
-                    className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                  />
-                  <span className="ml-2 text-white">Include Section</span>
-                </label>
-              </div>
+              <label className="inline-flex items-center cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={includeProjects}
+                  onChange={(e) => setIncludeProjects(e.target.checked)}
+                  className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                />
+                <span className="ml-2 text-white">Include in Resume</span>
+              </label>
             </div>
-            {includeProjects && (
-              <div className="space-y-6">
-                {projectEntries.map((entry, index) => (
-                  <div
-                    key={entry.id}
-                    className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-light text-[#44BCFF]">
-                        Project #{index + 1}
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={() => removeEntry(setProjectEntries, index)}
-                        className="text-red-400 hover:text-red-300 focus:outline-none"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Project Name*
-                        </label>
-                        <Tooltip
-                          title="Not Allowed Here"
-                          message="Making Text Bold is not allowed here"
+            <div className={`${!includeProjects ? "opacity-50 pointer-events-none" : ""}`}>
+              {includeProjects && (
+                <div className="space-y-6">
+                  {projectEntries.map((entry, index) => (
+                    <div key={entry.id} className="bg-white/5 p-6 rounded-lg">
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-light text-[#44BCFF]">
+                          Project #{index + 1}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => removeEntry(setProjectEntries, index)}
+                          className="text-red-400 hover:text-red-300 focus:outline-none"
                         >
+                          Remove
+                        </button>
+                      </div>
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Project Name*
+                          </label>
                           <input
                             type="text"
                             value={entry.projectName}
@@ -1796,231 +1395,158 @@ function JakeResume() {
                                 e.target.value
                               )
                             }
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                             required
                           />
-                        </Tooltip>
-                      </div>
-
-                      {includeProjectLinks && (
-                        <>
-                          <div className="mb-4">
-                            <label className="block text-[#44BCFF] font-medium mb-2">
-                              Project Link Title*{" "}
-                              <span className=" mx-0.5 text-xs text-white">
-                                Tip: Use concise text like "Github Link" or
-                                "Website Link"
-                              </span>
-                            </label>
-                            <Tooltip
-                              title="Not Allowed Here"
-                              message="Making Text Bold is not allowed here"
-                            >
-                              <input
-                                type="text"
-                                value={entry.projectLinkTitle}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    setProjectEntries,
-                                    projectEntries,
-                                    index,
-                                    "projectLinkTitle",
-                                    e.target.value
-                                  )
-                                }
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                required
-                              />
-                            </Tooltip>
-                          </div>
-
-                          <div className="mb-4">
-                            <label className="block text-[#44BCFF] font-medium mb-2">
-                              Project Link*{" "}
-                              <span className=" mx-0.5 text-xs text-white">
-                                Tip: The actual URL of the project (e.g.,
-                                https://github.com/username/project)
-                              </span>
-                            </label>
-                            <Tooltip
-                              title="Not Allowed Here"
-                              message="Making Text Bold is not allowed here"
-                            >
-                              <input
-                                type="url"
-                                value={entry.projectLink}
-                                onChange={(e) =>
-                                  handleInputChange(
-                                    setProjectEntries,
-                                    projectEntries,
-                                    index,
-                                    "projectLink",
-                                    e.target.value
-                                  )
-                                }
-                                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                required
-                              />
-                            </Tooltip>
-                          </div>
-                        </>
-                      )}
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Start Date*
-                        </label>
-                        <input
-                          type="month"
-                          value={entry.startDate || ""}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setProjectEntries,
-                              projectEntries,
-                              index,
-                              "startDate",
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                        />
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          End Date*
-                        </label>
-                        <input
-                          type={entry.endDate === "Present" ? "text" : "month"}
-                          disabled={entry.endDate === "Present"}
-                          value={entry.endDate || ""}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setProjectEntries,
-                              projectEntries,
-                              index,
-                              "endDate",
-                              e.target.value
-                            )
-                          }
-                          className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
-                            entry.endDate === "Present"
-                              ? "opacity-50 cursor-not-allowed"
-                              : ""
-                          }`}
-                        />
-                        <input
-                          type="checkbox"
-                          onChange={(e) => {
-                            if (e.target.checked) {
+                        </div>
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Project Link Title*
+                          </label>
+                          <input
+                            type="text"
+                            value={entry.projectLinkTitle}
+                            onChange={(e) =>
                               handleInputChange(
                                 setProjectEntries,
                                 projectEntries,
                                 index,
-                                "endDate",
-                                "Present"
-                              );
-                            } else {
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "endDate",
-                                ""
-                              );
+                                "projectLinkTitle",
+                                e.target.value
+                              )
                             }
-                          }}
-                        />
-
-                        <label htmlFor="">Currently Pursuing</label>
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Project Link*
+                          </label>
+                          <input
+                            type="url"
+                            value={entry.projectLink}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "projectLink",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Start Date*
+                          </label>
+                          <input
+                            type="month"
+                            value={entry.startDate}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "startDate",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            End Date*
+                          </label>
+                          <input
+                            type="month"
+                            value={entry.endDate}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "endDate",
+                                e.target.value
+                              )
+                            }
+                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </div>
+                        <div className="col-span-full">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Features*
+                          </label>
+                          <div className="space-y-2">
+                            {entry.featureList.map((feature, featureIndex) => (
+                              <div key={featureIndex} className="flex gap-2">
+                                <input
+                                  type="text"
+                                  value={feature}
+                                  onChange={(e) =>
+                                    handleSubListInputChange(
+                                      setProjectEntries,
+                                      index,
+                                      "featureList",
+                                      featureIndex,
+                                      e.target.value
+                                    )
+                                  }
+                                  className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                                  required
+                                />
+                                <button
+                                  type="button"
+                                  onClick={() =>
+                                    removeItemFromSubList(
+                                      setProjectEntries,
+                                  
+                                      index,
+                                      "featureList",
+                                      featureIndex
+                                    )
+                                  }
+                                  className="text-red-400 hover:text-red-300 focus:outline-none"
+                                >
+                                  Remove
+                                </button>
+                              </div>
+                            ))}
+                            <button
+                              type="button"
+                              onClick={() =>
+                                addItemToSubList(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "featureList",
+                                  ""
+                                )
+                              }
+                              className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                            >
+                              <PlusIcon className="w-4 h-4" /> Add Feature
+                            </button>
+                          </div>
+                        </div>
                       </div>
                     </div>
-
-                    <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                      Features:*{" "}
-                      <span className=" mx-0.5 text-xs text-white">
-                        Tip: Use Bold For Highlighting but don't overdo it
-                      </span>
-                    </h4>
-                    {entry.featureList.map((feature, featureIndex) => (
-                      <div
-                        key={`${entry.id}-feature-${featureIndex}`}
-                        className="mb-2 flex items-center space-x-4"
-                      >
-                        <label
-                          htmlFor={`feature-${entry.id}-${featureIndex}`}
-                          className="block text-[#44BCFF] font-medium mb-1"
-                        >
-                          Feature {featureIndex + 1}:
-                        </label>
-                        <input
-                          type="text"
-                          id={`feature-${entry.id}-${featureIndex}`}
-                          value={feature}
-                          onKeyDown={(e) =>
-                            handleKeyActionOnSublist(
-                              e,
-                              setProjectEntries,
-                              "featureList",
-                              index,
-                              featureIndex
-                            )
-                          }
-                          onChange={(e) =>
-                            handleSubListInputChange(
-                              setProjectEntries,
-                              index,
-                              "featureList",
-                              featureIndex,
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                        />
-                        <button
-                          type="button"
-                          onClick={() =>
-                            removeItemFromSubList(
-                              setProjectEntries,
-                              index,
-                              "featureList",
-                              featureIndex
-                            )
-                          }
-                          className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    ))}
-                    <div className="mt-2">
-                      <button
-                        type="button"
-                        onClick={() =>
-                          addItemToSubList(
-                            setProjectEntries,
-                            index,
-                            "featureList",
-                            ""
-                          )
-                        }
-                        className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
-                      >
-                        Add Feature
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-            <div className="mt-6 flex justify-end">
-              <button
-                type="button"
-                onClick={() => addEntry(setProjectEntries, defaultProjectEntry)}
-                className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-              >
-                <PlusIcon className="w-4 h-4" /> Add Project
-              </button>
+                  ))}
+                  <button
+                    type="button"
+                    onClick={() => addEntry(setProjectEntries, defaultProjectEntry)}
+                    className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  >
+                    <PlusIcon className="w-4 h-4" /> Add Project
+                  </button>
+                </div>
+              )}
             </div>
           </div>
 
@@ -2110,7 +1636,7 @@ function JakeResume() {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setSkills, defaultEmptySkillEntry)}
+                  onClick={() => addEntry(setSkills, defaultSkillEntry)}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Skill
@@ -2119,17 +1645,15 @@ function JakeResume() {
             </div>
           </div>
 
-          {/* Honors and Achievements Section */}
+          {/* Certifications Section */}
           <div className="mb-8 border-b  pb-6">
             <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-light text-white">
-                Honors and Achievements
-              </h2>
+              <h2 className="text-2xl font-light text-white">Certifications</h2>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={includeHonors}
-                  onChange={(e) => setIncludeHonors(e.target.checked)}
+                  checked={includeCertificates}
+                  onChange={(e) => setIncludeCertificates(e.target.checked)}
                   className="form-checkbox h-4 w-4 text-white focus:ring-white"
                 />
                 <span className="ml-2 text-white">Include Section</span>
@@ -2137,35 +1661,34 @@ function JakeResume() {
             </div>
             <div
               className={`${
-                !includeHonors ? "opacity-50 pointer-events-none" : ""
+                !includeCertificates ? "opacity-50 pointer-events-none" : ""
               }`}
             >
-              {includeHonors && (
+              {includeCertificates && (
                 <div className="space-y-6">
-                  {honorEntries.map((entry, index) => (
+                  {certificateEntries.map((entry, index) => (
                     <div
                       key={entry.id}
                       className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
                     >
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-light text-[#44BCFF]">
-                          Achievement #{index + 1}
+                          Certificate #{index + 1}
                         </h3>
                         <button
                           type="button"
-                          onClick={() => removeEntry(setHonorEntries, index)}
+                          onClick={() =>
+                            removeEntry(setCertificateEntries, index)
+                          }
                           className="text-red-400 hover:text-red-300 focus:outline-none"
                         >
                           Remove
                         </button>
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label
-                            htmlFor={`title-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Title:
+                      <div className="grid grid-cols-1 gap-4">
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Certificate Title*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2173,114 +1696,29 @@ function JakeResume() {
                           >
                             <input
                               type="text"
-                              id={`title-${entry.id}`}
                               value={entry.title}
                               onChange={(e) =>
                                 handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
+                                  setCertificateEntries,
+                                  certificateEntries,
                                   index,
                                   "title",
                                   e.target.value
                                 )
                               }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
                         </div>
-                        <div>
-                          <label
-                            htmlFor={`date-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Date:
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              id={`date-${entry.id}`}
-                              value={entry.date}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "date",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-                        <div className="col-span-full">
-                          <label
-                            htmlFor={`description-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Description:
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <textarea
-                              id={`description-${entry.id}`}
-                              value={entry.description}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "description",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-                        <div>
-                          <label
-                            htmlFor={`linkTitle-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Link Title:
-                          </label>
-                          <Tooltip
-                            title="Not Allowed Here"
-                            message="Making Text Bold is not allowed here"
-                          >
-                            <input
-                              type="text"
-                              id={`linkTitle-${entry.id}`}
-                              value={entry.linkTitle}
-                              onChange={(e) =>
-                                handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
-                                  index,
-                                  "linkTitle",
-                                  e.target.value
-                                )
-                              }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
-                            />
-                          </Tooltip>
-                        </div>
-                        <div>
-                          <label
-                            htmlFor={`link-${entry.id}`}
-                            className="block text-[#44BCFF] font-medium mb-2"
-                          >
-                            Link:
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Certificate Link{" "}
+                            <span className="mx-0.5 text-xs text-white">
+                              Tip: The URL of your certificate or verification
+                              page
+                            </span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2288,19 +1726,18 @@ function JakeResume() {
                           >
                             <input
                               type="url"
-                              id={`link-${entry.id}`}
                               value={entry.link}
                               onChange={(e) =>
                                 handleInputChange(
-                                  setHonorEntries,
-                                  honorEntries,
+                                  setCertificateEntries,
+                                  certificateEntries,
                                   index,
                                   "link",
                                   e.target.value
                                 )
                               }
-                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              
                             />
                           </Tooltip>
                         </div>
@@ -2312,10 +1749,12 @@ function JakeResume() {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setHonorEntries, defaultHonorEntry)}
+                  onClick={() =>
+                    addEntry(setCertificateEntries, defaultCertificateEntry)
+                  }
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Achievement
+                  <PlusIcon className="w-4 h-4" /> Add Certificate
                 </button>
               </div>
             </div>
@@ -2492,7 +1931,7 @@ function JakeResume() {
                           <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
                             Achievements:*{" "}
                             <span className="mx-0.5 text-xs text-white">
-                              Tip: Use Bold For Highlighting but don't overdo it
+                              Tip: Use Bold For Highlighting but don't overdo it. End each achievement with a full stop.
                             </span>
                           </h4>
                           {entry.achievements.map(
@@ -2578,15 +2017,17 @@ function JakeResume() {
             </div>
           </div>
 
-          {/* Certifications Section */}
+          {/* Achievements Section */}
           <div className="mb-8 border-b  pb-6">
             <div className="mb-6 flex justify-between items-center">
-              <h2 className="text-2xl font-light text-white">Certifications</h2>
+              <h2 className="text-2xl font-light text-white">
+                Honors and Achievements
+              </h2>
               <label className="inline-flex items-center cursor-pointer">
                 <input
                   type="checkbox"
-                  checked={includeCertificates}
-                  onChange={(e) => setIncludeCertificates(e.target.checked)}
+                  checked={includeAchievements}
+                  onChange={(e) => setIncludeAchievements(e.target.checked)}
                   className="form-checkbox h-4 w-4 text-white focus:ring-white"
                 />
                 <span className="ml-2 text-white">Include Section</span>
@@ -2594,34 +2035,35 @@ function JakeResume() {
             </div>
             <div
               className={`${
-                !includeCertificates ? "opacity-50 pointer-events-none" : ""
+                !includeAchievements ? "opacity-50 pointer-events-none" : ""
               }`}
             >
-              {includeCertificates && (
+              {includeAchievements && (
                 <div className="space-y-6">
-                  {certificateEntries.map((entry, index) => (
+                  {achievementEntries.map((entry, index) => (
                     <div
                       key={entry.id}
                       className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
                     >
                       <div className="flex justify-between items-center mb-4">
                         <h3 className="text-lg font-light text-[#44BCFF]">
-                          Certificate #{index + 1}
+                          Achievement #{index + 1}
                         </h3>
                         <button
                           type="button"
-                          onClick={() =>
-                            removeEntry(setCertificateEntries, index)
-                          }
+                          onClick={() => removeEntry(setAchievementEntries, index)}
                           className="text-red-400 hover:text-red-300 focus:outline-none"
                         >
                           Remove
                         </button>
                       </div>
-                      <div className="grid grid-cols-1 gap-4">
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Certificate Title*
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <label
+                            htmlFor={`title-${entry.id}`}
+                            className="block text-[#44BCFF] font-medium mb-2"
+                          >
+                            Title:
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2629,29 +2071,57 @@ function JakeResume() {
                           >
                             <input
                               type="text"
+                              id={`title-${entry.id}`}
                               value={entry.title}
                               onChange={(e) =>
                                 handleInputChange(
-                                  setCertificateEntries,
-                                  certificateEntries,
+                                  setAchievementEntries,
+                                  achievementEntries,
                                   index,
                                   "title",
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
                         </div>
-
-                        <div className="mb-4">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Certificate Link*{" "}
-                            <span className="mx-0.5 text-xs text-white">
-                              Tip: The URL of your certificate or verification
-                              page
-                            </span>
+                        <div>
+                          <label
+                            htmlFor={`linkTitle-${entry.id}`}
+                            className="block text-[#44BCFF] font-medium mb-2"
+                          >
+                            Link Title:
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="text"
+                              id={`linkTitle-${entry.id}`}
+                              value={entry.linkTitle}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setAchievementEntries,
+                                  achievementEntries,
+                                  index,
+                                  "linkTitle",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+                        <div>
+                          <label
+                            htmlFor={`link-${entry.id}`}
+                            className="block text-[#44BCFF] font-medium mb-2"
+                          >
+                            Link:
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2659,17 +2129,18 @@ function JakeResume() {
                           >
                             <input
                               type="url"
+                              id={`link-${entry.id}`}
                               value={entry.link}
                               onChange={(e) =>
                                 handleInputChange(
-                                  setCertificateEntries,
-                                  certificateEntries,
+                                  setAchievementEntries,
+                                  achievementEntries,
                                   index,
                                   "link",
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>
@@ -2682,12 +2153,10 @@ function JakeResume() {
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() =>
-                    addEntry(setCertificateEntries, defaultCertificateEntry)
-                  }
+                  onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry)}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Certificate
+                  <PlusIcon className="w-4 h-4" /> Add Achievement
                 </button>
               </div>
             </div>
@@ -2716,7 +2185,7 @@ function JakeResume() {
             </div>
           </div>
         </form>
-        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={hello} />
+        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={selectedPdf} />
       </div>
 
       {/* Add ChatbotModal */}
@@ -2728,7 +2197,7 @@ function JakeResume() {
           setPrompt={setPrompt}
           api = {api}
           // THIS format of string is required because it maps to enum in backend
-          resumeType= {"RESUME_WITH_PHOTO"}
+          resumeType= {"JAKE_RESUME"}
         />
       )}
     </>

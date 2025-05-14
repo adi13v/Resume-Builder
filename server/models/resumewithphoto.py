@@ -68,16 +68,16 @@ class ResumeWithPhotoModel(BaseModel):
     name: str
     email: str
     phoneNumber: str
-    githubLink: str
-    linkedInLink: str
-    portfolioLink: str
-    educationEntries: list[EducationEntry]
-    experienceEntries: list[ExperienceEntry]
-    projectEntries: list[ProjectEntry]
-    skills: list[Skill]
-    honorEntries: list[HonorEntry]
-    clubEntries: list[ClubEntry]
-    certificateEntries: list[CertificateEntry]
+    githubLink: Optional[str] = None
+    linkedInLink: Optional[str] = None
+    portfolioLink: Optional[str] = None
+    educationEntries: Optional[list[EducationEntry]] = None
+    experienceEntries: Optional[list[ExperienceEntry]] = None
+    projectEntries: Optional[list[ProjectEntry]] = None
+    skills: Optional[list[Skill]] = None
+    honorEntries: Optional[list[HonorEntry]] = None
+    clubEntries: Optional[list[ClubEntry]] = None
+    certificateEntries: Optional[list[CertificateEntry]] = None
     includeExperience: bool
     includeProjects: bool
     includeSkills: bool
@@ -87,14 +87,16 @@ class ResumeWithPhotoModel(BaseModel):
 
 
 ResumeWithPhotoInstruction ="""You are a resume parsing assistant who creates and enhances resume to maximize their ATS Score and show mildly amplified impact of the work done by the user.
-             Instructions:
-             - Write dates in YYYY-MM format and for phone number add +91- in front (unless other country code is provided in which case replace +91- with that country code) and no % prefix in percentage.
-             -Be atomic, either don't include the field or populate all the entry of that field with data(Add Placeholder if you can't infer data)
-             - Use placeholder data for specific fields like name,location,data,link,percentage,cgpa,etc, unless provided by the user.
-             - Use Keywords and Sentence Structures Present in High ATS Score Resumes.
-             - For generalized fields like workList,skillListFeatureList, if you are not provided specific information, write data that you infer from other sections.
-             - Education is important, apart from that don't include fields for which you can't infer susbtantial data.
-             - Whatver the user provides, add some buzzwords,add terms related to their education field, and more dense text with some related information to the one provided
-             -Add skill inferred from experience,projects,other data given by the user, in addition to the ones provided by the user
-             Now, convert the following user input into a JSON string 
-             """
+Do this in the following steps:
+1. For each field, find out the data that you can extract from the prompt and can infer from other fields but be atomic, either include a field completely or not at all except Education and personal information.
+2. If You have decided to include a field, but some part of that field is not provided, try to either infer from other fields, or try to exaggerate. But if it is specific information like College Name,mail or something add a placeholder.
+3. Once You have added the information, try to add buzzwords,terms related to that field or some vague stats like the ones used in Resumes with high ATS Score.
+
+4. Fix Typos,Grammatical Errors and make the language professional, try to reduce the use of Abbreviations.
+Some Rules:
+1.Write dates in YYYY-MM format and for phone number add +91- in front (unless other country code is provided in which case replace +91- with that country code) and no % prefix in percentage.
+2. For Link related placeholders, add https://www.placeholder.com and for link title add names like Github Link, Project Link, etc.
+3. For Other Placeholders write words like Placeholder College Name , Placeholder Degree,etc.
+4. If For School like Class 12 or Class 10 the official name of degree is "Senior Secondary" for 12th and "Secondary" for 10th and don't add any branch for school.
+Now for the prompt below , generate a JSON String
+"""

@@ -1,4 +1,6 @@
-import image from '../assets/image.png'; // Adjust the path as necessary
+import image from '../assets/image.png';
+import nitResume from '../assets/photos/Photo_NIT_Resume_With_Logo.jpg';
+import resumeWithPhoto from '../assets/photos/Resume_with_photo_Photo_Enabled.jpg';
 import { Link, redirect} from 'react-router-dom';
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -9,16 +11,16 @@ import App from '../App';
 const resumeTemplates = {
     tech: [
         { id: 'tech1', title: 'Technical Resume 1', description: 'For software engineers.', imageUrl: image, redirectUrl: '/jake' },
-        { id: 'tech2', title: 'Technical Resume 2', description: 'Clean layout for developers.', imageUrl: image },
-        { id: 'tech2', title: 'Technical Resume 2', description: 'Clean layout for developers.', imageUrl: image },
+        { id: 'tech2', title: 'Technical Resume 2', description: 'Clean layout for developers.', imageUrl: nitResume },
+        { id: 'tech3', title: 'Technical Resume 3', description: 'Modern design for tech professionals.', imageUrl: resumeWithPhoto },
     ],
     fresh: [
         { id: 'fresh1', title: 'Fresher Resume 1', description: 'Entry-level professionals.', imageUrl: image },
-        { id: 'fresh2', title: 'Fresher Resume 2', description: 'For recent graduates.', imageUrl: image },
+        { id: 'fresh2', title: 'Fresher Resume 2', description: 'For recent graduates.', imageUrl: nitResume },
     ],
     photo: [
-        { id: 'photo1', title: 'Resume with Photo 1', description: 'Photo on the left.', imageUrl: image },
-        { id: 'photo2', title: 'Resume with Photo 2', description: 'Photo at the top.', imageUrl: image },
+        { id: 'photo1', title: 'Resume with Photo 1', description: 'Photo on the left.', imageUrl: resumeWithPhoto },
+        { id: 'photo2', title: 'Resume with Photo 2', description: 'Photo at the top.', imageUrl: nitResume },
     ],
 };
 

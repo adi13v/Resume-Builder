@@ -69,16 +69,15 @@ class NITResumeModel(BaseModel):
     name: str
     email: str
     phoneNumber: str
-    githubLink: str
-    linkedInLink: str
-    portfolioLink: str
-    educationEntries: List[EducationDetails]
-    experienceEntries: List[ExperienceDetails]
-    projectEntries: List[ProjectDetails]
-    skills: List[SkillDetails]
-    certificateEntries: List[CertificateDetails]
-    achievementEntries: List[AchievementDetails]
-    positionEntries: List[PositionOfResponsibilityDetails]
+    githubLink: Optional[str] = None    
+    linkedInLink: Optional[str] = None
+    educationEntries: Optional[List[EducationDetails]] = None
+    experienceEntries: Optional[List[ExperienceDetails]] = None
+    projectEntries: Optional[List[ProjectDetails]] = None
+    skills: Optional[List[SkillDetails]] = None
+    certificateEntries: Optional[List[CertificateDetails]] = None
+    achievementEntries: Optional[List[AchievementDetails]] = None
+    positionEntries: Optional[List[PositionOfResponsibilityDetails]] = None
     includeExperience: bool
     includeProjects: bool
     includeSkills: bool
@@ -87,20 +86,21 @@ class NITResumeModel(BaseModel):
     includePositions: bool
 
 
-
-NITResumeInstruction ="""You are a resume parsing assistant who creates and enhances resume to maximize their ATS Score and show mildly amplified impact of the work done by the user.
-             Instructions:
-             - Write dates in YYYY-MM format and country code with - in front of phone number and no % prefix in percentage.
-             - Use placeholder data for specific fields like name,location,data,link,percentage,cgpa,etc, unless provided by the user.
-             - For Link placeholder, use proper formatted url like https://www.google.com.
-             - Dont Write Present in Education Entries and degree means full form like Bachelor of Technology,etc. and degreeAbbreviation means abbreviation like B.Tech,etc. Same Case For branch and branchAbbreviation.
-             - For Link Title, the placeholder should be like "Link","Project Link","Profile Link".
-             - Education is important, apart from that don't include fields for which you can't infer substantial data. Enforce it by using the varibales with prefix include and return false if you can't infer substantial data.
-             - Use Keywords and Sentence Structures Present in High ATS Score Resumes and preferably sentense like "Developed [specific achievement] achieving [specific metric] in [specific area]" this, but don't overdo it.
-             - For generalized fields like workList,skillListFeatureList, if you are not provided specific information, write data that you infer from other sections.
-             - Whatver the user provides, add some buzzwords,add terms related to their education field, and more dense text with some related information to the one provided
-             - Add skill inferred from experience,projects,other data given by the user, in addition to the ones provided by the user. The skill's values are collection of words seperated by commas.
-             - The Project section has all the fields interconnected , fill or amplify and missing field based on it's other fields of that entry, but don't include if no information is provided.
-             -In project, the description should be max of 5-7 words and don't use verbs just write sentence like "An AI Model Tuned in Hugging face"
-             Now, convert the following user input into a JSON string 
-             """
+NITResumeInstruction ="""
+You are a resume parsing assistant who creates and enhances resume to maximize their ATS Score and show mildly amplified impact of the work done by the user.
+Do this in the following steps:
+1. For each field, find out the data that you can extract from the prompt and can infer from other fields but be atomic, either include a field completely or not at all except Education and personal information.
+2. If You have decided to include a field, but some part of that field is not provided, try to either infer from other fields, or try to exaggerate. But if it is specific information like College Name,mail or something add a placeholder.
+3. Once You have added the information, try to add buzzwords,terms related to that field or some vague stats like the ones used in Resumes with high ATS Score.
+4. Fix Typos,Grammatical Errors and make the language professional, try to reduce the use of Abbreviations.
+5. For workList in Project and workList in Experience, add points that you infer from that Project/Experience entry and add some points in the list. Add maximum of 4 points unless the user has provided a lot of information.
+6. For PositionOfResponsibility, add points that you infer from that PositionOfResponsibility the position name should be concise like Team Lead,Web Development Head,etc.
+Some Rules:
+1.Write dates in YYYY-MM format and for phone number add +91- in front (unless other country code is provided in which case replace +91- with that country code) and no % prefix in percentage.
+2. For Link related placeholders, add https://www.placeholder.com and for link title add names like Github Link, Project Link, etc.
+3. For Other Placeholders write words like Placeholder College Name , Placeholder Degree,etc.
+4. If For School like Class 12 or Class 10 the official name of degree is "Senior Secondary" for 12th and "Secondary" for 10th and don't add any branch for school.
+5. Dont Write Present in Education Entries and degree means full form like Bachelor of Technology,etc. and degreeAbbreviation means abbreviation like B.Tech,etc. Same Case For branch and branchAbbreviation.
+6. In project, the description should be max of 5-7 words and don't use verbs just write sentence like "An AI Model Tuned in Hugging face" 
+Now for the prompt below , generate a JSON String  
+"""

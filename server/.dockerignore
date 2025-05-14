@@ -1,3 +1,26 @@
-.git    
-__pycache__
+# Ignore Python cache and virtual environments
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+env/
 venv/
+.venv/
+
+# Ignore environment/config files
+.env
+*.env
+.env.*
+
+# Ignore development tools/files
+.git
+.gitignore
+Dockerfile
+.dockerignore
+*.log
+*.sqlite3
+*.db
+*.DS_Store
+.vscode/
+.idea/
+*.swp
