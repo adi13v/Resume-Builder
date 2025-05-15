@@ -1,7 +1,7 @@
 const setCanvasPreview = (
-    image, // HTMLImageElement
-    canvas, // HTMLCanvasElement
-    crop // PixelCrop
+    image: HTMLImageElement,
+    canvas: HTMLCanvasElement,
+    crop: { x: number, y: number, width: number, height: number }
   ) => {
     const ctx = canvas.getContext("2d");
     if (!ctx) {

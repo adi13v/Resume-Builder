@@ -2413,7 +2413,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                   e.target.value
                                 )
                               }
-                              className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
                           </Tooltip>

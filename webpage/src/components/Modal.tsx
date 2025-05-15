@@ -1,7 +1,7 @@
 import CloseIcon from "./CloseIcon";
 import ImageCropper from "./ImageCropper";
 
-const Modal = ({ updateAvatar, closeModal, isCircle=true }) => {
+const Modal = ({ updateAvatar, closeModal, isCircle=true }: { updateAvatar: (avatar: string) => void, closeModal: () => void, isCircle: boolean }) => {
   return (
     <div
       className="relative "

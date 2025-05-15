@@ -73,7 +73,7 @@ const ImageCropper = ({ closeModal, updateAvatar, isCircle }: { closeModal: () =
         <div className="flex flex-col items-center">
           <ReactCrop
             crop={crop}
-            onChange={(pixelCrop, percentCrop) => setCrop(percentCrop)}
+            onChange={(_, percentCrop) => setCrop(percentCrop)}
             circularCrop={isCircle}
             keepSelection
             aspect={ASPECT_RATIO}
@@ -91,8 +91,8 @@ const ImageCropper = ({ closeModal, updateAvatar, isCircle }: { closeModal: () =
             className="text-white font-mono text-xs py-2 px-4 rounded-2xl mt-4 bg-sky-500 hover:bg-sky-600"
             onClick={() => {
               setCanvasPreview(
-                imgRef.current, // HTMLImageElement
-                previewCanvasRef.current, // HTMLCanvasElement
+                imgRef.current as HTMLImageElement, // HTMLImageElement
+                previewCanvasRef.current as HTMLCanvasElement, // HTMLCanvasElement
                 convertToPixelCrop(
                   crop as PercentCrop,
                   imgRef.current?.width || 0,

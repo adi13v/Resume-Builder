@@ -3,7 +3,7 @@ import CloseIcon from "./CloseIcon";
 import  { AxiosInstance } from 'axios';
 import { FormDataStore } from '../types/resumeWithPhoto';
 import { FormDataStore as NITFormDataStore } from '../types/nitResume';
-import {FormDataStore as JakesFormDataStore} from '../types/jakesResume';
+import {FormDataStore as JakesFormDataStore} from '../types/jakeResume';
 import toast from 'react-hot-toast';
 interface ChatbotModalProps<T> {
   closeModal: () => void;

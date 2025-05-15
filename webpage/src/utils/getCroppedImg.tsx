@@ -1,4 +1,4 @@
-export default function getCroppedImg(imageSrc, pixelCrop): Promise<Blob> {
+export default function getCroppedImg(imageSrc: string, pixelCrop: { x: number, y: number, width: number, height: number }): Promise<Blob> {
     return new Promise((resolve, reject) => {
       const image = new Image();
       image.src = imageSrc;
