@@ -3,20 +3,21 @@ import ReactCrop, {
   centerCrop,
   convertToPixelCrop,
   makeAspectCrop,
+  PercentCrop,
 } from "react-image-crop";
 import setCanvasPreview from "../utils/setCanvasPreview";
 
 const ASPECT_RATIO = 1;
 const MIN_DIMENSION = 150;
 
-const ImageCropper = ({ closeModal, updateAvatar, isCircle }) => {
-  const imgRef = useRef(null);
-  const previewCanvasRef = useRef(null);
+const ImageCropper = ({ closeModal, updateAvatar, isCircle }: { closeModal: () => void, updateAvatar: (dataUrl: string) => void, isCircle: boolean }) => {
+  const imgRef = useRef<HTMLImageElement>(null);
+  const previewCanvasRef = useRef<HTMLCanvasElement>(null);
   const [imgSrc, setImgSrc] = useState("");
-  const [crop, setCrop] = useState();
+  const [crop, setCrop] = useState<PercentCrop | undefined>(undefined);
   const [error, setError] = useState("");
 
-  const onSelectFile = (e) => {
+  const onSelectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -28,7 +29,7 @@ const ImageCropper = ({ closeModal, updateAvatar, isCircle }) => {
 
       imageElement.addEventListener("load", (e) => {
         if (error) setError("");
-        const { naturalWidth, naturalHeight } = e.currentTarget;
+        const { naturalWidth, naturalHeight } = e.currentTarget as HTMLImageElement;
         if (naturalWidth < MIN_DIMENSION || naturalHeight < MIN_DIMENSION) {
           setError("Image must be at least 150 x 150 pixels.");
           return setImgSrc("");
@@ -39,7 +40,7 @@ const ImageCropper = ({ closeModal, updateAvatar, isCircle }) => {
     reader.readAsDataURL(file);
   };
 
-  const onImageLoad = (e) => {
+  const onImageLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
     const { width, height } = e.currentTarget;
     const cropWidthInPercent = (MIN_DIMENSION / width) * 100;
 
@@ -93,14 +94,16 @@ const ImageCropper = ({ closeModal, updateAvatar, isCircle }) => {
                 imgRef.current, // HTMLImageElement
                 previewCanvasRef.current, // HTMLCanvasElement
                 convertToPixelCrop(
-                  crop,
-                  imgRef.current.width,
-                  imgRef.current.height
+                  crop as PercentCrop,
+                  imgRef.current?.width || 0,
+                  imgRef.current?.height || 0
                 )
               );
-              const dataUrl = previewCanvasRef.current.toDataURL();
-              updateAvatar(dataUrl);
-              closeModal();
+              const dataUrl = previewCanvasRef.current?.toDataURL();
+              if (dataUrl) {
+                updateAvatar(dataUrl);
+                closeModal();
+              }
             }}
           >
             Crop Image
