@@ -2,13 +2,13 @@ import React from 'react';
 import styled from 'styled-components';
 import {useEffect,useRef} from 'react';
 
-const Tooltip = ({children,title,message}) => {
-  const tooltipRef = useRef(null);
+const Tooltip = ({children,title,message}:{children:React.ReactNode,title:string,message:string}) => {
+  const tooltipRef = useRef<HTMLDivElement>(null);
   
   useEffect(()=>{
     const container = tooltipRef.current;
-    const input = container.querySelector('input');
-    const tooltip = container.querySelector('.tooltip');
+    const input = container?.querySelector('input');
+    const tooltip = container?.querySelector('.tooltip') as HTMLDivElement;
 
     const handleKeyDown = (e:KeyboardEvent)=>{
       if(e.ctrlKey && (e.key === 'b' || e.key === 'i')){
