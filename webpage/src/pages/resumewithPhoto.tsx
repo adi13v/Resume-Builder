@@ -1,13 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
 import axios from "axios";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
-import Resume_With_photo_Photo_Enabled from "../assets/Resume_With_photo_Photo_Enabled.pdf";
-import Resume_With_photo_Photo_Disabled from "../assets/Resume_With_photo_Photo_Disabled.pdf";
+import Resume_With_photo_Photo_Enabled from '../assets/Resume_With_Photo.pdf';
+import Resume_With_photo_Photo_Disabled from '../assets/Resume_with_photo_Photo_Disabled.pdf';
 import Tooltip from "../components/Tooltip";
 import Modal from "../components/Modal";
 import ChatbotModal from "../components/ChatbotModal";
+import { XIcon } from "lucide-react";
 import {
   generateUUID,
   handleInputChange,
@@ -233,12 +235,12 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
     defaultSkillEntry4,
     defaultSkillEntry5,
   ]);
-  const [name, setName] = useState<string>("Jake Smith");
-  const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
-  const [phoneNumber, setPhoneNumber] = useState<string>("6386419509");
-  const [portfolioLink, setPortfolioLink] = useState<string>("google.com");
-  const [githubLink, setGithubLink] = useState<string>("");
-  const [linkedInLink, setLinkedInLink] = useState<string>("");
+  const [name, setName] = useState<string>("Snoopy Matthew");
+  const [email, setEmail] = useState<string>("snoopymatthew@gmail.com");
+  const [phoneNumber, setPhoneNumber] = useState<string>("+91-9876543210");
+  const [portfolioLink, setPortfolioLink] = useState<string>("myportfolio.com");
+  const [githubLink, setGithubLink] = useState<string>("github.com/snoopymatthew");
+  const [linkedInLink, setLinkedInLink] = useState<string>("linkedin.com/in/snoopymatthew");
   const [globalId, setGlobalId] = useState<string>(generateUUID());
   
   const storageKeyName = `formData-${window.location.pathname}`;
@@ -577,9 +579,9 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
         .map((entry) => {
           return `
         \\textbf{${sanitizeInput(entry.title)}} & 
-        \\href{${sanitizeInputForLink(
+        ${entry.link!==''?`\\href{${sanitizeInputForLink(
           entry.link
-        )}}{\\color{blue}Certificate Link} \\\\
+        )}}{\\color{blue}Certificate Link}`:``} \\\\
         `;
         })
         .join("")}
@@ -1180,7 +1182,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
 
                     <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Branch*{" "}
+                        Branch{" "}
                         <span className=" mx-0.5 text-xs text-white">
                           Tip: Write your specialization or major.
                         </span>
@@ -1306,7 +1308,9 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
 
                     <div className="mb-4 md:col-span-2">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Grade Format
+                        Grade Format <span className="text-xs text-white">
+                          Tip: Leave blank if you don't want grade on your resume.
+                          </span>
                       </label>
                       <div className="flex space-x-4 mb-2">
                         <label className="inline-flex items-center text-[#44BCFF]">
@@ -1400,7 +1404,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                 )
                               }
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
-                              required
+                            
                             />
                           </Tooltip>
                         </div>
@@ -1469,7 +1473,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`jobTitle-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Job Title:
+                            Job Title*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1498,7 +1502,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`companyName-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Company Name:
+                            Company Name*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1527,7 +1531,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`location-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Location:
+                            Location*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1556,7 +1560,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`startDate-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Start Date:
+                            Start Date*
                           </label>
                           <input
                             type="month"
@@ -1580,7 +1584,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`endDate-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            End Date:
+                            End Date*
                           </label>
                           <input
                             type={
@@ -1684,7 +1688,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                 }
                                 className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                               >
-                                Remove
+                                <XIcon className="w-4 h-4" />
                               </button>
                             </div>
                           ))}
@@ -1876,6 +1880,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             )
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          required
                         />
                       </div>
 
@@ -1901,6 +1906,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                               ? "opacity-50 cursor-not-allowed"
                               : ""
                           }`}
+                          required
                         />
                         <input
                           type="checkbox"
@@ -1930,7 +1936,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                     </div>
 
                     <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                      Features:*{" "}
+                      Features{" "}
                       <span className=" mx-0.5 text-xs text-white">
                         Tip: Use Bold For Highlighting but don't overdo it
                       </span>
@@ -1969,6 +1975,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             )
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          required
                         />
                         <button
                           type="button"
@@ -1982,7 +1989,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                           }
                           className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                         >
-                          Remove
+                          <XIcon className="w-4 h-4" />
                         </button>
                       </div>
                     ))}
@@ -2029,6 +2036,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                   checked={includeSkills}
                   onChange={(e) => setIncludeSkills(e.target.checked)}
                   className="form-checkbox h-4 w-4 text-white focus:ring-white"
+
                 />
                 <span className="ml-2 text-white">Include Section</span>
               </label>
@@ -2042,7 +2050,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                 <div className="space-y-6">
                   {skills.map((skill, index) => (
                     <div
-                      className="inputGroup mb-4 flex items-center space-x-4"
+                      className="inputGroup mb-4 flex items-center space-x-4 "
                       key={index}
                     >
                       <Tooltip
@@ -2062,7 +2070,8 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                               e.target.value
                             )
                           }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
+                          className="shadow appearance-none border rounded-lg w-full  py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
+                          required
                         />
                       </Tooltip>
                       <input
@@ -2088,13 +2097,14 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                           )
                         }
                         className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
+                        required
                       />
                       <button
                         type="button"
                         onClick={() => removeEntry(setSkills, index)}
                         className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                       >
-                        Remove
+                        <XIcon className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
@@ -2158,7 +2168,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`title-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Title:
+                            Title*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2187,7 +2197,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`date-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Date:
+                            Date*
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2216,13 +2226,15 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                             htmlFor={`description-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Description:
+                            Description* <span className="text-xs text-white">
+                              Tip: Keep it short
+                            </span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
                             message="Making Text Bold is not allowed here"
                           >
-                            <textarea
+                            <input
                               id={`description-${entry.id}`}
                               value={entry.description}
                               onChange={(e) =>
@@ -2483,7 +2495,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
 
                         <div className="col-span-full">
                           <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                            Achievements:*{" "}
+                            Achievements:{" "}
                             <span className="mx-0.5 text-xs text-white">
                               Tip: Use Bold For Highlighting but don't overdo it
                             </span>
@@ -2495,7 +2507,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                 className="mb-2 flex items-center space-x-4"
                               >
                                 <label className="block text-[#44BCFF] font-medium mb-1">
-                                  Achievement {achievementIndex + 1}:
+                                  Achievement {achievementIndex + 1}*:
                                 </label>
                                 <input
                                   type="text"
@@ -2519,6 +2531,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                     )
                                   }
                                   className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                                  required
                                 />
                                 <button
                                   type="button"
@@ -2532,7 +2545,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                   }
                                   className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                                 >
-                                  Remove
+                                  <XIcon className="w-4 h-4" />
                                 </button>
                               </div>
                             )
@@ -2640,7 +2653,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Certificate Link*{" "}
+                            Certificate Link{" "}
                             <span className="mx-0.5 text-xs text-white">
                               Tip: The URL of your certificate or verification
                               page
@@ -2663,7 +2676,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                 )
                               }
                               className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                              
                             />
                           </Tooltip>
                         </div>

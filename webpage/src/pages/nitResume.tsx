@@ -1,12 +1,13 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
 import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
-
-import NIT_Resume_With_Logo from "../assets/NIT-Resume-With-Logo.pdf"
-import NIT_Resume_With_Photo from "../assets/NIT-Resume-With-Photo.pdf"
-import NIT_Resume_Without_Photo from "../assets/NIT-Resume-Without-Photo.pdf"
+import { XIcon } from "lucide-react";
+import NIT_Resume_With_Logo from '../assets/NIT-Resume-With-Logo.pdf'
+import NIT_Resume_With_Photo from '../assets/NIT-Resume-With-Photo.pdf'
+import NIT_Resume_Without_Photo from '../assets/NIT-Resume-Without-Photo.pdf'
 import Tooltip from "../components/Tooltip";
 import Modal from "../components/Modal";
 import ChatbotModal from "../components/ChatbotModal";
@@ -47,7 +48,7 @@ const api = axios.create({
 
 const defaultEducationEntry: EducationDetails = {
     "id": "edu1",
-    "instituteName": "NIT Trichy",
+    "instituteName": "National Institute of Technology, Trichy",
     "degree": "Bachelor of Technology",
     "degreeAbbreviation": "B.Tech",
     "branch": "Computer Science and Engineering",
@@ -58,6 +59,36 @@ const defaultEducationEntry: EducationDetails = {
     "cgpa": "9.2",
     "percentage": ""
   }
+
+const defaultEducationEntry2: EducationDetails = {
+    "id": "edu2",
+    "instituteName": "Kendriya Vidyalaya, Bhopal",
+    "degree": "Senior Secondary",
+    "degreeAbbreviation": "",
+    "branch": "",
+    "branchAbbreviation": "",
+    "location": "Bhopal, India",
+    "endDate": "2021-05",
+    "gradeType": "Percentage",
+    "cgpa": "9.2",
+    "percentage": "95"
+  }
+
+const defaultEducationEntry3: EducationDetails = {
+    "id": "edu3",
+    "instituteName": "Kendriya Vidyalaya, Bhopal",
+    "degree": "Secondary",
+    "degreeAbbreviation": "",
+    "branch": "",
+    "branchAbbreviation": "",
+    "location": "Bhopal, India",
+    "endDate": "2019-05",
+    "gradeType": "Percentage",
+    "cgpa": "9.2",
+    "percentage": "95"
+  }
+
+
 const defaultExperienceEntry1: ExperienceDetails = {
     "id": "exp1",
     "jobTitle": "Software Engineering Intern",
@@ -156,14 +187,14 @@ const defaultProjectEntry2: ProjectDetails = {
     "id": "pos1",
     "positionName": "Technical Head",
     "organizationName": "TechFusion Coding Club",
-    "date": "2021-2023"
+    "date": "2021-01"
   }
 
   const defaultPositionEntry2: PositionOfResponsibilityDetails = {
     "id": "pos2",
     "positionName": "Open Source Mentor",
     "organizationName": "Hacktoberfest NIT Trichy",
-    "date": "2022"
+    "date": "2022-06"
   }
 
 
@@ -173,12 +204,12 @@ function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [globalId, setGlobalId] = useState<string>(generateUUID());
-  const [name, setName] = useState<string>("Jake Smith");
+  const [name, setName] = useState<string>("Snoopy Smith");
   const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
-  const [phoneNumber, setPhoneNumber] = useState<string>("6386419509");
+  const [phoneNumber, setPhoneNumber] = useState<string>("+91-7975939393");
 
-  const [githubLink, setGithubLink] = useState<string>("");
-  const [linkedInLink, setLinkedInLink] = useState<string>("");
+  const [githubLink, setGithubLink] = useState<string>("https://github.com/snoopy-007");
+  const [linkedInLink, setLinkedInLink] = useState<string>("https://www.linkedin.com/in/snoopy-007/");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
@@ -196,7 +227,9 @@ function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
   // Form data states
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
-    
+    defaultEducationEntry2,
+    defaultEducationEntry3,
+
   ]);
   const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
     defaultExperienceEntry1,
@@ -264,7 +297,7 @@ function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
       phoneNumber: phoneNumber,
       githubLink: githubLink,
       linkedInLink: linkedInLink,
-     
+      
       educationEntries: educationEntries,
       experienceEntries: experienceEntries,
       projectEntries: projectEntries,
@@ -344,7 +377,7 @@ function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
   const parseEducationString = () => {
     const newString: string | void = educationEntries
       .map((entry) => {
-        return `${entry.degreeAbbreviation?`${sanitizeInput(entry.degreeAbbreviation)}`:`${sanitizeInput(entry.degree)}`}, ${sanitizeInput(entry.branchAbbreviation?`${sanitizeInput(entry.branchAbbreviation)}`:`${sanitizeInput(entry.branch)}`)} & ${sanitizeInput(entry.instituteName)} & ${entry.gradeType.toUpperCase()=='CGPA'?`${sanitizeInput(entry.cgpa)}`:`${sanitizeInput(entry.percentage)}`} & ${formatMonthYear(entry.endDate)} \\\\ 
+        return `${entry.degreeAbbreviation?`${sanitizeInput(entry.degreeAbbreviation)}`:`${sanitizeInput(entry.degree)}`}${entry.branch!==''?`,`:``}${sanitizeInput(entry.branchAbbreviation?`${sanitizeInput(entry.branchAbbreviation)}`:`${sanitizeInput(entry.branch)}`)} & ${sanitizeInput(entry.instituteName)} & ${entry.gradeType.toUpperCase()=='CGPA'?`${sanitizeInput(entry.cgpa)}`:`${sanitizeInput(entry.percentage)}`} & ${formatMonthYear(entry.endDate)} \\\\ 
   \\hline
   `;
       })
@@ -470,7 +503,7 @@ ${newString}
         return `
         \\resumePOR
     {${entry.title}} % Certification Name
-    {, \\href{${sanitizeInputForLink(entry.link)}}{Link}} % Issuer
+    {${entry.link!==''?`, \\href{${sanitizeInputForLink(entry.link)}}{Link}`:``}} % Issuer
     {${entry.date}}
     `}).join("")}
     \\resumeSubHeadingListEnd
@@ -686,7 +719,7 @@ ${FormatType!==NITEnum.None ? `\\includegraphics[width=2cm]{image-${globalId}}` 
 }
 \parbox{\dimexpr\linewidth${FormatType !== NITEnum.None ? "-2.8cm" : ""}\relax}{
 \begin{tabularx}{\linewidth}{L r}
-  \textbf{\LARGE \scshape \name} & +91-\phone \\ % Name styled with small caps
+  \textbf{\LARGE \scshape \name} & \phone \\ % Name styled with small caps
   \course & \href{mailto:\emailb}{\emailb} \\
   ${sanitizeInput(educationEntries[0].branch)} & \href{${sanitizeInputForLink(linkedInLink)}}{${sanitizeInputForDisplay(linkedInLink)}} \\
   ${sanitizeInput(educationEntries[0].instituteName)}
@@ -874,7 +907,7 @@ ${parseClubString()}
                   htmlFor="name"
                   className="block text-[#44BCFF] text-sm font-bold mb-2"
                 >
-                  Name*
+                  Name<span className="text-red-500">*</span>
                 </label>
                 <Tooltip
                   title="Not Allowed Here"
@@ -896,7 +929,7 @@ ${parseClubString()}
                   htmlFor="email"
                   className="block text-[#44BCFF] text-sm font-bold mb-2"
                 >
-                  Email*
+                  Email<span className="text-red-500">*</span>
                 </label>
                 <Tooltip
                   title="Not Allowed Here"
@@ -918,7 +951,7 @@ ${parseClubString()}
                   htmlFor="phoneNumber"
                   className="block text-[#44BCFF] text-sm font-bold mb-2"
                 >
-                  Phone Number*{" "}
+                  Phone Number<span className="text-red-500">*</span>{" "}
                   <span className=" mx-0.5 text-xs text-white">
                     Tip: Write Country Code followed by - and then the number
                   </span>
@@ -1022,7 +1055,7 @@ ${parseClubString()}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Institute Name*{" "}
+                        Institute Name<span className="text-red-500">*</span>{" "}
                         <span className=" mx-0.5 text-xs text-white">
                           Tip: Write Institute Name without any abbreviations.
                         </span>
@@ -1050,9 +1083,9 @@ ${parseClubString()}
                       </Tooltip>
                     </div>
 
-                    {index==0 &&<div className="mb-4">
+                    {<div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Degree*{" "}
+                        Degree<span className="text-red-500">*</span> <span className="text-xs text-white">Tip: For School write Secondary or Senior Secondary</span>
                       </label>
                       <Tooltip
                         title="Not Allowed Here"
@@ -1078,7 +1111,7 @@ ${parseClubString()}
 
                      <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Degree (In Abbrevation)*{" "}
+                        Degree (In Abbrevation){" "}
                         <span className=" mx-0.5 text-xs text-white">
                           Ex. : B.Tech,MBA (Leave Empty For School)
                         </span>
@@ -1106,7 +1139,7 @@ ${parseClubString()}
 
                     {index==0 && <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Branch*{" "}
+                        Branch<span className="text-red-500">*</span>{" "}
                         <span className=" mx-0.5 text-xs text-white">
                           Tip: Write your specialization or major.
                         </span>
@@ -1135,7 +1168,7 @@ ${parseClubString()}
 
                   <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Branch (In Abbreviation)*{" "}
+                        Branch (In Abbreviation){" "}
                         <span className=" mx-0.5 text-xs text-white">
                           Ex. CSE,Hons. (Leave Empty For School)
                         </span>
@@ -1164,7 +1197,7 @@ ${parseClubString()}
 
                     <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Location*
+                        Location<span className="text-red-500">*</span>
                       </label>
                       <Tooltip
                         title="Not Allowed Here"
@@ -1190,7 +1223,7 @@ ${parseClubString()}
 
                     <div className="mb-4">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Month Of Passing*
+                        Month Of Passing<span className="text-red-500">*</span>
                       </label>
                       <input
                         type="month"
@@ -1212,7 +1245,7 @@ ${parseClubString()}
 
                     <div className="mb-4 md:col-span-2">
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Grade Format
+                        Grade Format<span className="text-red-500">*</span>
                       </label>
                       <div className="flex space-x-4 mb-2">
                         <label className="inline-flex items-center text-[#44BCFF]">
@@ -1248,6 +1281,7 @@ ${parseClubString()}
                               )
                             }
                             className="form-radio h-4 w-4 text-white focus:ring-white"
+                          
                           />
                           <span className="ml-2">Percentage</span>
                         </label>
@@ -1278,6 +1312,7 @@ ${parseClubString()}
                                 )
                               }
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline border-white/10"
+                              required
                             />
                           </Tooltip>
                         </div>
@@ -1375,7 +1410,7 @@ ${parseClubString()}
                             htmlFor={`jobTitle-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Job Title:
+                            Job Title<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1404,7 +1439,7 @@ ${parseClubString()}
                             htmlFor={`companyName-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Company Name:
+                            Company Name<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1433,7 +1468,7 @@ ${parseClubString()}
                             htmlFor={`location-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Location:
+                            Location<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1462,7 +1497,7 @@ ${parseClubString()}
                             htmlFor={`startDate-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Start Date:
+                            Start Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type="month"
@@ -1486,7 +1521,7 @@ ${parseClubString()}
                             htmlFor={`endDate-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            End Date:
+                            End Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type={
@@ -1508,7 +1543,7 @@ ${parseClubString()}
                                 ? "opacity-50 cursor-not-allowed"
                                 : ""
                             }`}
-                            required
+                            
                           />
                           <input
                             type="checkbox"
@@ -1531,6 +1566,7 @@ ${parseClubString()}
                                 );
                               }
                             }}
+                            
                           />
 
                           <label htmlFor="">Currently Pursuing</label>
@@ -1547,12 +1583,7 @@ ${parseClubString()}
                               key={workIndex}
                               className="mb-2 flex items-center space-x-4"
                             >
-                              <label
-                                htmlFor={`work-${entry.id}-${workIndex}`}
-                                className="block text-[#44BCFF] font-medium mb-1"
-                              >
-                                Work {workIndex + 1}:
-                              </label>
+                             
                               <input
                                 type="text"
                                 id={`work-${entry.id}-${workIndex}`}
@@ -1576,7 +1607,7 @@ ${parseClubString()}
                                   )
                                 }
                                 className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                required
+                               
                               />
                               <button
                                 type="button"
@@ -1590,7 +1621,7 @@ ${parseClubString()}
                                 }
                                 className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                               >
-                                Remove
+                                <XIcon className="w-4 h-4" />
                               </button>
                             </div>
                           ))}
@@ -1620,9 +1651,9 @@ ${parseClubString()}
                 <button
                   type="button"
                   onClick={() =>
-                    addEntry(setExperienceEntries, defaultExperienceEntry)
+                    addEntry(setExperienceEntries, defaultExperienceEntry1)
                   }
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Experience
                 </button>
@@ -1666,7 +1697,7 @@ ${parseClubString()}
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Project Name*
+                          Project Name<span className="text-red-500">*</span>
                         </label>
                         <Tooltip
                           title="Not Allowed Here"
@@ -1692,13 +1723,13 @@ ${parseClubString()}
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Description*
+                          Description<span className="text-red-500">*</span> <span className="text-xs text-white">Tip:Keep it Very Short</span>
                         </label>
                         <Tooltip
                           title="Not Allowed Here"
                           message="Making Text Bold is not allowed here"
                         >
-                          <textarea
+                          <input
                             value={entry.description}
                             onChange={(e) =>
                               handleInputChange(
@@ -1717,7 +1748,7 @@ ${parseClubString()}
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Tools Used*{" "}
+                          Tools Used<span className="text-red-500">*</span>{" "}
                           <span className="mx-0.5 text-xs text-white">
                             Tip: Separate tools with commas (e.g., React, Node.js, MongoDB)
                           </span>
@@ -1746,7 +1777,7 @@ ${parseClubString()}
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Link Title*{" "}
+                          Link Title{" "}
                           <span className="mx-0.5 text-xs text-white">
                             Tip: The text to display for the link (e.g., "GitHub", "Live Demo", etc.)
                           </span>
@@ -1768,14 +1799,14 @@ ${parseClubString()}
                               )
                             }
                             className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
+                          
                           />
                         </Tooltip>
                       </div>
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Project Link*{" "}
+                          Project Link{" "}
                           <span className="mx-0.5 text-xs text-white">
                             Tip: The actual URL of the project
                           </span>
@@ -1797,14 +1828,14 @@ ${parseClubString()}
                               )
                             }
                             className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
+                            
                           />
                         </Tooltip>
                       </div>
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          Start Date*
+                          Start Date<span className="text-red-500">*</span>
                         </label>
                         <input
                           type="month"
@@ -1825,7 +1856,7 @@ ${parseClubString()}
 
                       <div className="mb-4">
                         <label className="block text-[#44BCFF] font-medium mb-2">
-                          End Date*
+                          End Date<span className="text-red-500">*</span>
                         </label>
                         <input
                           type={entry.endDate === "Present" ? "text" : "month"}
@@ -1859,6 +1890,7 @@ ${parseClubString()}
                               );
                             }}
                             className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                          
                           />
                           <label className="ml-2 text-white">Currently Working</label>
                         </div>
@@ -1866,7 +1898,7 @@ ${parseClubString()}
 
                       <div className="col-span-full">
                         <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                          Work Done:*{" "}
+                          Work Done{" "}
                           <span className="mx-0.5 text-xs text-white">
                             Tip: Use Bold For Highlighting but don't overdo it
                           </span>
@@ -1876,9 +1908,7 @@ ${parseClubString()}
                             key={`${entry.id}-work-${workIndex}`}
                             className="mb-2 flex items-center space-x-4"
                           >
-                            <label className="block text-[#44BCFF] font-medium mb-1">
-                              Work {workIndex + 1}:
-                            </label>
+                           
                             <input
                               type="text"
                               value={work}
@@ -1914,7 +1944,7 @@ ${parseClubString()}
                               }
                               className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                             >
-                              Remove
+                             <XIcon className="w-4 h-4 text-white" />
                             </button>
                           </div>
                         ))}
@@ -1943,10 +1973,10 @@ ${parseClubString()}
             <div className="mt-6 flex justify-end">
               <button
                 type="button"
-                onClick={() => addEntry(setProjectEntries, defaultProjectEntry)}
-                className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                onClick={() => addEntry(setProjectEntries, defaultProjectEntry1)}
+                className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
               >
-                <PlusIcon className="w-4 h-4" /> Add Project
+                <PlusIcon className="w-4 h-4 " /> Add Project
               </button>
             </div>
           </div>
@@ -1997,6 +2027,7 @@ ${parseClubString()}
                             )
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
+                          required
                         />
                       </Tooltip>
                       <input
@@ -2022,13 +2053,14 @@ ${parseClubString()}
                           )
                         }
                         className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
-                      />
+                        required
+                     />
                       <button
                         type="button"
                         onClick={() => removeEntry(setSkills, index)}
                         className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                       >
-                        Remove
+                        <XIcon className="w-4 h-4" />  
                       </button>
                     </div>
                   ))}
@@ -2037,8 +2069,8 @@ ${parseClubString()}
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setSkills, defaultEmptySkillEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  onClick={() => addEntry(setSkills, defaultSkillEntry1)}
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Skill
                 </button>
@@ -2089,7 +2121,7 @@ ${parseClubString()}
                       <div className="grid grid-cols-1 gap-4">
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Certificate Title*
+                            Certificate Title<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2115,7 +2147,7 @@ ${parseClubString()}
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Certificate Link*{" "}
+                            Certificate Link{" "}
                             <span className="mx-0.5 text-xs text-white">
                               Tip: The URL of your certificate or verification
                               page
@@ -2138,14 +2170,14 @@ ${parseClubString()}
                                 )
                               }
                               className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                             
                             />
                           </Tooltip>
                         </div>
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Date*{" "}
+                            Date<span className="text-red-500">*</span>{" "}
                            
                           </label>
                           <Tooltip
@@ -2178,9 +2210,9 @@ ${parseClubString()}
                 <button
                   type="button"
                   onClick={() =>
-                    addEntry(setCertificateEntries, defaultCertificateEntry)
+                    addEntry(setCertificateEntries, defaultCertificateEntry1)
                   }
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Certificate
                 </button>
@@ -2230,7 +2262,7 @@ ${parseClubString()}
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">Title*</label>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Title<span className="text-red-500">*</span></label>
                           <input
                             type="text"
                             value={entry.title}
@@ -2247,7 +2279,7 @@ ${parseClubString()}
                           />
                         </div>
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">Link Title*</label>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Link Title</label>
                           <input
                             type="text"
                             value={entry.linkTitle}
@@ -2264,7 +2296,7 @@ ${parseClubString()}
                           />
                         </div>
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">Link*</label>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Link</label>
                           <input
                             type="text"
                             value={entry.link}
@@ -2285,8 +2317,8 @@ ${parseClubString()}
                   ))}
                   <button
                     type="button"
-                    onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry)}
-                    className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                    onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry1)}
+                    className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                   >
                     <PlusIcon className="w-4 h-4" /> Add Achievement
                   </button>
@@ -2337,7 +2369,7 @@ ${parseClubString()}
                       </div>
                       <div className="space-y-4">
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">Position Name*</label>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Position Name<span className="text-red-500">*</span></label>
                           <input
                             type="text"
                             value={entry.positionName}
@@ -2351,10 +2383,11 @@ ${parseClubString()}
                               )
                             }
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
                           />
                         </div>
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">Organization Name*</label>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Organization Name<span className="text-red-500">*</span></label>
                           <input
                             type="text"
                             value={entry.organizationName}
@@ -2368,10 +2401,11 @@ ${parseClubString()}
                               )
                             }
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
                           />
                         </div>
                         <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">Date*</label>
+                          <label className="block text-[#44BCFF] font-medium mb-2">Date<span className="text-red-500">*</span></label>
                           <input
                             type="month"
                             value={entry.date}
@@ -2385,15 +2419,16 @@ ${parseClubString()}
                               )
                             }
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                          />
+                            required
+                         />
                         </div>
                       </div>
                     </div>
                   ))}
                   <button
                     type="button"
-                    onClick={() => addEntry(setPositionEntries, defaultPositionEntry)}
-                    className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                    onClick={() => addEntry(setPositionEntries, defaultPositionEntry1)}
+                    className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                   >
                     <PlusIcon className="w-4 h-4" /> Add Position
                   </button>

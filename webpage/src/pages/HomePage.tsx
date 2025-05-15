@@ -1,26 +1,29 @@
-import image from '../assets/image.png';
-import nitResume from '../assets/photos/Photo_NIT_Resume_With_Logo.jpg';
-import resumeWithPhoto from '../assets/photos/Resume_with_photo_Photo_Enabled.jpg';
-import { Link, redirect} from 'react-router-dom';
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Rocket, FileText, CheckCircle, X } from 'lucide-react';
-import App from '../App';
+import jakeWithGrade from '../assets/photos/Jake_Resume_With_Grade_page-0001.jpg';
+import nitWithPhoto from '../assets/photos/NIT-Resume-With-Photo_page-0001.jpg';
+import nitWithoutPhoto from '../assets/photos/NIT-Resume-Without-Photo_page-0001.jpg';
+import resumeWithPhoto from '../assets/photos/Resume_with_photo_page-0001.jpg';
+import resumeWithPhotoDisabled from '../assets/photos/Resume_with_photo_Photo_Disabled_page-0001.jpg';
+import nitWithLogo from '../assets/photos/Nit-Resume-With-Logo_page-0001.jpg';
+import React, { useEffect, useRef } from 'react';
+import { motion } from 'framer-motion';
+import { Rocket, FileText, CheckCircle } from 'lucide-react';
+import FAQSection from '../components/faq-accordion';
+import Footer from '../components/Footer';
 
 // Sample resume data (replace with your actual data)
 const resumeTemplates = {
-    tech: [
-        { id: 'tech1', title: 'Technical Resume 1', description: 'For software engineers.', imageUrl: image, redirectUrl: '/jake' },
-        { id: 'tech2', title: 'Technical Resume 2', description: 'Clean layout for developers.', imageUrl: nitResume },
-        { id: 'tech3', title: 'Technical Resume 3', description: 'Modern design for tech professionals.', imageUrl: resumeWithPhoto },
+    Popular: [
+        { id: 'tech1', title: 'Classic Jake\'s Resume', description: 'Our Most Popular Pick. Popularised by the name of Jake\'s Resume', imageUrl: jakeWithGrade, redirectUrl: '/jake' },
+        { id: 'tech2', title: 'Education in Tabular', description: 'Clean Resume for those wanting to highlight their academics', imageUrl: nitWithoutPhoto, redirectUrl: '/nit-without-photo' },
+        { id: 'tech3', title: 'Less is More', description: 'Works best for those who don\'t have much content', imageUrl: resumeWithPhotoDisabled, redirectUrl: '/photo-disabled' },
     ],
-    fresh: [
-        { id: 'fresh1', title: 'Fresher Resume 1', description: 'Entry-level professionals.', imageUrl: image },
-        { id: 'fresh2', title: 'Fresher Resume 2', description: 'For recent graduates.', imageUrl: nitResume },
-    ],
+   
     photo: [
-        { id: 'photo1', title: 'Resume with Photo 1', description: 'Photo on the left.', imageUrl: resumeWithPhoto },
-        { id: 'photo2', title: 'Resume with Photo 2', description: 'Photo at the top.', imageUrl: nitResume },
+        { id: 'photo1', title: 'Resume with Photo 1', description: 'Clean,Minimal and has circular photo, similar in format to Jake\'s Resume', imageUrl: resumeWithPhoto, redirectUrl: '/photo' },
+        { id: 'photo2', title: 'Resume with Photo 2', description: 'Resume with photo, preferred by those with strong academics', imageUrl: nitWithPhoto, redirectUrl: '/nit-with-logo' },
+    ],
+    CollegeLogo: [
+        { id: 'fresh1', title: 'Resume With Logo', description: 'Preferred for on-campus interviews and for prestigious colleges', imageUrl: nitWithLogo, redirectUrl: '/nit-with-logo' },
     ],
 };
 
@@ -38,7 +41,7 @@ const cardVariants = {
 };
 
 // Parallax effect component
-const Parallax = ({ children, offset = 50 }) => {
+const Parallax = ({ children, offset = 50 }: { children: React.ReactNode, offset?: number }) => {
     const ref = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
@@ -95,6 +98,7 @@ const ResumeCatalog = () => {
                                                
                                             >
                                                 <img
+                                                    loading='lazy'
                                                     src={template.imageUrl}
                                                     alt={template.title}
                                                     className="object-cover w-full h-full rounded-t-xl transition-transform duration-300 group-hover:scale-105"
@@ -196,7 +200,9 @@ const LandingPage = () => {
                     </motion.div>
                 </Parallax>
 
+               
                 <ResumeCatalog />
+                <FAQSection />
             </div>
         </div>
     );
@@ -207,9 +213,11 @@ const HomePage = () => {
     return (
         <div className="min-h-screen bg-gray-950 overflow-hidden w-[100vw]">
             <LandingPage />
+            <Footer />
         </div>
     )
 };
 
 export default HomePage;
+
 

@@ -1,13 +1,15 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
 import axios from "axios";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
-
-import Jake_Resume_Without_Grade from "../assets/Jake_Resume_Without_Grade.pdf";
-import Jake_Resume_With_Grade from "../assets/Jake_Resume_With_Grade.pdf";
+import { XIcon } from "lucide-react";
+import Jake_Resume_Without_Grade from '../assets/Jake_Resume_Without_Grade.pdf';
+import Jake_Resume_With_Grade from '../assets/Jake_Resume_With_Grade.pdf';
 import Tooltip from "../components/Tooltip";
 import ChatbotModal from "../components/ChatbotModal";
+
 import {
   generateUUID,
   handleInputChange,
@@ -37,24 +39,51 @@ const defaultEducationEntry: EducationDetails = {
   degree: "Master of Science",
   branch: "Computer Science",
   location: "Cambridge, Massachusetts",
-  startDate: "2020-09",
-  endDate: "Present",
+  startDate: "2021-08",
+  endDate: "2023-05",
   gradeType: "cgpa",
   cgpa: "3.9",
   percentage: ""
 };
 
+const defaultEducationEntry2: EducationDetails = {
+  id: "edu2",
+  instituteName: "Stanford University",
+  degree: "Bachelor of Science",
+  branch: "Computer Science and Engineering",
+  location: "Stanford, California",
+  startDate: "2017-08",
+  endDate: "2021-05",
+  gradeType: "cgpa",
+  cgpa: "3.8",
+  percentage: "",
+};
+
 const defaultExperienceEntry: ExperienceDetails = {
   id: "cvhu7654wdfghj",
-  jobTitle: "Senior Software Engineer",
+  jobTitle: "Software Engineer",
   companyName: "Google",
   location: "Mountain View, California",
   startDate: "2022-06",
   endDate: "Present",
   workList: [
-    "Led development of scalable microservices architecture handling 1M+ daily requests",
-    "Implemented CI/CD pipeline reducing deployment time by 40%",
-    "Mentored junior developers and conducted code reviews for team of 5 engineers",
+    "Developed scalable REST APIs using FastAPI and PostgreSQL, reducing response time by 30%",
+    "Collaborated in an Agile team to ship production-level features for a dashboard used by 10,000+ users",
+    "Integrated Docker-based CI/CD pipelines to streamline deployment across multiple environments",
+  ],
+};
+
+const defaultExperienceEntry2: ExperienceDetails = {
+  id: "exp2",
+  jobTitle: "Backend Developer Intern",
+  companyName: "Amazon",
+  location: "Seattle, Washington",
+  startDate: "2021-05",
+  endDate: "2021-08",
+  workList: [
+    "Designed microservices architecture to decouple services and enhance system modularity",
+    "Implemented JWT authentication, OAuth2, and role-based access control improving platform security",
+    "Increased API performance by 45% through async optimization and query indexing",
   ],
 };
 
@@ -66,10 +95,24 @@ const defaultProjectEntry: ProjectDetails = {
   startDate: "2023-01",
   endDate: "2023-06",
   featureList: [
-    "Implemented real-time LaTeX PDF generation",
-    "Added AI-powered content suggestions",
-    "Built responsive UI with dark/light mode"
+    "Built a resume parsing tool with OpenAI API to optimize ATS scores using NLP techniques",
+    "Enabled LaTeX-based PDF resume generation with responsive UI and dark/light modes",
+    "Integrated file cleanup and async subprocess management using FastAPI background tasks",
   ]
+};
+
+const defaultProjectEntry2: ProjectDetails = {
+  id: "proj2",
+  projectName: "Decentralized Chat Application",
+  projectLinkTitle: "GitHub Link",
+  projectLink: "https://github.com/username/decentralized-chat",
+  startDate: "2022-07",
+  endDate: "2022-12",
+  featureList: [
+    "Implemented peer-to-peer WebRTC-based video calling and Socket.IO-based real-time messaging",
+    "Built a responsive frontend with React and TailwindCSS, supporting light/dark modes",
+    "Used MongoDB Atlas for scalable chat history storage with encryption",
+  ],
 };
 
 const defaultSkillEntry: SkillDetails = {
@@ -78,29 +121,72 @@ const defaultSkillEntry: SkillDetails = {
   value: "Python, JavaScript, TypeScript, Java, C++",
 };
 
+const defaultSkillEntry2: SkillDetails = {
+  id: "sk2",
+  key: "Frameworks",
+  value: "React, Node.js, FastAPI, Express, Django",
+};
+
+const defaultSkillEntry3: SkillDetails = {
+  id: "sk3",
+  key: "DevOps",
+  value: "Docker, GitHub Actions, Jenkins, Kubernetes, NGINX",
+};
+
+const defaultSkillEntry4: SkillDetails = {
+  id: "sk4",
+  key: "Databases",
+  value: "PostgreSQL, MongoDB, Redis, Firebase, SQL",
+};
+
 const defaultCertificateEntry: CertificateDetails = {
   id: "cert1",
-  title: "AWS Cloud Practitioner",
+  title: "AWS Certified Cloud Practitioner",
   link: "https://example.com/certificate1",
+};
+
+const defaultCertificateEntry2: CertificateDetails = {
+  id: "cert2",
+  title: "Google Cloud Professional Developer",
+  link: "https://example.com/certificate2",
 };
 
 const defaultClubEntry: ClubDetails = {
   id: "club1",
   title: "Web Development Lead",
-  societyName: "KIIT MLSA",
-  startDate: "2023-01",
-  endDate: "2024-01",
+  societyName: "Computer Science Association",
+  startDate: "2022-01",
+  endDate: "2023-01",
   achievements: [
     "Led a team of 20+ members in developing and maintaining the society's website",
-    "Organized monthly coding workshops and hackathons",
+    "Organized monthly coding workshops and hackathons with an average of 300+ participants",
+  ],
+};
+
+const defaultClubEntry2: ClubDetails = {
+  id: "club2",
+  title: "Technical Coordinator",
+  societyName: "AI Research Group",
+  startDate: "2021-08",
+  endDate: "2022-05",
+  achievements: [
+    "Conducted weekly ML/AI workshops for 50+ students to foster practical implementation skills",
+    "Mentored 10+ juniors in building AI-powered projects and research papers",
   ],
 };
 
 const defaultAchievementEntry: AchievementDetails = {
   id: "achievement1",
-  title: "Dean's List",
+  title: "ACM ICPC Regional Finalist",
   linkTitle: "Certificate",
   link: "https://example.com/certificate",
+};
+
+const defaultAchievementEntry2: AchievementDetails = {
+  id: "achievement2",
+  title: "Google Hackathon Winner",
+  linkTitle: "Project",
+  link: "https://example.com/project",
 };
 
 function JakeResume({defaultGradeSetting}:{defaultGradeSetting:boolean}) {
@@ -108,46 +194,55 @@ function JakeResume({defaultGradeSetting}:{defaultGradeSetting:boolean}) {
   const [isLoading, setIsLoading] = useState(false);
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
+    defaultEducationEntry2,
   ]);
 
   const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
     defaultExperienceEntry,
+    defaultExperienceEntry2,
   ]);
   
   const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
     defaultProjectEntry,
+    defaultProjectEntry2,
   ]);
   
   const [skills, setSkills] = useState<SkillDetails[]>([
     defaultSkillEntry,
+    defaultSkillEntry2,
+    defaultSkillEntry3,
+    defaultSkillEntry4,
   ]);
   
-  const [name, setName] = useState<string>("Jake Smith");
-  const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
-  const [phoneNumber, setPhoneNumber] = useState<string>("6386419509");
-  const [portfolioLink, setPortfolioLink] = useState<string>("google.com");
-  const [githubLink, setGithubLink] = useState<string>("");
-  const [linkedInLink, setLinkedInLink] = useState<string>("");
+  const [name, setName] = useState<string>("Snoopy Matthew");
+  const [email, setEmail] = useState<string>("snoopy@gmail.com");
+  const [phoneNumber, setPhoneNumber] = useState<string>("+91-9876543210");
+  const [portfolioLink, setPortfolioLink] = useState<string>("snoopy.dev");
+  const [githubLink, setGithubLink] = useState<string>("github.com/johnsmith");
+  const [linkedInLink, setLinkedInLink] = useState<string>("linkedin.com/in/johnsmith");
   const [globalId, setGlobalId] = useState<string>(generateUUID());
   
   const storageKeyName = `formData-${window.location.pathname}`;
   const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([
     defaultCertificateEntry,
+    defaultCertificateEntry2,
   ]);
   const [clubEntries, setClubEntries] = useState<ClubDetails[]>([
     defaultClubEntry,
+    defaultClubEntry2,
   ]);
   const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([
     defaultAchievementEntry,
+    defaultAchievementEntry2,
   ]);
 
   // Add new state variables for section toggles
   const [includeExperience, setIncludeExperience] = useState(true);
   const [includeProjects, setIncludeProjects] = useState(true);
   const [includeSkills, setIncludeSkills] = useState(true);
-  const [includeCertificates, setIncludeCertificates] = useState(false);
-  const [includeClubs, setIncludeClubs] = useState(false);
-  const [includeAchievements, setIncludeAchievements] = useState(false);
+  const [includeCertificates, setIncludeCertificates] = useState(true);
+  const [includeClubs, setIncludeClubs] = useState(true);
+  const [includeAchievements, setIncludeAchievements] = useState(true);
   
   const [includeGrade, setIncludeGrade] = useState(defaultGradeSetting);
   
@@ -580,25 +675,25 @@ ${parseSkillString()}
 
   // Add this function to handle the AI-generated form data
   const handleAIGeneratedData = (data: FormDataStore) => {
-    setName(data.name || "");
-    setEmail(data.email || "");
-    setPhoneNumber(data.phoneNumber || "");
-    setGithubLink(data.githubLink || "");
-    setLinkedInLink(data.linkedInLink || "");
-    setPortfolioLink(data.portfolioLink || "");
-    setEducationEntries(data.educationEntries || []);
-    setExperienceEntries(data.experienceEntries || []);
-    setProjectEntries(data.projectEntries || []);
-    setSkills(data.skills || []);
-    setCertificateEntries(data.certificateEntries || [defaultCertificateEntry]);
-    setClubEntries(data.clubEntries || [defaultClubEntry]);
-    setAchievementEntries(data.achievementEntries || [defaultAchievementEntry]);
-    setIncludeClubs(data.includeClubs || false);
-    setIncludeAchievements(data.includeAchievements || false);
-    setIncludeProjects(data.includeProjects || false);
-    setIncludeSkills(data.includeSkills || false);
-    setIncludeExperience(data.includeExperience || false);
-    setIncludeCertificates(data.includeCertificates || false);
+    setName(data.name || "John Smith");
+    setEmail(data.email || "john.smith@gmail.com");
+    setPhoneNumber(data.phoneNumber || "+1-555-123-4567");
+    setGithubLink(data.githubLink || "github.com/johnsmith");
+    setLinkedInLink(data.linkedInLink || "linkedin.com/in/johnsmith");
+    setPortfolioLink(data.portfolioLink || "johnsmith.dev");
+    setEducationEntries(data.educationEntries || [defaultEducationEntry, defaultEducationEntry2]);
+    setExperienceEntries(data.experienceEntries || [defaultExperienceEntry, defaultExperienceEntry2]);
+    setProjectEntries(data.projectEntries || [defaultProjectEntry, defaultProjectEntry2]);
+    setSkills(data.skills || [defaultSkillEntry, defaultSkillEntry2, defaultSkillEntry3, defaultSkillEntry4]);
+    setCertificateEntries(data.certificateEntries || [defaultCertificateEntry, defaultCertificateEntry2]);
+    setClubEntries(data.clubEntries || [defaultClubEntry, defaultClubEntry2]);
+    setAchievementEntries(data.achievementEntries || [defaultAchievementEntry, defaultAchievementEntry2]);
+    setIncludeClubs(data.includeClubs || true);
+    setIncludeAchievements(data.includeAchievements || true);
+    setIncludeProjects(data.includeProjects || true);
+    setIncludeSkills(data.includeSkills || true);
+    setIncludeExperience(data.includeExperience || true);
+    setIncludeCertificates(data.includeCertificates || true);
     setTriggerSubmit(true);
   };
 
@@ -646,7 +741,7 @@ ${parseSkillString()}
                   htmlFor="name"
                   className="block text-[#44BCFF] text-sm font-bold mb-2"
                 >
-                  Name*
+                  Name<span className="text-red-500">*</span>
                 </label>
                 <Tooltip
                   title="Not Allowed Here"
@@ -658,6 +753,7 @@ ${parseSkillString()}
                     name="name"
                     value={name}
                     onChange={(e) => setName(e.target.value)}
+                    placeholder="Ex. John Smith"
                     className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                     required
                   />
@@ -668,7 +764,7 @@ ${parseSkillString()}
                   htmlFor="email"
                   className="block text-[#44BCFF] text-sm font-bold mb-2"
                 >
-                  Email*
+                  Email<span className="text-red-500">*</span>
                 </label>
                 <Tooltip
                   title="Not Allowed Here"
@@ -680,6 +776,7 @@ ${parseSkillString()}
                     name="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Ex. john.smith@gmail.com"
                     className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                     required
                   />
@@ -690,7 +787,7 @@ ${parseSkillString()}
                   htmlFor="phoneNumber"
                   className="block text-[#44BCFF] text-sm font-bold mb-2"
                 >
-                  Phone Number*{" "}
+                  Phone Number<span className="text-red-500">*</span>{" "}
                   <span className=" mx-0.5 text-xs text-white">
                     Tip: Write Country Code followed by - and then the number
                   </span>
@@ -705,7 +802,7 @@ ${parseSkillString()}
                     name="phoneNumber"
                     value={phoneNumber}
                     onChange={(e) => setPhoneNumber(e.target.value)}
-                    placeholder="+91-9876543210"
+                    placeholder="Ex. +1-555-123-4567"
                     className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                     required
                   />
@@ -733,7 +830,7 @@ ${parseSkillString()}
                     id="linkedInLink"
                     name="linkedInLink"
                     value={linkedInLink}
-                    placeholder="linkedin.com/in/adityav1313/"
+                    placeholder="Ex. linkedin.com/in/johnsmith"
                     onChange={(e) => setLinkedInLink(e.target.value)}
                     className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                   />
@@ -758,7 +855,7 @@ ${parseSkillString()}
                     id="githubLink"
                     name="githubLink"
                     value={githubLink}
-                    placeholder="github.com/adi13v"
+                    placeholder="Ex. github.com/johnsmith"
                     onChange={(e) => setGithubLink(e.target.value)}
                     className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                   />
@@ -783,6 +880,7 @@ ${parseSkillString()}
                     id="portfolioLink"
                     name="portfolioLink"
                     value={portfolioLink}
+                    placeholder="Ex. johnsmith.dev"
                     onChange={(e) => setPortfolioLink(e.target.value)}
                     className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                   />
@@ -824,7 +922,7 @@ ${parseSkillString()}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Institute Name*
+                        Institute Name<span className="text-red-500">*</span> <span className="text-xs text-white">Tip:Write Full Form and in capitalised form</span>
                       </label>
                       <input
                         type="text"
@@ -838,13 +936,14 @@ ${parseSkillString()}
                             e.target.value
                           )
                         }
+                        placeholder="Ex. Massachusetts Institute of Technology"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Degree*
+                        Degree<span className="text-red-500">*</span> <span className="text-xs text-white">Tip: For School, write Secondary or Senior Secondary</span>
                       </label>
                       <input
                         type="text"
@@ -858,13 +957,15 @@ ${parseSkillString()}
                             e.target.value
                           )
                         }
+                        placeholder="Ex. Master of Science"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Branch*
+                        Branch
+                        <span className="text-xs text-white"> Tip: Leave Blank For School</span>
                       </label>
                       <input
                         type="text"
@@ -878,13 +979,14 @@ ${parseSkillString()}
                             e.target.value
                           )
                         }
+                        placeholder="Ex. Computer Science"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                        
                       />
                     </div>
                     <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Location*
+                        Location<span className="text-red-500">*</span>
                       </label>
                       <input
                         type="text"
@@ -898,13 +1000,14 @@ ${parseSkillString()}
                             e.target.value
                           )
                         }
+                        placeholder="Ex. Cambridge, Massachusetts"
                         className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                         required
                       />
                     </div>
                     <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        Start Date*
+                        Start Date<span className="text-red-500">*</span>
                       </label>
                       <input
                         type="month"
@@ -924,7 +1027,7 @@ ${parseSkillString()}
                     </div>
                     <div>
                       <label className="block text-[#44BCFF] font-medium mb-2">
-                        End Date*
+                        End Date<span className="text-red-500">*</span>
                       </label>
                       <input
                         type={entry.endDate === "Present" ? "text" : "month"}
@@ -968,7 +1071,7 @@ ${parseSkillString()}
                       <>
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Grade Type*
+                            Grade Type<span className="text-red-500">*</span>
                           </label>
                           <select
                             value={entry.gradeType}
@@ -991,7 +1094,7 @@ ${parseSkillString()}
                         {entry.gradeType === "cgpa" ? (
                           <div>
                             <label className="block text-[#44BCFF] font-medium mb-2">
-                              CGPA*
+                              CGPA<span className="text-red-500">*</span>
                             </label>
                             <input
                               type="text"
@@ -1012,7 +1115,7 @@ ${parseSkillString()}
                         ) : (
                           <div>
                             <label className="block text-[#44BCFF] font-medium mb-2">
-                              Percentage*
+                              Percentage<span className="text-red-500">*</span>
                             </label>
                             <input
                               type="text"
@@ -1038,10 +1141,20 @@ ${parseSkillString()}
               ))}
               <button
                 type="button"
-                onClick={() => addEntry(setEducationEntries, defaultEducationEntry)}
+                onClick={() => addEntry(setEducationEntries, {
+                  instituteName: "",
+                  degree: "",
+                  branch: "",
+                  location: "",
+                  startDate: "",
+                  endDate: "",
+                  gradeType: "cgpa",
+                  cgpa: "",
+                  percentage: ""
+                })}
                 className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
               >
-                <PlusIcon className="w-4 h-4" /> Add Education
+                <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Education</span>
               </button>
             </div>
           </div>
@@ -1092,7 +1205,7 @@ ${parseSkillString()}
                             htmlFor={`jobTitle-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Job Title:
+                            Job Title<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1111,6 +1224,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. Software Engineer"
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -1121,7 +1235,7 @@ ${parseSkillString()}
                             htmlFor={`companyName-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Company Name:
+                            Company Name<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1140,6 +1254,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. Google"
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -1150,7 +1265,7 @@ ${parseSkillString()}
                             htmlFor={`location-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Location:
+                            Location<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1169,6 +1284,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. Mountain View, California"
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -1179,7 +1295,7 @@ ${parseSkillString()}
                             htmlFor={`startDate-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Start Date:
+                            Start Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type="month"
@@ -1203,7 +1319,7 @@ ${parseSkillString()}
                             htmlFor={`endDate-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            End Date:
+                            End Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type={
@@ -1254,7 +1370,7 @@ ${parseSkillString()}
                         </div>
                         <div className="col-span-full">
                           <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                            Work Details:{" "}
+                            Work Details{" "}
                             <span className=" mx-0.5 text-xs text-white">
                               Tip: Use Bold For Highlighting but don't overdo it
                             </span>
@@ -1264,12 +1380,7 @@ ${parseSkillString()}
                               key={workIndex}
                               className="mb-2 flex items-center space-x-4"
                             >
-                              <label
-                                htmlFor={`work-${entry.id}-${workIndex}`}
-                                className="block text-[#44BCFF] font-medium mb-1"
-                              >
-                                Work {workIndex + 1}:
-                              </label>
+                             
                               <input
                                 type="text"
                                 id={`work-${entry.id}-${workIndex}`}
@@ -1292,6 +1403,7 @@ ${parseSkillString()}
                                     workIndex
                                   )
                                 }
+                                placeholder="Ex. Developed scalable REST APIs using FastAPI, reducing response time by 30%"
                                 className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                                 required
                               />
@@ -1307,7 +1419,7 @@ ${parseSkillString()}
                                 }
                                 className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                               >
-                                Remove
+                                <XIcon className="w-4 h-4" />
                               </button>
                             </div>
                           ))}
@@ -1337,11 +1449,17 @@ ${parseSkillString()}
                 <button
                   type="button"
                   onClick={() =>
-                    addEntry(setExperienceEntries, defaultExperienceEntry)
-                  }
+                    addEntry(setExperienceEntries, {
+                      jobTitle: "",
+                      companyName: "",
+                      location: "",
+                      startDate: "",
+                      endDate: "",
+                      workList: [""]
+                    })}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Experience
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Experience</span>
                 </button>
               </div>
             </div>
@@ -1381,7 +1499,7 @@ ${parseSkillString()}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Project Name*
+                            Project Name<span className="text-red-500">*</span>
                           </label>
                           <input
                             type="text"
@@ -1395,13 +1513,14 @@ ${parseSkillString()}
                                 e.target.value
                               )
                             }
+                            placeholder="Ex. AI-Powered Resume Builder"
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                             required
                           />
                         </div>
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Project Link Title*
+                            Project Link Title
                           </label>
                           <input
                             type="text"
@@ -1415,13 +1534,14 @@ ${parseSkillString()}
                                 e.target.value
                               )
                             }
+                            placeholder="Ex. GitHub Link"
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
+                          
                           />
                         </div>
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Project Link*
+                            Project Link
                           </label>
                           <input
                             type="url"
@@ -1435,13 +1555,14 @@ ${parseSkillString()}
                                 e.target.value
                               )
                             }
+                            placeholder="Ex. https://github.com/username/resume-builder"
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
+                           
                           />
                         </div>
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Start Date*
+                            Start Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type="month"
@@ -1461,11 +1582,12 @@ ${parseSkillString()}
                         </div>
                         <div>
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            End Date*
+                            End Date<span className="text-red-500">*</span>
                           </label>
                           <input
-                            type="month"
+                            type={entry.endDate === "Present" ? "text" : "month"}
                             value={entry.endDate}
+                            disabled={entry.endDate === "Present"}
                             onChange={(e) =>
                               handleInputChange(
                                 setProjectEntries,
@@ -1475,13 +1597,34 @@ ${parseSkillString()}
                                 e.target.value
                               )
                             }
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
+                              entry.endDate === "Present"
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }`}
                             required
                           />
+                          <div className="mt-2 flex items-center">
+                            <input
+                              type="checkbox"
+                              checked={entry.endDate === "Present"}
+                              onChange={(e) => {
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "endDate",
+                                  e.target.checked ? "Present" : ""
+                                );
+                              }}
+                              className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                            />
+                            <label className="ml-2 text-white">Ongoing Project</label>
+                          </div>
                         </div>
                         <div className="col-span-full">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Features*
+                            Features<span className="text-red-500">*</span>
                           </label>
                           <div className="space-y-2">
                             {entry.featureList.map((feature, featureIndex) => (
@@ -1489,6 +1632,7 @@ ${parseSkillString()}
                                 <input
                                   type="text"
                                   value={feature}
+
                                   onChange={(e) =>
                                     handleSubListInputChange(
                                       setProjectEntries,
@@ -1498,6 +1642,7 @@ ${parseSkillString()}
                                       e.target.value
                                     )
                                   }
+                                  placeholder="Ex. Built a resume parsing tool with OpenAI API to optimize ATS scores"
                                   className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                                   required
                                 />
@@ -1506,7 +1651,6 @@ ${parseSkillString()}
                                   onClick={() =>
                                     removeItemFromSubList(
                                       setProjectEntries,
-                                  
                                       index,
                                       "featureList",
                                       featureIndex
@@ -1514,7 +1658,7 @@ ${parseSkillString()}
                                   }
                                   className="text-red-400 hover:text-red-300 focus:outline-none"
                                 >
-                                  Remove
+                                  <XIcon className="w-4 h-4" />
                                 </button>
                               </div>
                             ))}
@@ -1523,7 +1667,6 @@ ${parseSkillString()}
                               onClick={() =>
                                 addItemToSubList(
                                   setProjectEntries,
-                                  projectEntries,
                                   index,
                                   "featureList",
                                   ""
@@ -1531,7 +1674,7 @@ ${parseSkillString()}
                               }
                               className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                             >
-                              <PlusIcon className="w-4 h-4" /> Add Feature
+                              <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Feature</span>
                             </button>
                           </div>
                         </div>
@@ -1540,10 +1683,17 @@ ${parseSkillString()}
                   ))}
                   <button
                     type="button"
-                    onClick={() => addEntry(setProjectEntries, defaultProjectEntry)}
+                    onClick={() => addEntry(setProjectEntries, {
+                      projectName: "",
+                      projectLinkTitle: "",
+                      projectLink: "",
+                      startDate: "",
+                      endDate: "",
+                      featureList: [""]
+                    })}
                     className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                   >
-                    <PlusIcon className="w-4 h-4" /> Add Project
+                    <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Project</span>
                   </button>
                 </div>
               )}
@@ -1562,6 +1712,7 @@ ${parseSkillString()}
                   checked={includeSkills}
                   onChange={(e) => setIncludeSkills(e.target.checked)}
                   className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                  
                 />
                 <span className="ml-2 text-white">Include Section</span>
               </label>
@@ -1584,7 +1735,7 @@ ${parseSkillString()}
                       >
                         <input
                           type="text"
-                          placeholder="Skill Type (e.g., Frameworks)"
+                          placeholder="Ex. Languages"
                           value={skill.key}
                           onChange={(e) =>
                             handleInputChange(
@@ -1596,11 +1747,12 @@ ${parseSkillString()}
                             )
                           }
                           className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
+                          required
                         />
                       </Tooltip>
                       <input
                         type="text"
-                        placeholder="Skills (e.g., React, Node)"
+                        placeholder="Ex. Python, JavaScript, TypeScript, Java, C++"
                         value={skill.value}
                         onKeyDown={(e) =>
                           handleKeyActiononList(
@@ -1621,13 +1773,14 @@ ${parseSkillString()}
                           )
                         }
                         className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:shadow-outline  border-white/10"
+                        required
                       />
                       <button
                         type="button"
                         onClick={() => removeEntry(setSkills, index)}
                         className="px-2 py-1 bg-gray-800 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                       >
-                        Remove
+                        <XIcon className="w-4 h-4" />
                       </button>
                     </div>
                   ))}
@@ -1636,10 +1789,13 @@ ${parseSkillString()}
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setSkills, defaultSkillEntry)}
+                  onClick={() => addEntry(setSkills, {
+                    key: "",
+                    value: ""
+                  })}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Skill
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Skill</span>
                 </button>
               </div>
             </div>
@@ -1688,7 +1844,7 @@ ${parseSkillString()}
                       <div className="grid grid-cols-1 gap-4">
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Certificate Title*
+                            Certificate Title<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1706,6 +1862,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. AWS Certified Cloud Practitioner"
                               className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -1736,6 +1893,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. https://example.com/certificate"
                               className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               
                             />
@@ -1750,11 +1908,13 @@ ${parseSkillString()}
                 <button
                   type="button"
                   onClick={() =>
-                    addEntry(setCertificateEntries, defaultCertificateEntry)
-                  }
+                    addEntry(setCertificateEntries, {
+                      title: "",
+                      link: ""
+                    })}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Certificate
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Certificate</span>
                 </button>
               </div>
             </div>
@@ -1803,7 +1963,7 @@ ${parseSkillString()}
                       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Position Title*
+                            Position Title<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1821,6 +1981,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. Web Development Lead"
                               className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -1829,7 +1990,7 @@ ${parseSkillString()}
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Society/Club Name*
+                            Society/Club Name<span className="text-red-500">*</span>
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -1847,6 +2008,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. Computer Science Association"
                               className="w-full px-3 py-2 border border-white/10 rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -1855,7 +2017,7 @@ ${parseSkillString()}
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            Start Date*
+                            Start Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type="month"
@@ -1876,7 +2038,7 @@ ${parseSkillString()}
 
                         <div className="mb-4">
                           <label className="block text-[#44BCFF] font-medium mb-2">
-                            End Date*
+                            End Date<span className="text-red-500">*</span>
                           </label>
                           <input
                             type={
@@ -1929,7 +2091,7 @@ ${parseSkillString()}
 
                         <div className="col-span-full">
                           <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                            Achievements:*{" "}
+                            Achievements:{" "}
                             <span className="mx-0.5 text-xs text-white">
                               Tip: Use Bold For Highlighting but don't overdo it. End each achievement with a full stop.
                             </span>
@@ -1940,9 +2102,7 @@ ${parseSkillString()}
                                 key={`${entry.id}-achievement-${achievementIndex}`}
                                 className="mb-2 flex items-center space-x-4"
                               >
-                                <label className="block text-[#44BCFF] font-medium mb-1">
-                                  Achievement {achievementIndex + 1}:
-                                </label>
+                                
                                 <input
                                   type="text"
                                   value={achievement}
@@ -1964,7 +2124,9 @@ ${parseSkillString()}
                                       e.target.value
                                     )
                                   }
+                                  placeholder="Ex. Led workshops on Git and DevOps with 300+ participants"
                                   className="w-full px-3 py-2 border  rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                                  required
                                 />
                                 <button
                                   type="button"
@@ -1978,7 +2140,7 @@ ${parseSkillString()}
                                   }
                                   className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                                 >
-                                  Remove
+                                  <XIcon className="w-4 h-4" />
                                 </button>
                               </div>
                             )
@@ -1994,9 +2156,9 @@ ${parseSkillString()}
                                   ""
                                 )
                               }
-                              className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
+                              className="px-4 py-2  flex items-center gap-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
                             >
-                              Add Achievement
+                              <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Achievement</span>
                             </button>
                           </div>
                         </div>
@@ -2008,10 +2170,16 @@ ${parseSkillString()}
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setClubEntries, defaultClubEntry)}
+                  onClick={() => addEntry(setClubEntries, {
+                    title: "",
+                    societyName: "",
+                    startDate: "",
+                    endDate: "",
+                    achievements: [""]
+                  })}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Club/Society
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Club/Society</span>
                 </button>
               </div>
             </div>
@@ -2063,7 +2231,7 @@ ${parseSkillString()}
                             htmlFor={`title-${entry.id}`}
                             className="block text-[#44BCFF] font-medium mb-2"
                           >
-                            Title:
+                            Title<span className="text-red-500">*</span>:
                           </label>
                           <Tooltip
                             title="Not Allowed Here"
@@ -2082,6 +2250,7 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. ACM ICPC Regional Finalist"
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                               required
                             />
@@ -2111,8 +2280,9 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. Certificate"
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                            
                             />
                           </Tooltip>
                         </div>
@@ -2140,8 +2310,9 @@ ${parseSkillString()}
                                   e.target.value
                                 )
                               }
+                              placeholder="Ex. https://example.com/certificate"
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                              required
+                            
                             />
                           </Tooltip>
                         </div>
@@ -2153,10 +2324,14 @@ ${parseSkillString()}
               <div className="mt-6 flex justify-end">
                 <button
                   type="button"
-                  onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry)}
+                  onClick={() => addEntry(setAchievementEntries, {
+                    title: "",
+                    linkTitle: "",
+                    link: ""
+                  })}
                   className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Achievement
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Achievement</span>
                 </button>
               </div>
             </div>
@@ -2185,7 +2360,9 @@ ${parseSkillString()}
             </div>
           </div>
         </form>
-        <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={selectedPdf} />
+        <div className="mt-10 w-full">
+          <PdfBox pdfUrl={pdfUrl} defaultPdfUrl={selectedPdf} />
+        </div>
       </div>
 
       {/* Add ChatbotModal */}

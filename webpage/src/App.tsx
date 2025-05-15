@@ -1,6 +1,5 @@
-import React from 'react'
 import "react-image-crop/dist/ReactCrop.css";
-import { Routes,Route,Link} from 'react-router-dom'
+import { Routes,Route} from 'react-router-dom'
 import JakeResume from './pages/jakesResume'
 import ResumeWithPhoto from './pages/resumewithPhoto'
 import HomePage from './pages/HomePage'
@@ -8,9 +7,8 @@ import Header from './components/Header'
 import NitResume from './pages/nitResume'
 import './App.css'
 import { NITEnum } from './helper/helperFunctions'
-
+import NotFoundPage from './pages/notExists'
 function App() {
-  
   return (
     <>
      <div className='w-full'>
@@ -24,6 +22,7 @@ function App() {
         <Route path='/nit-with-logo' element={<NitResume  defaultPhotoSetting = {NITEnum.Logo}/>} />
         <Route path='/nit-with-photo' element={<NitResume defaultPhotoSetting = {NITEnum.Photo}/>} />
         <Route path='/nit-without-photo' element={<NitResume defaultPhotoSetting = {NITEnum.None}/>} />
+        <Route path='*' element={<NotFoundPage />} />
       </Routes>
      </div>
      

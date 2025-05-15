@@ -16,13 +16,14 @@ const Header: React.FC = () => {
 
   return (
     <div
-      className={`fixed  justify-center top-0 left-0   right-0 w-full p-5 flex  items-center z-50 transition-all duration-300 ${scrolled ? 'bg-black/30 backdrop-blur-md text-black' : 'bg-transparent text-white'}`}
+      className={`fixed  justify-center top-0 left-0   right-0 w-full p-1 flex  items-center z-50 transition-all duration-300 ${scrolled ? 'bg-black/30 backdrop-blur-md text-black' : 'bg-transparent text-white'}`}
     >  
-<div className="flex w-full md:w-5/6 flex-wrap md:flex-row justify-evenly gap-4 md:gap-6 px-2">
+<div className="flex w-full md:w-5/6 flex-wrap md:flex-row justify-evenly items-center gap-4 md:gap-6 px-2">
 <Link to="/jake" className="!text-white hover:underline hover:!text-white transition">Blog</Link>
     <Link to="/jake" className="!text-white hover:underline hover:!text-white transition">Categories</Link>
-    <Link to="/" className="!text-white hover:underline hover:!text-white transition">
-        <img src="/logo.png" alt="logo" className="max-w-8 max-h-8  hover:scale-110 transition-all duration-300" />
+    <Link to="/" className="!text-white hover:underline hover:!text-white transition py-0 m-0">
+        <img src="/logo.png" alt="logo" className="max-w-10 max-h-10 hover:scale-110 transition-all py-0 m-0 duration-300 " />
+        
     </Link>
     <Link to="/photo" className="!text-white hover:underline hover:!text-white transition">Resume Tips</Link>
     <Link to="/photo" className="!text-white hover:underline hover:!text-white transition">About</Link>
