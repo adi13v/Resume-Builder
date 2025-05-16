@@ -8,8 +8,9 @@ import React, { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Rocket, FileText, CheckCircle } from 'lucide-react';
 import FAQSection from '../components/faq-accordion';
-import Footer from '../components/Footer';
+import { Link } from 'react-router-dom';
 
+import { useLocation } from 'react-router-dom';
 // Sample resume data (replace with your actual data)
 const resumeTemplates = {
     Popular: [
@@ -108,14 +109,14 @@ const ResumeCatalog = () => {
                                                 <h3 className="text-lg font-semibold text-white mb-2 tracking-tight">{template.title}</h3>
                                                 <p className="text-gray-400 text-sm leading-relaxed">{template.description}</p>
                                                 <div className="mt-6">
-                                                    <a
-                                                        href={template.redirectUrl || '#'}
+                                                    <Link
+                                                        to={template.redirectUrl || '#'} 
                                                         className="w-full px-6 py-3 bg-white/10 hover:bg-white/20 text-white
                                                                 rounded-xl text-center inline-block transition-all duration-300
                                                                 font-medium border border-white/10 backdrop-blur-md"
                                                     >
                                                         Use Template
-                                                    </a>
+                                                    </Link>
                                                 </div>
                                             </div>
                                         </div>
@@ -132,6 +133,12 @@ const ResumeCatalog = () => {
 };
 
 const LandingPage = () => {
+    const location = useLocation();
+    useEffect(()=>{
+        if(location.hash === '#catalog'){
+            scrollToCatalog();
+        }
+    },[location.hash])
     const fontClass = "font-sans";
 
     const scrollToCatalog = () => {
@@ -181,13 +188,14 @@ const LandingPage = () => {
                                     </div>
                                     <p className="text-gray-400 text-sm">Select from our ATS-friendly resume templates.</p>
                                 </div>
-                                <div className="p-6 bg-white/5 rounded-xl border border-white/10 backdrop-blur-md">
+                                <div className="p-6 bg-white/5 rounded-xl  inset-shadow-amber-300   backdrop-blur-md">
                                      <div className="flex items-center gap-4 mb-4">
                                         <FileText className="w-6 h-6 text-blue-400" />
-                                        <h3 className="text-lg font-semibold text-white">2. Fill Details</h3>
+                                        <h3 className="text-lg font-semibold text-white">2. Give Prompt To <span className=' font-bold bg-gradient-to-r from-red-600 via-yellow-600 to-purple-600 bg-clip-text text-transparent'>AI</span></h3>
                                     </div>
-                                    <p className="text-gray-400 text-sm">Easily input your information.</p>
+                                    <p className="text-gray-400 text-sm">Easily input your information to AI and then refine using our form.</p>
                                 </div>
+                                
                                 <div className="p-6 bg-white/5 rounded-xl border border-white/10 backdrop-blur-md">
                                     <div className="flex items-center gap-4 mb-4">
                                         <CheckCircle className="w-6 h-6 text-purple-400" />
@@ -213,7 +221,7 @@ const HomePage = () => {
     return (
         <div className="min-h-screen bg-gray-950 overflow-hidden w-[100vw]">
             <LandingPage />
-            <Footer />
+          
         </div>
     )
 };

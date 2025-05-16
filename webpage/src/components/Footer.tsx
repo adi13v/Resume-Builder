@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Github, Mail } from 'lucide-react';
-
+import { Link } from 'react-router-dom';
 const Footer = () => {
     const currentYear = new Date().getFullYear();
 
@@ -42,7 +42,7 @@ const Footer = () => {
                 </p>
                 
                 <p className="text-gray-500 text-s mt-2">
-                    Thanks to the creators who provided templates for the site: <a href="/credits" className="text-blue-400 hover:text-blue-500">Credits</a>
+                    Thanks to the creators who provided templates for the site: <Link to="/credits" className="text-blue-400 hover:text-blue-500">Credits</Link>
                 </p>
             </div>
         </motion.footer>

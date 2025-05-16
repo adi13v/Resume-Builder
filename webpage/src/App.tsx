@@ -8,6 +8,11 @@ import NitResume from './pages/nitResume'
 import './App.css'
 import { NITEnum } from './helper/helperFunctions'
 import NotFoundPage from './pages/notExists'
+import CreditsPage from './pages/CreditsPage'
+import AboutPage from './pages/About'
+import FreshersInfo from './pages/FreshersInfo'
+import Tips from './pages/Tips'
+import Footer from './components/Footer'
 function App() {
   return (
     <>
@@ -22,8 +27,13 @@ function App() {
         <Route path='/nit-with-logo' element={<NitResume  defaultPhotoSetting = {NITEnum.Logo}/>} />
         <Route path='/nit-with-photo' element={<NitResume defaultPhotoSetting = {NITEnum.Photo}/>} />
         <Route path='/nit-without-photo' element={<NitResume defaultPhotoSetting = {NITEnum.None}/>} />
+        <Route path='/credits' element={<CreditsPage/>} />
+        <Route path='/about' element={<AboutPage/>} />
+        <Route path='/freshers' element={<FreshersInfo/>} />
+        <Route path='/tips' element={<Tips/>} />
         <Route path='*' element={<NotFoundPage />} />
       </Routes>
+      <Footer/>
      </div>
      
     </>

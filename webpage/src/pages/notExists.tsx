@@ -1,4 +1,3 @@
-
 import { motion } from 'framer-motion';
 import { AlertTriangle, Home } from 'lucide-react'; // Using AlertTriangle for error indication
 
