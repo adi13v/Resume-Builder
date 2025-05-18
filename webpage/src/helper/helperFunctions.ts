@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 
 function generateUUID() {
@@ -206,6 +207,10 @@ if (e.ctrlKey && (e.key === 'b' || e.key === 'i')){
 }
 }
 
+const api = axios.create({
+  // https://resume-builder-aditya.onrender.com
+  baseURL: `http://127.0.0.1:8000`,
+});
 
 export {
   generateUUID,
@@ -223,5 +228,6 @@ export {
   handleKeyActiononList,
   handleKeyActionOnSublist,
   type BaseEntry,
-  NITEnum
+  NITEnum,
+  api
 }

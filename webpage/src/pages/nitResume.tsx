@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
+
 import "../App.css";
-import axios from "axios";
 import { useState, useRef, useEffect } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
@@ -27,7 +27,8 @@ import {
   removeEntry,
   handleKeyActiononList,
   handleKeyActionOnSublist,
-  NITEnum
+  NITEnum,
+  api
 } from "../helper/helperFunctions";
 import { 
   EducationDetails, 
@@ -41,9 +42,7 @@ import {
 } from "../types/nitResume";
 import PdfBox from "../components/PdfBox";
 
-const api = axios.create({
-  baseURL: `https://resume-builder-aditya.onrender.com`,
-});
+
 
 
 const defaultEducationEntry: EducationDetails = {
@@ -2469,6 +2468,7 @@ ${parseClubString()}
           closeModal={() => setChatbotModalOpen(false)}
           updateFormData={handleAIGeneratedData}
           prompt={prompt}
+          formDataStore={JSON.parse(localStorage.getItem(storageKeyName) || "{}")}
           setPrompt={setPrompt}
           api = {api}
           // THIS format of string is required because it maps to enum in backend

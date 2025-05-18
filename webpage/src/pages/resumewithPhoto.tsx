@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
-import axios from "axios";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
@@ -25,12 +24,10 @@ import {
   removeEntry,
   handleKeyActiononList,
   handleKeyActionOnSublist,
+  api
 } from "../helper/helperFunctions";
 import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, HonorDetails, ClubDetails, CertificateDetails, FormDataStore } from "../types/resumeWithPhoto";
 import PdfBox from "../components/PdfBox";
-const api = axios.create({
-  baseURL: `https://resume-builder-aditya.onrender.com`,
-});
 
 
 const defaultEducationEntry: EducationDetails = {
@@ -2733,6 +2730,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
           prompt={prompt}
           setPrompt={setPrompt}
           api = {api}
+          formDataStore={JSON.parse(localStorage.getItem(storageKeyName) || "{}")}
           // THIS format of string is required because it maps to enum in backend
           resumeType= {"RESUME_WITH_PHOTO"}
         />

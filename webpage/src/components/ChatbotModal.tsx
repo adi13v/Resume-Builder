@@ -1,36 +1,60 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import CloseIcon from "./CloseIcon";
-import  { AxiosInstance } from 'axios';
-import { FormDataStore } from '../types/resumeWithPhoto';
-import { FormDataStore as NITFormDataStore } from '../types/nitResume';
-import {FormDataStore as JakesFormDataStore} from '../types/jakeResume';
-import toast from 'react-hot-toast';
+import { AxiosInstance } from "axios";
+import { FormDataStore } from "../types/resumeWithPhoto";
+import { FormDataStore as NITFormDataStore } from "../types/nitResume";
+import { FormDataStore as JakesFormDataStore } from "../types/jakeResume";
+import toast from "react-hot-toast";
 interface ChatbotModalProps<T> {
   closeModal: () => void;
   updateFormData: (data: T) => void;
-  api:AxiosInstance
-  prompt:string
-  setPrompt:(prompt:string)=>void
-  resumeType:string
+  api: AxiosInstance;
+  prompt: string;
+  setPrompt: (prompt: string) => void;
+  resumeType: string;
+  formDataStore: T | undefined;
 }
 
-const ChatbotModal = <T extends FormDataStore | NITFormDataStore | JakesFormDataStore>({ closeModal, updateFormData,prompt,setPrompt,api,resumeType }: ChatbotModalProps<T>) => {
+const ChatbotModal = <
+  T extends FormDataStore | NITFormDataStore | JakesFormDataStore
+>({
+  closeModal,
+  updateFormData,
+  prompt,
+  setPrompt,
+  api,
+  resumeType,
+  formDataStore,
+}: ChatbotModalProps<T>) => {
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError('');
+    setError("");
     try {
-      const response = await api.post('/convert-prompt-to-json', { prompt: prompt, type: resumeType });
+      type Payload<T> = {
+        prompt: string;
+        type: string;
+        formDataStore?: T;
+      };
+      const payload: Payload<typeof formDataStore> = {
+        prompt: prompt,
+        type: resumeType,
+      };
+      if (formDataStore && Object.keys(formDataStore).length > 0) {
+        payload.formDataStore = formDataStore;
+      }
+
+      const response = await api.post("/convert-prompt-to-json", payload);
       updateFormData(response.data);
-      toast.success('Ai Data Generated Successfully');
-      
+      toast.success("Ai Data Generated Successfully");
+
       closeModal();
     } catch (err) {
-      setError('Failed to convert prompt. Please try again.');
-      console.error('Error converting prompt:', err);
+      setError("Failed to convert prompt. Please try again.");
+      console.error("Error converting prompt:", err);
     } finally {
       setLoading(false);
     }
@@ -56,16 +80,20 @@ const ChatbotModal = <T extends FormDataStore | NITFormDataStore | JakesFormData
                 <span className="sr-only">Close menu</span>
                 <CloseIcon />
               </button>
-              
+
               <div className="mt-8">
                 <h2 className="text-2xl font-bold mb-4">AI Resume Generator</h2>
                 <p className="text-gray-300 mb-6">
-                  Describe your experience and skills, and our AI will help create your resume.
+                  Describe your experience and skills, and our AI will help
+                  create your resume.
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <label htmlFor="prompt" className="block text-sm font-medium text-gray-300 mb-2">
+                    <label
+                      htmlFor="prompt"
+                      className="block text-sm font-medium text-gray-300 mb-2"
+                    >
                       Describe your experience and skills
                     </label>
                     <textarea
@@ -79,9 +107,7 @@ const ChatbotModal = <T extends FormDataStore | NITFormDataStore | JakesFormData
                     />
                   </div>
 
-                  {error && (
-                    <p className="text-red-400 text-sm">{error}</p>
-                  )}
+                  {error && <p className="text-red-400 text-sm">{error}</p>}
 
                   <div className="flex justify-end">
                     <button
@@ -89,7 +115,7 @@ const ChatbotModal = <T extends FormDataStore | NITFormDataStore | JakesFormData
                       disabled={loading}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? 'Generating...' : 'Generate Resume'}
+                      {loading ? "Generating..." : "Generate Resume"}
                     </button>
                   </div>
                 </form>
@@ -102,4 +128,4 @@ const ChatbotModal = <T extends FormDataStore | NITFormDataStore | JakesFormData
   );
 };
 
-export default ChatbotModal; 
+export default ChatbotModal;

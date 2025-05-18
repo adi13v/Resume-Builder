@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import "../App.css";
-import axios from "axios";
 import { useState, useRef, useEffect, useMemo } from "react";
 import { PlusIcon } from "lucide-react";
 import toast from "react-hot-toast";
@@ -25,13 +24,12 @@ import {
   removeEntry,
   handleKeyActiononList,
   handleKeyActionOnSublist,
+  api
 } from "../helper/helperFunctions";
 import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, FormDataStore, CertificateDetails, ClubDetails, AchievementDetails } from "../types/jakeResume";
 import PdfBox from "../components/PdfBox";
 
-const api = axios.create({
-  baseURL: `https://resume-builder-aditya.onrender.com`,
-});
+
 
 const defaultEducationEntry: EducationDetails = {
   id: "dfcvbhu7654efghnbvcd",
@@ -267,8 +265,16 @@ function JakeResume({defaultGradeSetting}:{defaultGradeSetting:boolean}) {
   },[includeGrade])
 
   useEffect(() => {
-    if (triggerSubmit) {
-      formRef.current?.requestSubmit();
+    if (triggerSubmit && formRef.current) {
+      formRef.current.requestSubmit();
+      toast((t) => (
+        <span>
+          AI Generated data can have errors, especially with links. Please check <span className=" font-bold text-red-700">carefully</span>
+          <button className=" text-white " onClick={() => toast.dismiss(t.id)}>
+            Dismiss
+          </button>
+        </span>
+      ),{duration: 10000});
       setTriggerSubmit(false);
     }
   }, [triggerSubmit]);
@@ -514,7 +520,7 @@ const parseClubString = () => {
     
     setIsLoading(true);
     setGlobalId(generateUUID());
-  
+    
 
   const Code:string = String.raw`\documentclass[letterpaper,11pt]{article}
 \usepackage{latexsym}
@@ -2371,6 +2377,7 @@ ${parseSkillString()}
           closeModal={() => setChatbotModalOpen(false)}
           updateFormData={handleAIGeneratedData}
           prompt={prompt}
+          formDataStore={JSON.parse(localStorage.getItem(storageKeyName) || "{}")}
           setPrompt={setPrompt}
           api = {api}
           // THIS format of string is required because it maps to enum in backend

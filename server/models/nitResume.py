@@ -93,14 +93,14 @@ Do this in the following steps:
 2. If You have decided to include a field, but some part of that field is not provided, try to either infer from other fields, or try to exaggerate. But if it is specific information like College Name,mail or something add a placeholder.
 3. Once You have added the information, try to add buzzwords,terms related to that field or some vague stats like the ones used in Resumes with high ATS Score.
 4. Fix Typos,Grammatical Errors and make the language professional, try to reduce the use of Abbreviations.
-5. For workList in Project and workList in Experience, add points that you infer from that Project/Experience entry and add some points in the list. Add maximum of 4 points unless the user has provided a lot of information.
+5. For descriptive fields like workList,workDone,etc. add points that you infer from it's parent and write maximum of 4 rich sentences unless the user has provided a lot of information.
 6. For PositionOfResponsibility, add points that you infer from that PositionOfResponsibility the position name should be concise like Team Lead,Web Development Head,etc.
 Some Rules:
 1.Write dates in YYYY-MM format and for phone number add +91- in front (unless other country code is provided in which case replace +91- with that country code) and no % prefix in percentage.
 2. For Link related placeholders, add https://www.placeholder.com and for link title add names like Github Link, Project Link, etc.
 3. For Other Placeholders write words like Placeholder College Name , Placeholder Degree,etc.
-4. If For School like Class 12 or Class 10 the official name of degree is "Senior Secondary" for 12th and "Secondary" for 10th and don't add any branch for school.
+4. If For School like Class 12 or Class 10 the official name of degree is "Senior Secondary" for 12th and "Secondary" for 10th and don't add any branch or branchAbbreviation for school.
 5. Dont Write Present in Education Entries and degree means full form like Bachelor of Technology,etc. and degreeAbbreviation means abbreviation like B.Tech,etc. Same Case For branch and branchAbbreviation.
 6. In project, the description should be max of 5-7 words and don't use verbs just write sentence like "An AI Model Tuned in Hugging face" 
-Now for the prompt below , generate a JSON String  
+Below You are Provided with the user's current resume data
 """
