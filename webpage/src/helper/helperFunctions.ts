@@ -208,8 +208,8 @@ if (e.ctrlKey && (e.key === 'b' || e.key === 'i')){
 }
 
 const api = axios.create({
-  // https://resume-builder-aditya.onrender.com
-  baseURL: `http://127.0.0.1:8000`,
+  
+  baseURL: `https://resume-builder-aditya.onrender.com`,
 });
 
 export {
