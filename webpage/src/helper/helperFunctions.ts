@@ -209,7 +209,7 @@ if (e.ctrlKey && (e.key === 'b' || e.key === 'i')){
 
 const api = axios.create({
   
-  baseURL: `https://resume-builder-aditya.onrender.com`,
+  baseURL: import.meta.env.VITE_SERVER_URL,
 });
 
 export {
