@@ -209,7 +209,7 @@ if (e.ctrlKey && (e.key === 'b' || e.key === 'i')){
 
 const api = axios.create({
   
-  baseURL: "http://localhost:8000"
+  baseURL: import.meta.env.VITE_SERVER_URL,
 });
 
 export {
