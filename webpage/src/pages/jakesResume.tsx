@@ -29,219 +29,46 @@ import {
 import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, FormDataStore, CertificateDetails, ClubDetails, AchievementDetails } from "../types/jakeResume";
 import PdfBox from "../components/PdfBox";
 
-
-
-const defaultEducationEntry: EducationDetails = {
-  id: "dfcvbhu7654efghnbvcd",
-  instituteName: "Massachusetts Institute of Technology",
-  degree: "Master of Science",
-  branch: "Computer Science",
-  location: "Cambridge, Massachusetts",
-  startDate: "2021-08",
-  endDate: "2023-05",
+const defaultEducationEntry:EducationDetails = {
+  instituteName: "",
+  degree: "",
+  branch: "",
+  location: "",
+  startDate: "",
+  endDate: "",
   gradeType: "cgpa",
-  cgpa: "3.9",
-  percentage: ""
-};
-
-const defaultEducationEntry2: EducationDetails = {
-  id: "edu2",
-  instituteName: "Stanford University",
-  degree: "Bachelor of Science",
-  branch: "Computer Science and Engineering",
-  location: "Stanford, California",
-  startDate: "2017-08",
-  endDate: "2021-05",
-  gradeType: "cgpa",
-  cgpa: "3.8",
+  cgpa: "",
   percentage: "",
-};
-
-const defaultExperienceEntry: ExperienceDetails = {
-  id: "cvhu7654wdfghj",
-  jobTitle: "Software Engineer",
-  companyName: "Google",
-  location: "Mountain View, California",
-  startDate: "2022-06",
-  endDate: "Present",
-  workList: [
-    "Developed scalable REST APIs using FastAPI and PostgreSQL, reducing response time by 30%",
-    "Collaborated in an Agile team to ship production-level features for a dashboard used by 10,000+ users",
-    "Integrated Docker-based CI/CD pipelines to streamline deployment across multiple environments",
-  ],
-};
-
-const defaultExperienceEntry2: ExperienceDetails = {
-  id: "exp2",
-  jobTitle: "Backend Developer Intern",
-  companyName: "Amazon",
-  location: "Seattle, Washington",
-  startDate: "2021-05",
-  endDate: "2021-08",
-  workList: [
-    "Designed microservices architecture to decouple services and enhance system modularity",
-    "Implemented JWT authentication, OAuth2, and role-based access control improving platform security",
-    "Increased API performance by 45% through async optimization and query indexing",
-  ],
-};
-
-const defaultProjectEntry: ProjectDetails = {
-  id: "0okmhgfdr543edf",
-  projectName: "AI-Powered Resume Builder",
-  projectLinkTitle: "Github Link",
-  projectLink: "https://github.com/username/resume-builder",
-  startDate: "2023-01",
-  endDate: "2023-06",
-  featureList: [
-    "Built a resume parsing tool with OpenAI API to optimize ATS scores using NLP techniques",
-    "Enabled LaTeX-based PDF resume generation with responsive UI and dark/light modes",
-    "Integrated file cleanup and async subprocess management using FastAPI background tasks",
-  ]
-};
-
-const defaultProjectEntry2: ProjectDetails = {
-  id: "proj2",
-  projectName: "Decentralized Chat Application",
-  projectLinkTitle: "GitHub Link",
-  projectLink: "https://github.com/username/decentralized-chat",
-  startDate: "2022-07",
-  endDate: "2022-12",
-  featureList: [
-    "Implemented peer-to-peer WebRTC-based video calling and Socket.IO-based real-time messaging",
-    "Built a responsive frontend with React and TailwindCSS, supporting light/dark modes",
-    "Used MongoDB Atlas for scalable chat history storage with encryption",
-  ],
-};
-
-const defaultSkillEntry: SkillDetails = {
-  id: "3edfty7unbvcxae567j",
-  key: "Languages",
-  value: "Python, JavaScript, TypeScript, Java, C++",
-};
-
-const defaultSkillEntry2: SkillDetails = {
-  id: "sk2",
-  key: "Frameworks",
-  value: "React, Node.js, FastAPI, Express, Django",
-};
-
-const defaultSkillEntry3: SkillDetails = {
-  id: "sk3",
-  key: "DevOps",
-  value: "Docker, GitHub Actions, Jenkins, Kubernetes, NGINX",
-};
-
-const defaultSkillEntry4: SkillDetails = {
-  id: "sk4",
-  key: "Databases",
-  value: "PostgreSQL, MongoDB, Redis, Firebase, SQL",
-};
-
-const defaultCertificateEntry: CertificateDetails = {
-  id: "cert1",
-  title: "AWS Certified Cloud Practitioner",
-  link: "https://example.com/certificate1",
-};
-
-const defaultCertificateEntry2: CertificateDetails = {
-  id: "cert2",
-  title: "Google Cloud Professional Developer",
-  link: "https://example.com/certificate2",
-};
-
-const defaultClubEntry: ClubDetails = {
-  id: "club1",
-  title: "Web Development Lead",
-  societyName: "Computer Science Association",
-  startDate: "2022-01",
-  endDate: "2023-01",
-  achievements: [
-    "Led a team of 20+ members in developing and maintaining the society's website",
-    "Organized monthly coding workshops and hackathons with an average of 300+ participants",
-  ],
-};
-
-const defaultClubEntry2: ClubDetails = {
-  id: "club2",
-  title: "Technical Coordinator",
-  societyName: "AI Research Group",
-  startDate: "2021-08",
-  endDate: "2022-05",
-  achievements: [
-    "Conducted weekly ML/AI workshops for 50+ students to foster practical implementation skills",
-    "Mentored 10+ juniors in building AI-powered projects and research papers",
-  ],
-};
-
-const defaultAchievementEntry: AchievementDetails = {
-  id: "achievement1",
-  title: "ACM ICPC Regional Finalist",
-  linkTitle: "Certificate",
-  link: "https://example.com/certificate",
-};
-
-const defaultAchievementEntry2: AchievementDetails = {
-  id: "achievement2",
-  title: "Google Hackathon Winner",
-  linkTitle: "Project",
-  link: "https://example.com/project",
-};
+  id: generateUUID(),
+}
 
 function JakeResume({defaultGradeSetting}:{defaultGradeSetting:boolean}) {
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
-    defaultEducationEntry,
-    defaultEducationEntry2,
-  ]);
-
-  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
-    defaultExperienceEntry,
-    defaultExperienceEntry2,
-  ]);
-  
-  const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
-    defaultProjectEntry,
-    defaultProjectEntry2,
-  ]);
-  
-  const [skills, setSkills] = useState<SkillDetails[]>([
-    defaultSkillEntry,
-    defaultSkillEntry2,
-    defaultSkillEntry3,
-    defaultSkillEntry4,
-  ]);
-  
-  const [name, setName] = useState<string>("Snoopy Matthew");
-  const [email, setEmail] = useState<string>("snoopy@gmail.com");
-  const [phoneNumber, setPhoneNumber] = useState<string>("+91-9876543210");
-  const [portfolioLink, setPortfolioLink] = useState<string>("snoopy.dev");
-  const [githubLink, setGithubLink] = useState<string>("github.com/johnsmith");
-  const [linkedInLink, setLinkedInLink] = useState<string>("linkedin.com/in/johnsmith");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [portfolioLink, setPortfolioLink] = useState<string>("");
+  const [githubLink, setGithubLink] = useState<string>("");
+  const [linkedInLink, setLinkedInLink] = useState<string>("");
   const [globalId, setGlobalId] = useState<string>(generateUUID());
   
   const storageKeyName = `formData-${window.location.pathname}`;
-  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([
-    defaultCertificateEntry,
-    defaultCertificateEntry2,
-  ]);
-  const [clubEntries, setClubEntries] = useState<ClubDetails[]>([
-    defaultClubEntry,
-    defaultClubEntry2,
-  ]);
-  const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([
-    defaultAchievementEntry,
-    defaultAchievementEntry2,
-  ]);
+  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([]);
+  const [clubEntries, setClubEntries] = useState<ClubDetails[]>([]);
+  const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([]);
+  const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([defaultEducationEntry]);
+  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([]);
+  const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([]);
+  const [skills, setSkills] = useState<SkillDetails[]>([]);
 
   // Add new state variables for section toggles
-  const [includeExperience, setIncludeExperience] = useState(true);
-  const [includeProjects, setIncludeProjects] = useState(true);
-  const [includeSkills, setIncludeSkills] = useState(true);
-  const [includeCertificates, setIncludeCertificates] = useState(true);
-  const [includeClubs, setIncludeClubs] = useState(true);
-  const [includeAchievements, setIncludeAchievements] = useState(true);
-  
+  const [includeExperience, setIncludeExperience] = useState(false);
+  const [includeProjects, setIncludeProjects] = useState(false);
+  const [includeSkills, setIncludeSkills] = useState(false);
+  const [includeCertificates, setIncludeCertificates] = useState(false);
+  const [includeClubs, setIncludeClubs] = useState(false);
+  const [includeAchievements, setIncludeAchievements] = useState(false);
   const [includeGrade, setIncludeGrade] = useState(defaultGradeSetting);
   
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
@@ -338,13 +165,13 @@ function JakeResume({defaultGradeSetting}:{defaultGradeSetting:boolean}) {
       setGithubLink(store.githubLink);
       setLinkedInLink(store.linkedInLink);
       setPortfolioLink(store.portfolioLink);
-      setEducationEntries(store.educationEntries);
-      setExperienceEntries(store.experienceEntries);
-      setProjectEntries(store.projectEntries);
-      setSkills(store.skills);
-      setCertificateEntries(store.certificateEntries || [defaultCertificateEntry]);
-      setClubEntries(store.clubEntries || [defaultClubEntry]);
-      setAchievementEntries(store.achievementEntries || [defaultAchievementEntry]);
+      setEducationEntries(store.educationEntries || []);
+      setExperienceEntries(store.experienceEntries || []);
+      setProjectEntries(store.projectEntries || []);
+      setSkills(store.skills || []);
+      setCertificateEntries(store.certificateEntries || []);
+      setClubEntries(store.clubEntries || []);
+      setAchievementEntries(store.achievementEntries || []);
       setIncludeExperience(store.includeExperience);
       setIncludeProjects(store.includeProjects);
       setIncludeSkills(store.includeSkills);
@@ -681,36 +508,36 @@ ${parseSkillString()}
 
   // Add this function to handle the AI-generated form data
   const handleAIGeneratedData = (data: FormDataStore) => {
-    setName(data.name || "John Smith");
-    setEmail(data.email || "john.smith@gmail.com");
-    setPhoneNumber(data.phoneNumber || "+1-555-123-4567");
-    setGithubLink(data.githubLink || "github.com/johnsmith");
-    setLinkedInLink(data.linkedInLink || "linkedin.com/in/johnsmith");
-    setPortfolioLink(data.portfolioLink || "johnsmith.dev");
-    setEducationEntries(data.educationEntries || [defaultEducationEntry, defaultEducationEntry2]);
-    setExperienceEntries(data.experienceEntries || [defaultExperienceEntry, defaultExperienceEntry2]);
-    setProjectEntries(data.projectEntries || [defaultProjectEntry, defaultProjectEntry2]);
-    setSkills(data.skills || [defaultSkillEntry, defaultSkillEntry2, defaultSkillEntry3, defaultSkillEntry4]);
-    setCertificateEntries(data.certificateEntries || [defaultCertificateEntry, defaultCertificateEntry2]);
-    setClubEntries(data.clubEntries || [defaultClubEntry, defaultClubEntry2]);
-    setAchievementEntries(data.achievementEntries || [defaultAchievementEntry, defaultAchievementEntry2]);
-    setIncludeClubs(data.includeClubs || true);
-    setIncludeAchievements(data.includeAchievements || true);
-    setIncludeProjects(data.includeProjects || true);
-    setIncludeSkills(data.includeSkills || true);
-    setIncludeExperience(data.includeExperience || true);
-    setIncludeCertificates(data.includeCertificates || true);
+    setName(data.name || "");
+    setEmail(data.email || "");
+    setPhoneNumber(data.phoneNumber || "");
+    setGithubLink(data.githubLink || "");
+    setLinkedInLink(data.linkedInLink || "");
+    setPortfolioLink(data.portfolioLink || "");
+    setEducationEntries(data.educationEntries || []);
+    setExperienceEntries(data.experienceEntries || []);
+    setProjectEntries(data.projectEntries || []);
+    setSkills(data.skills || []);
+    setCertificateEntries(data.certificateEntries || []);
+    setClubEntries(data.clubEntries || []);
+    setAchievementEntries(data.achievementEntries || []);
+    setIncludeClubs(data.includeClubs);
+    setIncludeAchievements(data.includeAchievements);
+    setIncludeProjects(data.includeProjects);
+    setIncludeSkills(data.includeSkills);
+    setIncludeExperience(data.includeExperience);
+    setIncludeCertificates(data.includeCertificates);
     setTriggerSubmit(true);
   };
 
   return (
     <>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 font-sans min-h-screen w-[100%] overflow-x-hidden bg-gray-950">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4 font-sans min-h-screen w-[100%] bg-gray-950">
         <form
           ref={formRef}
           action=""
           onSubmit={handleFormSubmit}
-          className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10"
+          className="bg-gray-900/50 mt-15 backdrop-blur-md shadow-lg rounded-xl px-8 pt-6 pb-8 mb-4 w-[100%] border border-white/10 "
         >
           {/* Add AI Generator Button at the top */}
           
@@ -822,7 +649,7 @@ ${parseSkillString()}
                   LinkedIn Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
                     Tip: Write full url with https://, also if URL is too long,{" "}
-                    <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
+                    <a  className="text-blue-500" href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
                       edit in Linkedin
                     </a>
                   </span>
@@ -1093,8 +920,8 @@ ${parseSkillString()}
                             className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                             required
                           >
-                            <option value="cgpa">CGPA</option>
-                            <option value="percentage">Percentage</option>
+                            <option style={{backgroundColor:"Black",color:"white"}} value="cgpa">CGPA</option>
+                            <option style={{backgroundColor:"Black",color:"white"}} value="percentage">Percentage</option>
                           </select>
                         </div>
                         {entry.gradeType === "cgpa" ? (
@@ -1145,23 +972,25 @@ ${parseSkillString()}
                   </div>
                 </div>
               ))}
-              <button
-                type="button"
-                onClick={() => addEntry(setEducationEntries, {
-                  instituteName: "",
-                  degree: "",
-                  branch: "",
-                  location: "",
-                  startDate: "",
-                  endDate: "",
-                  gradeType: "cgpa",
-                  cgpa: "",
-                  percentage: ""
-                })}
-                className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-              >
-                <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Education</span>
-              </button>
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => addEntry(setEducationEntries, {
+                    instituteName: "",
+                    degree: "",
+                    branch: "",
+                    location: "",
+                    startDate: "",
+                    endDate: "",
+                    gradeType: "cgpa",
+                    cgpa: "",
+                    percentage: ""
+                  })}
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Education</span>
+                </button>
+              </div>
             </div>
           </div>
 
@@ -1482,227 +1311,227 @@ ${parseSkillString()}
                   onChange={(e) => setIncludeProjects(e.target.checked)}
                   className="form-checkbox h-4 w-4 text-white focus:ring-white"
                 />
-                <span className="ml-2 text-white">Include in Resume</span>
+                <span className="ml-2 text-white">Include Section</span>
               </label>
             </div>
             <div className={`${!includeProjects ? "opacity-50 pointer-events-none" : ""}`}>
-              {includeProjects && (
-                <div className="space-y-6">
-                  {projectEntries.map((entry, index) => (
-                    <div key={entry.id} className="bg-white/5 p-6 rounded-lg">
-                      <div className="flex justify-between items-center mb-4">
-                        <h3 className="text-lg font-light text-[#44BCFF]">
-                          Project #{index + 1}
-                        </h3>
-                        <button
-                          type="button"
-                          onClick={() => removeEntry(setProjectEntries, index)}
-                          className="text-red-400 hover:text-red-300 focus:outline-none"
-                        >
-                          Remove
-                        </button>
+              <div className="space-y-6">
+                {projectEntries.map((entry, index) => (
+                  <div key={entry.id} className="bg-white/5 p-6 rounded-lg">
+                    <div className="flex justify-between items-center mb-4">
+                      <h3 className="text-lg font-light text-[#44BCFF]">
+                        Project #{index + 1}
+                      </h3>
+                      <button
+                        type="button"
+                        onClick={() => removeEntry(setProjectEntries, index)}
+                        className="text-red-400 hover:text-red-300 focus:outline-none"
+                      >
+                        Remove
+                      </button>
+                    </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Project Name<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="text"
+                          value={entry.projectName}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setProjectEntries,
+                              projectEntries,
+                              index,
+                              "projectName",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex. AI-Powered Resume Builder"
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          required
+                        />
                       </div>
-                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Project Name<span className="text-red-500">*</span>
-                          </label>
+                      <div>
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Project Link Title
+                        </label>
+                        <input
+                          type="text"
+                          value={entry.projectLinkTitle}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setProjectEntries,
+                              projectEntries,
+                              index,
+                              "projectLinkTitle",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex. GitHub Link"
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Project Link
+                        </label>
+                        <input
+                          type="url"
+                          value={entry.projectLink}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setProjectEntries,
+                              projectEntries,
+                              index,
+                              "projectLink",
+                              e.target.value
+                            )
+                          }
+                          placeholder="Ex. https://github.com/username/resume-builder"
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Start Date<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type="month"
+                          value={entry.startDate}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setProjectEntries,
+                              projectEntries,
+                              index,
+                              "startDate",
+                              e.target.value
+                            )
+                          }
+                          className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                          required
+                        />
+                      </div>
+                      <div>
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          End Date<span className="text-red-500">*</span>
+                        </label>
+                        <input
+                          type={entry.endDate === "Present" ? "text" : "month"}
+                          value={entry.endDate}
+                          disabled={entry.endDate === "Present"}
+                          onChange={(e) =>
+                            handleInputChange(
+                              setProjectEntries,
+                              projectEntries,
+                              index,
+                              "endDate",
+                              e.target.value
+                            )
+                          }
+                          className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
+                            entry.endDate === "Present"
+                              ? "opacity-50 cursor-not-allowed"
+                              : ""
+                          }`}
+                          required
+                        />
+                        <div className="mt-2 flex items-center">
                           <input
-                            type="text"
-                            value={entry.projectName}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "projectName",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Ex. AI-Powered Resume Builder"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Project Link Title
-                          </label>
-                          <input
-                            type="text"
-                            value={entry.projectLinkTitle}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "projectLinkTitle",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Ex. GitHub Link"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                          
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Project Link
-                          </label>
-                          <input
-                            type="url"
-                            value={entry.projectLink}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "projectLink",
-                                e.target.value
-                              )
-                            }
-                            placeholder="Ex. https://github.com/username/resume-builder"
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                           
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Start Date<span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type="month"
-                            value={entry.startDate}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "startDate",
-                                e.target.value
-                              )
-                            }
-                            className="w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </div>
-                        <div>
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            End Date<span className="text-red-500">*</span>
-                          </label>
-                          <input
-                            type={entry.endDate === "Present" ? "text" : "month"}
-                            value={entry.endDate}
-                            disabled={entry.endDate === "Present"}
-                            onChange={(e) =>
+                            type="checkbox"
+                            checked={entry.endDate === "Present"}
+                            onChange={(e) => {
                               handleInputChange(
                                 setProjectEntries,
                                 projectEntries,
                                 index,
                                 "endDate",
-                                e.target.value
+                                e.target.checked ? "Present" : ""
+                              );
+                            }}
+                            className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                          />
+                          <label className="ml-2 text-white">Ongoing Project</label>
+                        </div>
+                      </div>
+                      <div className="col-span-full">
+                        <label className="block text-[#44BCFF] font-medium mb-2">
+                          Features<span className="text-red-500">*</span>
+                        </label>
+                        <div className="space-y-2">
+                          {entry.featureList.map((feature, featureIndex) => (
+                            <div key={featureIndex} className="flex gap-2">
+                              <input
+                                type="text"
+                                value={feature}
+
+                                onChange={(e) =>
+                                  handleSubListInputChange(
+                                    setProjectEntries,
+                                    index,
+                                    "featureList",
+                                    featureIndex,
+                                    e.target.value
+                                  )
+                                }
+                                placeholder="Ex. Built a resume parsing tool with OpenAI API to optimize ATS scores"
+                                className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                                required
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeItemFromSubList(
+                                    setProjectEntries,
+                                    index,
+                                    "featureList",
+                                    featureIndex
+                                  )
+                                }
+                                className="text-red-400 hover:text-red-300 focus:outline-none"
+                              >
+                                <XIcon className="w-4 h-4" />
+                              </button>
+                            </div>
+                          ))}
+                          <button
+                            type="button"
+                            onClick={() =>
+                              addItemToSubList(
+                                setProjectEntries,
+                                index,
+                                "featureList",
+                                ""
                               )
                             }
-                            className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
-                              entry.endDate === "Present"
-                                ? "opacity-50 cursor-not-allowed"
-                                : ""
-                            }`}
-                            required
-                          />
-                          <div className="mt-2 flex items-center">
-                            <input
-                              type="checkbox"
-                              checked={entry.endDate === "Present"}
-                              onChange={(e) => {
-                                handleInputChange(
-                                  setProjectEntries,
-                                  projectEntries,
-                                  index,
-                                  "endDate",
-                                  e.target.checked ? "Present" : ""
-                                );
-                              }}
-                              className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                            />
-                            <label className="ml-2 text-white">Ongoing Project</label>
-                          </div>
-                        </div>
-                        <div className="col-span-full">
-                          <label className="block text-[#44BCFF] font-medium mb-2">
-                            Features<span className="text-red-500">*</span>
-                          </label>
-                          <div className="space-y-2">
-                            {entry.featureList.map((feature, featureIndex) => (
-                              <div key={featureIndex} className="flex gap-2">
-                                <input
-                                  type="text"
-                                  value={feature}
-
-                                  onChange={(e) =>
-                                    handleSubListInputChange(
-                                      setProjectEntries,
-                                      index,
-                                      "featureList",
-                                      featureIndex,
-                                      e.target.value
-                                    )
-                                  }
-                                  placeholder="Ex. Built a resume parsing tool with OpenAI API to optimize ATS scores"
-                                  className="flex-1 px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                                  required
-                                />
-                                <button
-                                  type="button"
-                                  onClick={() =>
-                                    removeItemFromSubList(
-                                      setProjectEntries,
-                                      index,
-                                      "featureList",
-                                      featureIndex
-                                    )
-                                  }
-                                  className="text-red-400 hover:text-red-300 focus:outline-none"
-                                >
-                                  <XIcon className="w-4 h-4" />
-                                </button>
-                              </div>
-                            ))}
-                            <button
-                              type="button"
-                              onClick={() =>
-                                addItemToSubList(
-                                  setProjectEntries,
-                                  index,
-                                  "featureList",
-                                  ""
-                                )
-                              }
-                              className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                            >
-                              <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Feature</span>
-                            </button>
-                          </div>
+                            className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                          >
+                            <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Feature</span>
+                          </button>
                         </div>
                       </div>
                     </div>
-                  ))}
-                  <button
-                    type="button"
-                    onClick={() => addEntry(setProjectEntries, {
-                      projectName: "",
-                      projectLinkTitle: "",
-                      projectLink: "",
-                      startDate: "",
-                      endDate: "",
-                      featureList: [""]
-                    })}
-                    className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                  >
-                    <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Project</span>
-                  </button>
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
+              <div className="mt-6 flex justify-end">
+                <button
+                  type="button"
+                  onClick={() => addEntry(setProjectEntries, {
+                    projectName: "",
+                    projectLinkTitle: "",
+                    projectLink: "",
+                    startDate: "",
+                    endDate: "",
+                    featureList: [""]
+                  })}
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                >
+                  <PlusIcon className="w-4 h-4 text-white" /> <span className="text-white">Add Project</span>
+                </button>
+              </div>
             </div>
           </div>
 

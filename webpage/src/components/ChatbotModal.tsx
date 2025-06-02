@@ -82,10 +82,9 @@ const ChatbotModal = <
               </button>
 
               <div className="mt-8">
-                <h2 className="text-2xl font-bold mb-4">AI Resume Generator</h2>
+                <h2 className="text-2xl font-bold mb-4">AI Powered Editing</h2>
                 <p className="text-gray-300 mb-6">
-                  Describe your experience and skills, and our AI will help
-                  create your resume.
+                  Be clear about which section do you want your prompt to be applied in
                 </p>
 
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -94,7 +93,7 @@ const ChatbotModal = <
                       htmlFor="prompt"
                       className="block text-sm font-medium text-gray-300 mb-2"
                     >
-                      Describe your experience and skills
+
                     </label>
                     <textarea
                       id="prompt"
@@ -102,7 +101,7 @@ const ChatbotModal = <
                       value={prompt}
                       onChange={(e) => setPrompt(e.target.value)}
                       className="w-full px-3 py-2 bg-gray-700 border border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-white"
-                      placeholder="Example: I am a software engineer with 5 years of experience in web development. I specialize in React, Node.js, and TypeScript. I have worked at Google and Microsoft..."
+                      placeholder="Example: Built a web based video call application as a project where i used react and Socket.io"
                       required
                     />
                   </div>
@@ -115,7 +114,7 @@ const ChatbotModal = <
                       disabled={loading}
                       className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                      {loading ? "Generating..." : "Generate Resume"}
+                      {loading ? "Generating..." : "Apply Changes"}
                     </button>
                   </div>
                 </form>

@@ -61,8 +61,8 @@ async def call_llm(prompt: PromptModel):
     try:
         type = prompt.type
         response = client.models.generate_content(
-            model="gemini-1.5-flash-8b",
-            contents=f"{MODEL_MAP[type][1]} \n Current Resume: {prompt.formDataStore if prompt.formDataStore else ''}\n Now here is the user's prompt \n Prompt: {prompt} \n Now incorporate the additional details provided in the prompt into the existing resume if it is non empty,for which you create a fresh one, if there are conflicts, prioritize the prompt information and finally generate a JSON string", 
+            model="gemini-1.5-flash",
+            contents=f"{MODEL_MAP[type][1]} \n Current Resume: {prompt.formDataStore if prompt.formDataStore else ''}\n Now here is the user's prompt \n Prompt: {prompt} \n Now incorporate the additional details provided in the prompt into the existing resume if it is non empty,for which you create a fresh one, if there are conflicts, prioritize the prompt information and finally generate a JSON string",
             config={
                 "response_mime_type": "application/json",
                 "response_schema": MODEL_MAP[type][0],

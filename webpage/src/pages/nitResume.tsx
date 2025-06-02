@@ -47,168 +47,73 @@ import PdfBox from "../components/PdfBox";
 
 const defaultEducationEntry: EducationDetails = {
     "id": "edu1",
-    "instituteName": "National Institute of Technology, Trichy",
-    "degree": "Bachelor of Technology",
-    "degreeAbbreviation": "B.Tech",
-    "branch": "Computer Science and Engineering",
-    "branchAbbreviation": "CSE",
-    "location": "Tiruchirappalli, India",
-    "endDate": "2023-05",
+    "instituteName": "",
+    "degree": "",
+    "degreeAbbreviation": "",
+    "branch": "",
+    "branchAbbreviation": "",
+    "location": "",
+    "endDate": "",
     "gradeType": "CGPA",
-    "cgpa": "9.2",
+    "cgpa": "",
     "percentage": ""
   }
 
-const defaultEducationEntry2: EducationDetails = {
-    "id": "edu2",
-    "instituteName": "Kendriya Vidyalaya, Bhopal",
-    "degree": "Senior Secondary",
-    "degreeAbbreviation": "",
-    "branch": "",
-    "branchAbbreviation": "",
-    "location": "Bhopal, India",
-    "endDate": "2021-05",
-    "gradeType": "Percentage",
-    "cgpa": "9.2",
-    "percentage": "95"
-  }
-
-const defaultEducationEntry3: EducationDetails = {
-    "id": "edu3",
-    "instituteName": "Kendriya Vidyalaya, Bhopal",
-    "degree": "Secondary",
-    "degreeAbbreviation": "",
-    "branch": "",
-    "branchAbbreviation": "",
-    "location": "Bhopal, India",
-    "endDate": "2019-05",
-    "gradeType": "Percentage",
-    "cgpa": "9.2",
-    "percentage": "95"
-  }
-
-
 const defaultExperienceEntry1: ExperienceDetails = {
     "id": "exp1",
-    "jobTitle": "Software Engineering Intern",
-    "companyName": "Google",
-    "location": "Bangalore, India",
-    "startDate": "2022-05",
-    "endDate": "2022-08",
-    "workList": [
-      "Developed scalable RESTful APIs with FastAPI and PostgreSQL, improving system throughput by 35%",
-      "Contributed to production deployment of a microservice used by 10M+ users with Kubernetes & Docker",
-      "Wrote unit and integration tests achieving 95% test coverage, reducing bugs by 40%"
-    ]
-  }
-
-const defaultExperienceEntry2: ExperienceDetails = {
-    "id": "exp2",
-    "jobTitle": "Backend Developer (Freelance)",
-    "companyName": "TechStart Inc.",
-    "location": "Remote",
-    "startDate": "2021-12",
-    "endDate": "2022-03",
-    "workList": [
-      "Built JWT-based authentication and OAuth2 flows for secure API endpoints",
-      "Designed and deployed CI/CD pipelines using GitHub Actions and Docker",
-      "Optimized database queries, improving response time by 50%"
-    ]
+    "jobTitle": "",
+    "companyName": "",
+    "location": "",
+    "startDate": "",
+    "endDate": "",
+    "workList": [""]
   }
 
 const defaultProjectEntry1: ProjectDetails = {
     "id": "proj1",
-    "projectName": "Smart Resume Optimizer",
-    "description": "An ATS-aware resume generation and optimization tool with LaTeX output and NLP-based job description analysis.",
-    "toolsUsed": "FastAPI, OpenAI API, LaTeX, TailwindCSS",
-    "linkTitle": "GitHub Repo",
-    "projectLink": "https://github.com/aryanmehta/resume-optimizer",
-    "startDate": "2023-01",
-    "endDate": "2023-03",
-    "workDone": [
-      "Integrated OpenAI API to analyze job descriptions and recommend skill alignment",
-      "Enabled LaTeX resume generation with custom section toggles",
-      "Used FastAPI background tasks for file management and async processing"
-    ]
+    "projectName": "",
+    "description": "",
+    "toolsUsed": "",
+    "linkTitle": "",
+    "projectLink": "",
+    "startDate": "",
+    "endDate": "",
+    "workDone": [""]
   }
 
-const defaultProjectEntry2: ProjectDetails = {
-    "id": "proj2",
-    "projectName": "Decentralized Chat Platform",
-    "description": "Peer-to-peer video and text chat system with end-to-end encryption and real-time messaging.",
-    "toolsUsed": "WebRTC, Socket.IO, React, MongoDB",
-    "linkTitle": "Live Demo",
-    "projectLink": "https://chat.aryanmehta.dev",
-    "startDate": "2022-07",
-    "endDate": "2022-10",
-    "workDone": [
-      "Implemented real-time messaging with Socket.IO and MongoDB Atlas",
-      "Enabled secure peer-to-peer video calling using WebRTC and TURN servers",
-      "Built a responsive UI with React, Tailwind, and dark/light themes"
-    ]
-  }
-
-  const defaultSkillEntry1: SkillDetails = { "id": "sk1", "key": "Languages", "value": "Python, JavaScript, C++, SQL" }
-  const defaultSkillEntry2: SkillDetails = { "id": "sk2", "key": "Frameworks", "value": "FastAPI, React, Node.js, Express" }
-  const defaultSkillEntry3: SkillDetails = { "id": "sk3", "key": "DevOps", "value": "Docker, GitHub Actions, NGINX, Kubernetes" }
-  const defaultSkillEntry4: SkillDetails = { "id": "sk4", "key": "Databases", "value": "PostgreSQL, MongoDB, Redis" }
-  const defaultSkillEntry5: SkillDetails = { "id": "sk5", "key": "Cloud Platforms", "value": "AWS EC2/S3, Firebase, Railway" }
+  const defaultSkillEntry1: SkillDetails = { "id": "sk1", "key": "", "value": "" }
 
   const defaultCertificateEntry1: CertificateDetails = {
     "id": "cert1",
-    "title": "AWS Certified Cloud Practitioner",
-    "link": "https://www.credly.com/badges/aws-certificate",
-    "date": "2023-03"
-  }
-
-  const defaultCertificateEntry2: CertificateDetails = {
-    "id": "cert2",
-    "title": "Full Stack Web Development Specialization - Coursera",
-    "link": "https://coursera.org/verify/certificate",
-    "date": "2022-09"
+    "title": "",
+    "link": "",
+    "date": ""
   }
 
   const defaultAchievementEntry1: AchievementDetails = {
     "id": "ach1",
-    "title": "SIH 2022 Finalist",
-    "linkTitle": "Certificate",
-    "link": "https://smartindiahackathon.com"
-  }
-
-  const defaultAchievementEntry2: AchievementDetails = {
-    "id": "ach2",
-    "title": "CodeChef April Challenge – Top 1%",
-    "linkTitle": "Contest Link",
-    "link": "https://www.codechef.com/rankings"
+    "title": "",
+    "linkTitle": "",
+    "link": ""
   }
 
   const defaultPositionEntry1: PositionOfResponsibilityDetails = {
     "id": "pos1",
-    "positionName": "Technical Head",
-    "organizationName": "TechFusion Coding Club",
-    "date": "2021-01"
+    "positionName": "",
+    "organizationName": "",
+    "date": ""
   }
-
-  const defaultPositionEntry2: PositionOfResponsibilityDetails = {
-    "id": "pos2",
-    "positionName": "Open Source Mentor",
-    "organizationName": "Hacktoberfest NIT Trichy",
-    "date": "2022-06"
-  }
-
-
 
 function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
   const FormatType = defaultPhotoSetting
   const [pdfUrl, setPdfUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [globalId, setGlobalId] = useState<string>(generateUUID());
-  const [name, setName] = useState<string>("Snoopy Smith");
-  const [email, setEmail] = useState<string>("2228090@kiit.ac.in");
-  const [phoneNumber, setPhoneNumber] = useState<string>("+91-7975939393");
-
-  const [githubLink, setGithubLink] = useState<string>("https://github.com/snoopy-007");
-  const [linkedInLink, setLinkedInLink] = useState<string>("https://www.linkedin.com/in/snoopy-007/");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [githubLink, setGithubLink] = useState<string>("");
+  const [linkedInLink, setLinkedInLink] = useState<string>("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
   const [chatbotModalOpen, setChatbotModalOpen] = useState(false);
@@ -225,38 +130,14 @@ function NITResume({defaultPhotoSetting}:{defaultPhotoSetting:NITEnum}) {
   
   // Form data states
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
-    defaultEducationEntry,
-    defaultEducationEntry2,
-    defaultEducationEntry3,
-
+    defaultEducationEntry
   ]);
-  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([
-    defaultExperienceEntry1,
-    defaultExperienceEntry2,
-  ]);
-  const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
-    defaultProjectEntry1,
-    defaultProjectEntry2,
-  ]);
-  const [skills, setSkills] = useState<SkillDetails[]>([
-    defaultSkillEntry1,
-    defaultSkillEntry2,
-    defaultSkillEntry3,
-    defaultSkillEntry4,
-    defaultSkillEntry5,
-  ]);
-  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([
-    defaultCertificateEntry1,
-    defaultCertificateEntry2,
-  ]);
-  const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([
-    defaultAchievementEntry1,
-    defaultAchievementEntry2,
-  ]);
-  const [positionEntries, setPositionEntries] = useState<PositionOfResponsibilityDetails[]>([
-    defaultPositionEntry1,
-    defaultPositionEntry2,
-  ]);
+  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([]);
+  const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([]);
+  const [skills, setSkills] = useState<SkillDetails[]>([]);
+  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([]);
+  const [achievementEntries, setAchievementEntries] = useState<AchievementDetails[]>([]);
+  const [positionEntries, setPositionEntries] = useState<PositionOfResponsibilityDetails[]>([]);
 
   const updateAvatar = async (imageUrl: string) => {
     try {
@@ -979,7 +860,7 @@ ${parseClubString()}
                   LinkedIn Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
                     Tip: Write full url with https://, also if URL is too long,{" "}
-                    <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
+                    <a className="text-blue-500"  href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
                       edit in Linkedin
                     </a>
                   </span>
@@ -1674,308 +1555,313 @@ ${parseClubString()}
                 <span className="ml-2 text-white">Include Section</span>
               </label>
             </div>
-            {includeProjects && (
-              <div className="space-y-6">
-                {projectEntries.map((entry, index) => (
-                  <div
-                    key={entry.id}
-                    className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
-                  >
-                    <div className="flex justify-between items-center mb-4">
-                      <h3 className="text-lg font-light text-[#44BCFF]">
-                        Project #{index + 1}
-                      </h3>
-                      <button
-                        type="button"
-                        onClick={() => removeEntry(setProjectEntries, index)}
-                        className="text-red-400 hover:text-red-300 focus:outline-none"
-                      >
-                        Remove
-                      </button>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Project Name<span className="text-red-500">*</span>
-                        </label>
-                        <Tooltip
-                          title="Not Allowed Here"
-                          message="Making Text Bold is not allowed here"
+            <div
+              className={`${
+                !includeProjects ? "opacity-50 pointer-events-none" : ""
+              }`}
+            >
+              {includeProjects && (
+                <div className="space-y-6">
+                  {projectEntries.map((entry, index) => (
+                    <div
+                      key={entry.id}
+                      className="bg-white/5 p-6 rounded-xl shadow border border-white/10"
+                    >
+                      <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-light text-[#44BCFF]">
+                          Project #{index + 1}
+                        </h3>
+                        <button
+                          type="button"
+                          onClick={() => removeEntry(setProjectEntries, index)}
+                          className="text-red-400 hover:text-red-300 focus:outline-none"
                         >
-                          <input
-                            type="text"
-                            value={entry.projectName}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "projectName",
-                                e.target.value
-                              )
-                            }
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </Tooltip>
+                          Remove
+                        </button>
                       </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Description<span className="text-red-500">*</span> <span className="text-xs text-white">Tip:Keep it Very Short</span>
-                        </label>
-                        <Tooltip
-                          title="Not Allowed Here"
-                          message="Making Text Bold is not allowed here"
-                        >
-                          <input
-                            value={entry.description}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "description",
-                                e.target.value
-                              )
-                            }
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </Tooltip>
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Tools Used<span className="text-red-500">*</span>{" "}
-                          <span className="mx-0.5 text-xs text-white">
-                            Tip: Separate tools with commas (e.g., React, Node.js, MongoDB)
-                          </span>
-                        </label>
-                        <Tooltip
-                          title="Not Allowed Here"
-                          message="Making Text Bold is not allowed here"
-                        >
-                          <input
-                            type="text"
-                            value={entry.toolsUsed}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "toolsUsed",
-                                e.target.value
-                              )
-                            }
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            required
-                          />
-                        </Tooltip>
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Link Title{" "}
-                          <span className="mx-0.5 text-xs text-white">
-                            Tip: The text to display for the link (e.g., "GitHub", "Live Demo", etc.)
-                          </span>
-                        </label>
-                        <Tooltip
-                          title="Not Allowed Here"
-                          message="Making Text Bold is not allowed here"
-                        >
-                          <input
-                            type="text"
-                            value={entry.linkTitle}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "linkTitle",
-                                e.target.value
-                              )
-                            }
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                          
-                          />
-                        </Tooltip>
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Project Link{" "}
-                          <span className="mx-0.5 text-xs text-white">
-                            Tip: The actual URL of the project
-                          </span>
-                        </label>
-                        <Tooltip
-                          title="Not Allowed Here"
-                          message="Making Text Bold is not allowed here"
-                        >
-                          <input
-                            type="url"
-                            value={entry.projectLink}
-                            onChange={(e) =>
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "projectLink",
-                                e.target.value
-                              )
-                            }
-                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                            
-                          />
-                        </Tooltip>
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          Start Date<span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type="month"
-                          value={entry.startDate}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setProjectEntries,
-                              projectEntries,
-                              index,
-                              "startDate",
-                              e.target.value
-                            )
-                          }
-                          className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
-                          required
-                        />
-                      </div>
-
-                      <div className="mb-4">
-                        <label className="block text-[#44BCFF] font-medium mb-2">
-                          End Date<span className="text-red-500">*</span>
-                        </label>
-                        <input
-                          type={entry.endDate === "Present" ? "text" : "month"}
-                          value={entry.endDate}
-                          disabled={entry.endDate === "Present"}
-                          onChange={(e) =>
-                            handleInputChange(
-                              setProjectEntries,
-                              projectEntries,
-                              index,
-                              "endDate",
-                              e.target.value
-                            )
-                          }
-                          className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
-                            entry.endDate === "Present" ? "opacity-50 cursor-not-allowed" : ""
-                          }`}
-                          required
-                        />
-                        <div className="mt-2">
-                          <input
-                            type="checkbox"
-                            checked={entry.endDate === "Present"}
-                            onChange={(e) => {
-                              handleInputChange(
-                                setProjectEntries,
-                                projectEntries,
-                                index,
-                                "endDate",
-                                e.target.checked ? "Present" : ""
-                              );
-                            }}
-                            className="form-checkbox h-4 w-4 text-white focus:ring-white"
-                          
-                          />
-                          <label className="ml-2 text-white">Currently Working</label>
-                        </div>
-                      </div>
-
-                      <div className="col-span-full">
-                        <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
-                          Work Done{" "}
-                          <span className="mx-0.5 text-xs text-white">
-                            Tip: Use Bold For Highlighting but don't overdo it
-                          </span>
-                        </h4>
-                        {entry.workDone.map((work, workIndex) => (
-                          <div
-                            key={`${entry.id}-work-${workIndex}`}
-                            className="mb-2 flex items-center space-x-4"
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Project Name<span className="text-red-500">*</span>
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
                           >
-                           
                             <input
                               type="text"
-                              value={work}
-                              onKeyDown={(e) =>
-                                handleKeyActionOnSublist(
-                                  e,
+                              value={entry.projectName}
+                              onChange={(e) =>
+                                handleInputChange(
                                   setProjectEntries,
-                                  "workDone",
+                                  projectEntries,
                                   index,
-                                  workIndex
+                                  "projectName",
+                                  e.target.value
                                 )
                               }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Description<span className="text-red-500">*</span> <span className="text-xs text-white">Tip:Keep it Very Short</span>
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              value={entry.description}
                               onChange={(e) =>
-                                handleSubListInputChange(
+                                handleInputChange(
                                   setProjectEntries,
+                                  projectEntries,
                                   index,
-                                  "workDone",
-                                  workIndex,
+                                  "description",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Tools Used<span className="text-red-500">*</span>{" "}
+                            <span className="mx-0.5 text-xs text-white">
+                              Tip: Separate tools with commas (e.g., React, Node.js, MongoDB)
+                            </span>
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="text"
+                              value={entry.toolsUsed}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "toolsUsed",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              required
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Link Title{" "}
+                            <span className="mx-0.5 text-xs text-white">
+                              Tip: The text to display for the link (e.g., "GitHub", "Live Demo", etc.)
+                            </span>
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="text"
+                              value={entry.linkTitle}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "linkTitle",
                                   e.target.value
                                 )
                               }
                               className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
                             />
+                          </Tooltip>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Project Link{" "}
+                            <span className="mx-0.5 text-xs text-white">
+                              Tip: The actual URL of the project
+                            </span>
+                          </label>
+                          <Tooltip
+                            title="Not Allowed Here"
+                            message="Making Text Bold is not allowed here"
+                          >
+                            <input
+                              type="url"
+                              value={entry.projectLink}
+                              onChange={(e) =>
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "projectLink",
+                                  e.target.value
+                                )
+                              }
+                              className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            />
+                          </Tooltip>
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            Start Date<span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type="month"
+                            value={entry.startDate}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "startDate",
+                                e.target.value
+                              )
+                            }
+                            className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                            required
+                          />
+                        </div>
+
+                        <div className="mb-4">
+                          <label className="block text-[#44BCFF] font-medium mb-2">
+                            End Date<span className="text-red-500">*</span>
+                          </label>
+                          <input
+                            type={entry.endDate === "Present" ? "text" : "month"}
+                            value={entry.endDate}
+                            disabled={entry.endDate === "Present"}
+                            onChange={(e) =>
+                              handleInputChange(
+                                setProjectEntries,
+                                projectEntries,
+                                index,
+                                "endDate",
+                                e.target.value
+                              )
+                            }
+                            className={`shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10 ${
+                              entry.endDate === "Present" ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                            required
+                          />
+                          <div className="mt-2">
+                            <input
+                              type="checkbox"
+                              checked={entry.endDate === "Present"}
+                              onChange={(e) => {
+                                handleInputChange(
+                                  setProjectEntries,
+                                  projectEntries,
+                                  index,
+                                  "endDate",
+                                  e.target.checked ? "Present" : ""
+                                );
+                              }}
+                              className="form-checkbox h-4 w-4 text-white focus:ring-white"
+                            />
+                            <label className="ml-2 text-white">Currently Working</label>
+                          </div>
+                        </div>
+
+                        <div className="col-span-full">
+                          <h4 className="text-md font-semibold mb-2 text-[#44BCFF]">
+                            Work Done{" "}
+                            <span className="mx-0.5 text-xs text-white">
+                              Tip: Use Bold For Highlighting but don't overdo it
+                            </span>
+                          </h4>
+                          {entry.workDone.map((work, workIndex) => (
+                            <div
+                              key={`${entry.id}-work-${workIndex}`}
+                              className="mb-2 flex items-center space-x-4"
+                            >
+                              <input
+                                type="text"
+                                value={work}
+                                onKeyDown={(e) =>
+                                  handleKeyActionOnSublist(
+                                    e,
+                                    setProjectEntries,
+                                    "workDone",
+                                    index,
+                                    workIndex
+                                  )
+                                }
+                                onChange={(e) =>
+                                  handleSubListInputChange(
+                                    setProjectEntries,
+                                    index,
+                                    "workDone",
+                                    workIndex,
+                                    e.target.value
+                                  )
+                                }
+                                className="shadow appearance-none border rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-white/20 bg-white/5 border-white/10"
+                              />
+                              <button
+                                type="button"
+                                onClick={() =>
+                                  removeItemFromSubList(
+                                    setProjectEntries,
+                                    index,
+                                    "workDone",
+                                    workIndex
+                                  )
+                                }
+                                className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
+                              >
+                                <XIcon className="w-4 h-4 text-white" />
+                              </button>
+                            </div>
+                          ))}
+                          <div className="mt-2">
                             <button
                               type="button"
                               onClick={() =>
-                                removeItemFromSubList(
+                                addItemToSubList(
                                   setProjectEntries,
                                   index,
                                   "workDone",
-                                  workIndex
+                                  ""
                                 )
                               }
-                              className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
+                              className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
                             >
-                             <XIcon className="w-4 h-4 text-white" />
+                              Add Work
                             </button>
                           </div>
-                        ))}
-                        <div className="mt-2">
-                          <button
-                            type="button"
-                            onClick={() =>
-                              addItemToSubList(
-                                setProjectEntries,
-                                index,
-                                "workDone",
-                                ""
-                              )
-                            }
-                            className="px-4 py-2 text-white rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-sm"
-                          >
-                            Add Work
-                          </button>
                         </div>
                       </div>
                     </div>
-                  </div>
-                ))}
-              </div>
-            )}
+                  ))}
+                </div>
+              )}
+            </div>
             <div className="mt-6 flex justify-end">
               <button
                 type="button"
                 onClick={() => addEntry(setProjectEntries, defaultProjectEntry1)}
-                className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                disabled={!includeProjects}
+                className={`px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                  !includeProjects ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                }`}
               >
-                <PlusIcon className="w-4 h-4 " /> Add Project
+                <PlusIcon className="w-4 h-4" /> Add Project
               </button>
             </div>
           </div>
@@ -2314,15 +2200,20 @@ ${parseClubString()}
                       </div>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry1)}
-                    className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                  >
-                    <PlusIcon className="w-4 h-4" /> Add Achievement
-                  </button>
                 </div>
               )}
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => addEntry(setAchievementEntries, defaultAchievementEntry1)}
+                disabled={!includeAchievements}
+                className={`px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                  !includeAchievements ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                }`}
+              >
+                <PlusIcon className="w-4 h-4" /> Add Achievement
+              </button>
             </div>
           </div>
 
@@ -2424,15 +2315,20 @@ ${parseClubString()}
                       </div>
                     </div>
                   ))}
-                  <button
-                    type="button"
-                    onClick={() => addEntry(setPositionEntries, defaultPositionEntry1)}
-                    className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
-                  >
-                    <PlusIcon className="w-4 h-4" /> Add Position
-                  </button>
                 </div>
               )}
+            </div>
+            <div className="mt-6 flex justify-end">
+              <button
+                type="button"
+                onClick={() => addEntry(setPositionEntries, defaultPositionEntry1)}
+                disabled={!includePositions}
+                className={`px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md focus:outline-none focus:ring-2 focus:ring-white ${
+                  !includePositions ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-200'
+                }`}
+              >
+                <PlusIcon className="w-4 h-4" /> Add Position
+              </button>
             </div>
           </div>
 

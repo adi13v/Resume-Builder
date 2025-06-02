@@ -171,7 +171,7 @@ const LandingPage = () => {
                         className="text-center"
                     >
                         <h1 className="text-5xl mt-15 font-bold text-white mb-4 tracking-tight">
-                            Overleaf is the industry standard <br/> of professional resumes,
+                            Overleaf is the industry standard <br/> of professional resumes
                             <span className="block text-gray-400 mt-2 font-normal text-xl">But it's so damn complicated.</span>
                         </h1>
                         <p className="text-2xl text-green-400 mt-6 font-medium tracking-tight">So we made it simple.</p>

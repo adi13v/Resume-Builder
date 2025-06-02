@@ -17,7 +17,7 @@ function PdfBox({
     <>
     <div>
       {pdfUrl && (
-        <div className="pdf-viewer-z-0 container lg:fixed lg:top-19 lg:right-0 lg:w-1/2 sm:w-full">
+        <div className="pdf-viewer-z-0 mb-1 container lg:fixed lg:top-19 lg:right-0 lg:w-1/2 sm:w-full">
           <button onClick={handlePdfDownload}>Download PDF</button>
           <iframe
             src={pdfUrl + "#zoom=90%"}

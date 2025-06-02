@@ -38,7 +38,7 @@ const Footer = () => {
                     
                 </div>
                 <p className="text-gray-400 text-sm">
-                    &copy; {currentYear} Resume Builder. All rights reserved.
+                    &copy; {currentYear} I Need Resume. All rights reserved.
                 </p>
                 
                 <p className="text-gray-500 text-s mt-2">

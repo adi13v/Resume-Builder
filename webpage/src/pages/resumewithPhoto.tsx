@@ -29,184 +29,67 @@ import {
 import { EducationDetails, ExperienceDetails, ProjectDetails, SkillDetails, HonorDetails, ClubDetails, CertificateDetails, FormDataStore } from "../types/resumeWithPhoto";
 import PdfBox from "../components/PdfBox";
 
-
 const defaultEducationEntry: EducationDetails = {
   id: "edu1",
-  instituteName: "Placeholder Institute of Technology",
-  degree: "Bachelor of Technology",
-  branch: "Computer Science and Engineering",
-  location: "Bangalore, India",
-  startDate: "2019-08",
-  endDate: "2023-05",
+  instituteName: "",
+  degree: "",
+  branch: "",
+  location: "",
+  startDate: "",
+  endDate: "",
   gradeType: "CGPA",
-  cgpa: "9.1",
+  cgpa: "",
   percentage: "",
-};
-
-const defaultEducationEntry2: EducationDetails = {
-  id: "edu2",
-  instituteName: "Placeholder Senior Secondary School",
-  degree: "Senior Secondary",
-  branch: "",
-  location: "Delhi, India",
-  startDate: "2017-06",
-  endDate: "2019-05",
-  gradeType: "Percentage",
-  cgpa: "",
-  percentage: "94",
-};
-
-const defaultEducationEntry3: EducationDetails = {
-  id: "edu3",
-  instituteName: "Placeholder Secondary School",
-  degree: "Secondary",
-  branch: "",
-  location: "Delhi, India",
-  startDate: "2015-06",
-  endDate: "2017-05",
-  gradeType: "Percentage",
-  cgpa: "",
-  percentage: "96",
 };
 
 const defaultExperienceEntry: ExperienceDetails = {
   id: "exp1",
-  jobTitle: "Software Engineering Intern",
-  companyName: "Placeholder Technologies Pvt Ltd",
-  location: "Remote",
-  startDate: "2022-05",
-  endDate: "2022-08",
-  workList: [
-    "Developed scalable REST APIs using FastAPI and PostgreSQL, reducing response time by 30%",
-    "Collaborated in an Agile team to ship production-level features for a fintech dashboard used by 10,000+ users",
-    "Integrated Docker-based CI/CD pipelines to streamline deployment across multiple environments",
-  ],
-};
-
-const defaultExperienceEntry2: ExperienceDetails = {
-  id: "exp2",
-  jobTitle: "Backend Developer (Freelance)",
-  companyName: "StartupHub Inc.",
-  location: "Remote",
-  startDate: "2021-12",
-  endDate: "2022-03",
-  workList: [
-    "Designed a microservices-based architecture to decouple services and enhance system modularity",
-    "Implemented JWT authentication, OAuth2, and role-based access control improving platform security",
-    "Increased API performance by 45% through async optimization and query indexing",
-  ],
+  jobTitle: "",
+  companyName: "",
+  location: "",
+  startDate: "",
+  endDate: "",
+  workList: [],
 };
 
 const defaultProjectEntry: ProjectDetails = {
   id: "proj1",
-  projectName: "AI Resume Optimizer",
-  projectLinkTitle: "Project Link",
-  projectLink: "https://www.placeholder.com",
-  startDate: "2023-01",
-  endDate: "2023-03",
-  featureList: [
-    "Built a resume parsing tool with OpenAI API to optimize ATS score using NLP techniques",
-    "Enabled LaTeX-based PDF resume generation with image and data upload",
-    "Integrated file cleanup and async subprocess management using FastAPI background tasks",
-  ],
-};
-
-const defaultProjectEntry2: ProjectDetails = {
-  id: "proj2",
-  projectName: "Decentralized Chat App",
-  projectLinkTitle: "GitHub Link",
-  projectLink: "https://www.placeholder.com",
-  startDate: "2022-07",
-  endDate: "2022-10",
-  featureList: [
-    "Implemented peer-to-peer WebRTC-based video calling and Socket.IO-based real-time messaging",
-    "Built a responsive frontend with React and TailwindCSS, supporting light/dark modes",
-    "Used MongoDB Atlas for scalable chat history storage with encryption",
-  ],
+  projectName: "",
+  projectLinkTitle: "",
+  projectLink: "",
+  startDate: "",
+  endDate: "",
+  featureList: [],
 };
 
 const defaultSkillEntry: SkillDetails = {
   id: "sk1",
-  key: "Languages",
-  value: "Python, JavaScript, C++",
-};
-
-const defaultSkillEntry2: SkillDetails = {
-  id: "sk2",
-  key: "Frameworks",
-  value: "FastAPI, React, Node.js, Express",
-};
-
-const defaultSkillEntry3: SkillDetails = {
-  id: "sk3",
-  key: "DevOps",
-  value: "Docker, GitHub Actions, Render, NGINX",
-};
-
-const defaultSkillEntry4: SkillDetails = {
-  id: "sk4",
-  key: "Tools",
-  value: "Postman, Figma, VS Code, MongoDB Compass",
-};
-
-const defaultSkillEntry5: SkillDetails = {
-  id: "sk5",
-  key: "Cloud",
-  value: "AWS EC2, S3, Firebase, Railway",
+  key: "",
+  value: "",
 };
 
 const defaultHonorEntry: HonorDetails = {
   id: "hon1",
-  title: "Smart India Hackathon Finalist",
-  date: "2022-08",
-  description: "Developed an AI-driven compliance audit tool that reached top 5 among 500+ national teams",
-  linkTitle: "Certificate Link",
-  link: "https://www.placeholder.com",
-};
-
-const defaultHonorEntry2: HonorDetails = {
-  id: "hon2",
-  title: "CodeChef Long Challenge Top 1%",
-  date: "2023-04",
-  description: "Achieved global rank under 150 in April Long Challenge among 20,000+ coders",
-  linkTitle: "Contest Link",
-  link: "https://www.placeholder.com",
+  title: "",
+  date: "",
+  description: "",
+  linkTitle: "",
+  link: "",
 };
 
 const defaultClubEntry: ClubDetails = {
   id: "club1",
-  title: "Technical Head",
-  societyName: "Coding Club - TechFusion",
-  startDate: "2021-07",
-  endDate: "2023-03",
-  achievements: [
-    "Led workshops on Git, DevOps, and Competitive Programming with 300+ participants",
-    "Mentored 10+ juniors in open-source development under Hacktoberfest",
-  ],
-};
-
-const defaultClubEntry2: ClubDetails = {
-  id: "club2",
-  title: "Technical Head",
-  societyName: "Coding Club - TechFusion",
-  startDate: "2021-07",
-  endDate: "2023-03",
-  achievements: [
-    "Led workshops on Git, DevOps, and Competitive Programming with 300+ participants",
-    "Mentored 10+ juniors in open-source development under Hacktoberfest",
-  ],
+  title: "",
+  societyName: "",
+  startDate: "",
+  endDate: "",
+  achievements: [],
 };
 
 const defaultCertificateEntry: CertificateDetails = {
   id: "cert1",
-  title: "AWS Certified Cloud Practitioner",
-  link: "https://www.placeholder.com",
-};
-
-const defaultCertificateEntry2: CertificateDetails = {
-  id: "cert2",
-  title: "Full Stack Development - Coursera",
-  link: "https://www.placeholder.com",
+  title: "",
+  link: "",
 };
 
 function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
@@ -214,46 +97,25 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
   const [isLoading, setIsLoading] = useState(false);
   const [educationEntries, setEducationEntries] = useState<EducationDetails[]>([
     defaultEducationEntry,
-    defaultEducationEntry2,
-    defaultEducationEntry3,
   ]);
 
-  const [experienceEntries, setExperienceEntries] = useState<
-    ExperienceDetails[]
-  >([defaultExperienceEntry, defaultExperienceEntry2]);
-  const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([
-    defaultProjectEntry,
-    defaultProjectEntry2,
-  ]);
-  const [skills, setSkills] = useState<SkillDetails[]>([
-    defaultSkillEntry,
-    defaultSkillEntry2,
-    defaultSkillEntry3,
-    defaultSkillEntry4,
-    defaultSkillEntry5,
-  ]);
-  const [name, setName] = useState<string>("Snoopy Matthew");
-  const [email, setEmail] = useState<string>("snoopymatthew@gmail.com");
-  const [phoneNumber, setPhoneNumber] = useState<string>("+91-9876543210");
-  const [portfolioLink, setPortfolioLink] = useState<string>("myportfolio.com");
-  const [githubLink, setGithubLink] = useState<string>("github.com/snoopymatthew");
-  const [linkedInLink, setLinkedInLink] = useState<string>("linkedin.com/in/snoopymatthew");
+  const [experienceEntries, setExperienceEntries] = useState<ExperienceDetails[]>([]);
+  const [projectEntries, setProjectEntries] = useState<ProjectDetails[]>([]);
+  const [skills, setSkills] = useState<SkillDetails[]>([]);
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
+  const [portfolioLink, setPortfolioLink] = useState<string>("");
+  const [githubLink, setGithubLink] = useState<string>("");
+  const [linkedInLink, setLinkedInLink] = useState<string>("");
   const [globalId, setGlobalId] = useState<string>(generateUUID());
   
   const storageKeyName = `formData-${window.location.pathname}`;
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-  const [honorEntries, setHonorEntries] = useState<HonorDetails[]>([
-    defaultHonorEntry,
-    defaultHonorEntry2,
-  ]);
-  const [clubEntries, setClubEntries] = useState<ClubDetails[]>([
-    defaultClubEntry,
-    defaultClubEntry2,
-  ]);
-  const [certificateEntries, setCertificateEntries] = useState<
-    CertificateDetails[]
-  >([defaultCertificateEntry, defaultCertificateEntry2]);
+  const [honorEntries, setHonorEntries] = useState<HonorDetails[]>([]);
+  const [clubEntries, setClubEntries] = useState<ClubDetails[]>([]);
+  const [certificateEntries, setCertificateEntries] = useState<CertificateDetails[]>([]);
 
   // Add new state variables for section toggles
   const [includeExperience, setIncludeExperience] = useState(true);
@@ -358,18 +220,9 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
       setExperienceEntries(store.experienceEntries);
       setProjectEntries(store.projectEntries);
       setSkills(store.skills);
-      setHonorEntries(
-        store.honorEntries || [defaultHonorEntry, defaultHonorEntry2]
-      );
-      setClubEntries(
-        store.clubEntries || [defaultClubEntry, defaultClubEntry2]
-      );
-      setCertificateEntries(
-        store.certificateEntries || [
-          defaultCertificateEntry,
-          defaultCertificateEntry2,
-        ]
-      );
+      setHonorEntries(store.honorEntries || []);
+      setClubEntries(store.clubEntries || []);
+      setCertificateEntries(store.certificateEntries || []);
       setIncludeExperience(store.includeExperience);
       setIncludeProjects(store.includeProjects);
       setIncludeSkills(store.includeSkills);
@@ -1021,7 +874,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                   LinkedIn Link{" "}
                   <span className=" mx-0.5 text-xs text-white">
                     Tip: Write full url with https://, also if URL is too long,{" "}
-                    <a href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
+                    <a className="text-blue-500"  href="https://youtu.be/oga5s3Yngc8?si=XhzKVeKdUMhG6hrg">
                       edit in Linkedin
                     </a>
                   </span>
