@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { Rocket, FileText, CheckCircle } from 'lucide-react';
 import FAQSection from '../components/faq-accordion';
 import { Link } from 'react-router-dom';
-
+import Silk from '../components/silk';
 import { useLocation } from 'react-router-dom';
 // Sample resume data (replace with your actual data)
 const resumeTemplates = {
@@ -72,6 +72,7 @@ const ResumeCatalog = () => {
 
     return (
         <>
+
             <motion.div
                 variants={fadeIn}
                 initial="hidden"
@@ -219,7 +220,9 @@ const LandingPage = () => {
 const HomePage = () => {
 
     return (
+
         <div className="min-h-screen bg-gray-950 overflow-hidden w-[100vw]">
+
             <LandingPage />
           
         </div>

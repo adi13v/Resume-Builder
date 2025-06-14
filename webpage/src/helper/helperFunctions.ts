@@ -79,9 +79,8 @@ const sanitizeInputForLink = (input:string) => {
   if (!trimmedInput.startsWith("http://") && !trimmedInput.startsWith("https://")){
     return "https://" + trimmedInput;
   }
-  console.log(input)
   input = input.replace(/\\/g, '/');
-  console.log(input)
+ 
   input = input.replace(/\s/g, '');
   return input;
 }

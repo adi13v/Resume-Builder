@@ -697,7 +697,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
         >
           {/* Add AI Generator Button at the top */}
           
-          <div className="flex justify-end ">
+          <div className="flex justify-end md:mb-2 mb-4 ">
            
             <div className=" bg-black rounded-xl flex justify-center items-center">
               <div className="relative inline-flex rounded-xl  group">
@@ -725,9 +725,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
             <div className="space-y-6">
               <div className="bg-white/5 p-6 rounded-xl shadow border border-white/10">
                 <div className="flex justify-between items-center mb-4">
-                  <h3 className="text-lg font-light text-white">
-                    Profile Photo
-                  </h3>
+
                   <div
                     className={`relative w-24 h-24 rounded-full overflow-hidden border-2 border-white/20 bg-white/5 flex items-center justify-center cursor-pointer hover:border-white/30 transition-colors ${
                       !includePicture ? "opacity-50 cursor-not-allowed" : ""
@@ -784,7 +782,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                       className="form-checkbox h-4 w-4 text-green-600 border-[#948979] focus:ring-2 focus:ring-green-400"
                     />
                     <span className="ml-2 text-[#44BCFF]">
-                      Include in Resume
+                      Include
                     </span>
                   </label>
                 </div>
@@ -1570,7 +1568,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                   onClick={() =>
                     addEntry(setExperienceEntries, defaultExperienceEntry)
                   }
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Experience
                 </button>
@@ -1867,7 +1865,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
               <button
                 type="button"
                 onClick={() => addEntry(setProjectEntries, defaultProjectEntry)}
-                className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
               >
                 <PlusIcon className="w-4 h-4" /> Add Project
               </button>
@@ -1964,7 +1962,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                 <button
                   type="button"
                   onClick={() => addEntry(setSkills, defaultSkillEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Skill
                 </button>
@@ -2168,7 +2166,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                 <button
                   type="button"
                   onClick={() => addEntry(setHonorEntries, defaultHonorEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Achievement
                 </button>
@@ -2395,7 +2393,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                                   }
                                   className="px-2 py-1 text-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-700 text-xs"
                                 >
-                                  <XIcon className="w-4 h-4" />
+                                  <XIcon className="w-4 h-4 text-red-400" />
                                 </button>
                               </div>
                             )
@@ -2426,9 +2424,9 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                 <button
                   type="button"
                   onClick={() => addEntry(setClubEntries, defaultClubEntry)}
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
-                  <PlusIcon className="w-4 h-4" /> Add Club/Society
+                  <PlusIcon className="w-4 h-4 text-white" /> Add Club/Society
                 </button>
               </div>
             </div>
@@ -2541,7 +2539,7 @@ function ResumeWithPhoto({defaultPhotoSetting}:{defaultPhotoSetting:boolean}) {
                   onClick={() =>
                     addEntry(setCertificateEntries, defaultCertificateEntry)
                   }
-                  className="px-4 py-2 flex items-center gap-2 bg-white text-black rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
+                  className="px-4 py-2 flex items-center gap-2 bg-white text-white rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-white"
                 >
                   <PlusIcon className="w-4 h-4" /> Add Certificate
                 </button>
