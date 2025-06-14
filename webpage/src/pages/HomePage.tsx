@@ -9,7 +9,6 @@ import { motion } from 'framer-motion';
 import { Rocket, FileText, CheckCircle } from 'lucide-react';
 import FAQSection from '../components/faq-accordion';
 import { Link } from 'react-router-dom';
-import Silk from '../components/silk';
 import { useLocation } from 'react-router-dom';
 // Sample resume data (replace with your actual data)
 const resumeTemplates = {
